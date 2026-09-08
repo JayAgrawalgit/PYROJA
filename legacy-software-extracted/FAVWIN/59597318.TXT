@@ -1,0 +1,33 @@
+
+RAM FATAKA CENTER 01/04/2026 31/03/2027
+A/C SHEDULE MASTER
+--------------------------------------------------------------------------------
+ SRL  A/C SHEDULE NAME                           IND
+--------------------------------------------------------------------------------
+   8   SUNDRY DEBTORS (SALE)                  B    SDEB 
+   9  SUNDRY CREDITORS(PURC)                  B    SCRE 
+  23 BANK CURRENT ACCOUNTS                    B    BACA 
+  23 BANKS CASH CREDIT A/C (CC)               B    BACC 
+  23 BANKS SAVING ACCOUNTS                    B    BASV 
+   1 CAPITAL ACCOUNT                          B    PCAP 
+   1 CAPITAL ACCOUNT [PARTNER]                B    PTCP 
+  24 CASH IN HAND                             B    99999
+  23 CLOSING STOCK                            B    CLOS 
+  22 CUREENT ACCOUNT                          B    PCUR 
+  16 CURRENT ASSETS ACCOUNTS                  B    CASS 
+  19 DEPOSIT ACCOUNT                          B    DEPO 
+   6 DIRECT EXPENSES (TRADING)                T    DEXP 
+  12 FIXED ASSETS ACCOUNTS                    B    FXAS 
+  15 FIXED DEPOSIT ACCOUNTS                   B    BFIX 
+   5 IN-DIRECT EXPENSES (P&L)                 P    PLEX 
+  21 INVESTMENT ACCOUNT                       B    INVE 
+  20 LOAN & ADVANCE ACCOUNT                   B    LOAN 
+  18 MANUFACTURING EXPENSES                   T    MEXP 
+   2 OPENING STOCK                            T    OSTO 
+  17 OTHERS ACCOUNTS                          B    OTHE 
+   7 PROVISION & PAYABLE ACCOUNTS             B    PAYA 
+   3 PURCHASE ACCOUNTS                        T    PURC 
+   4 SALE ACCOUNT                             T    SALE 
+  11 SECURED LOANS                            B    SLOA 
+  10 UNSECURED LOANS                          B    ULOA 
+--------------------------------------------------------------------------------

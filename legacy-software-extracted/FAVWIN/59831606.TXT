@@ -1,0 +1,202 @@
+
+M
+                            RAM FATAKA CENTER 01/04/2026 31/03/2027                             
+                             TRADING & P&L ACCOUNT AS ON 31/03/2027                             
+------------------------------------------------------------------------------------------------
+PARTICULARS                                      PARTICULARS
+------------------------------------------------------------------------------------------------
+TOTAL :                        0.00        0.00  SALE ACCOUNT (12.5%)    70407576.99        0.00
+TOTAL :                        0.00        0.00  TOTAL :                        0.00 70407576.99
+TOTAL :                        0.00        0.00  CLOSING STOCK  0%              0.00        0.00
+                               0.00        0.00  CLOSING STOCK  4%              0.00        0.00
+                               0.00        0.00  CLOSING STOCK  5%              0.00        0.00
+                               0.00        0.00  CLOSING STOCK 12.5%            0.00        0.00
+                               0.00        0.00  CLOSING STOCK 20.0%            0.00        0.00
+                               0.00        0.00  TOTAL :                        0.00        0.00
+                               0.00        0.00  TOTAL :                        0.00        0.00
+------------------------------------------------------------------------------------------------
+                                           0.00                                      70407576.99
+GROSS PROFIT TRF.TO P&L : 100.00%   70407576.99
+------------------------------------------------------------------------------------------------
+TOTAL :                             70407576.99 TOTAL :                              70407576.99
+------------------------------------------------------------------------------------------------
+                                                GROSS PROFIT TFR FROM TRADING A/C    70407576.99
+SALE  LESS ACCOUNT                     13697.00 SALE  ADD  ACCOUNT                      66623.00
+                                           0.00 SALE ROUND OFF/UP ACCOUNT                   0.60
+------------------------------------------------------------------------------------------------
+                                       13697.00                                      70474200.59
+N.P.TFR TO CAPITAL A/C  : 5144.2%   70460503.59
+------------------------------------------------------------------------------------------------
+TOTAL :                             70474200.59 TOTAL :                              70474200.59
+------------------------------------------------------------------------------------------------
+
+                            RAM FATAKA CENTER 01/04/2026 31/03/2027                             
+------------------------------------------------------------------------------------------------
+                                CAPITAL ACCOUNT AS ON 31/03/2027                                
+------------------------------------------------------------------------------------------------
+                                       AS PER SHEDULE (A)                                       
+------------------------------------------------------------------------------------------------
+                                                                              GRAND TOTAL :       0.00
+------------------------------------------------------------------------------------------------
+                                  PROVISION & PAYABLE ACCOUNTS                                  
+                                       AS PER SHEDULE (B)                                       
+------------------------------------------------------------------------------------------------
+ SR.  ACCOUNT NAME                             PLACE            DR.AMOUNT         CR.AMOUNT
+------------------------------------------------------------------------------------------------
+   1  SALE VAT TAX ACCOUNT (12.5%)                                                  512.00
+------------------------------------------------------------------------------------------------
+                                                       TOTAL :        0.00          512.00
+------------------------------------------------------------------------------------------------
+                                     SUNDRY DEBTORS (SALE)                                      
+                                       AS PER SHEDULE (C)                                       
+------------------------------------------------------------------------------------------------
+ SR.  ACCOUNT NAME                             PLACE            DR.AMOUNT         CR.AMOUNT
+------------------------------------------------------------------------------------------------
+   1  AJAY WAGHMARE ( DHAMNGAON)               A DHAMNGAON         3240.00
+   2  AKASH HIKARE (RALEGAON)                  RALEGAON            5335.00
+   3  AKSHAY URKUDE ( ARNI)                    ARNI                6625.00
+   4  AMOL BHASAKRWAR ( MAHUR)                 MAHUR               8305.00
+   5  ANISH SALES (ARNI)                       ARNI               40146.00
+   6  ANUP UIKE (RALEGAON)                     RALEGAON            1185.00
+   7  ARYAN FATAKA CENTRE (MAREGAON)           MAREGAON             800.00
+   8  ASLAM NASEM PARVEEN JAVED KHAN(KALAMB)   KALAMB             26992.00
+   9  ASRAR BHAI (YAVATMAL)                    YAVATMAL             518.00
+  10  ATHAR HUSAIN (PKD)                       PKD                 7941.00
+  11  AVINASH GOLAIT ( YAVATAMAL)              YAVATMAL           30475.00
+  12  AVNESH BOMIDWAR (ADILABAD)               ADILABAD          139781.00
+  13  AYUB BHAI NATIONAL HARDWARE FATAKA CENTE WAI BAZZAR         46865.00
+  14  BALAJI MAADASWAR (KINWAT)                KINWAT            194681.00
+  15  BALU RAHATE (WAORA)                      WARORA               576.00
+  16  BASHIR SHAHA ( SELU HINGNI)              SELU HINGNI                       150000.00
+  17  BHANUDAS RAUT ( DIGARS)                  DIGARS             16449.00
+  18  BHAVESH GHANKAR ( AKOLA BAJAR )          AKOLA BAJAR        65451.00
+  19  BUTLE FATAKA CENTER (ARNI)               ARNI               43720.00
+  20  CHANDEKAR FATAKA CENTER (WAI BAJAR )     WAI BAJAR          16540.00
+  21  CHANDU ICHODA ( ICHODA)                  ICHODA             18045.00
+  22  CHURE SIR (WANI)                         RANGARI PURA        6750.00
+  23  DANISH SHAIKH (PARWA)                    PARWA              34644.00
+  24  DILIP SADASHIV LAMBADE (RALEGAON)        RALEGAON            5310.00
+  25  ELIYAS BHAI(PULGAON)                     NACHANGAON (PUL    17987.00
+  26  EMRAN KHAN ( WANI)                       WANI                6500.00
+  27  ERSHAD FATAKA CENTER (GHONSA)            GHONSA            238431.00
+  28  ERSHAD SHEIKH ABBAS SHEIKH (MOHADA)      MOHADA             26915.00
+  29  ESHWAR CRACKERS ( BHAINSA)               BHAINSA           188823.00
+  30  FIROJ KHAN BASHIR PATHAN( GHATI)         GHATI               3608.00
+  31  GAJANAN JILLADWAR  (PARWA)               PARWA               7930.00
+  32  GAJANAN LAXMAN BANDEWAR (MANDAVI)        MANDAVI            15938.00
+  33  GAJANAN NAGORAO YANNARWAR ( PARWA)       PARWA                479.00
+  34  GANESH KADAM FATAKA CENTER (ARNI)        ARNI                1860.00
+  35  HAFIZ BHAI FATAKA CENTER (MUKUTBAN)      MUKUTBAN           45360.00
+  36  HARIBHAU AGRAWAL (HINGOLI)               HINGOLI            75500.00
+  37  HARSHAD VADZADE (ARNI )                  ARNI               21608.00
+  38  HARUN SK. SATTAR (AKOLA BAJAR)           AKOLA BAJAR         4800.00
+  39  HUZEFA HUSAIN FATAKA CENTER(HINGANGHA)   HINGANGHAT          3749.00
+  40  IBRAHIM BHAI (SARKHANI)                  SARKHANI                            6571.00
+  41  IMRAN KHAN JABAR KHAN ( PULAGOAN)        PULANGAON          14914.00
+  42  IMROZ BHAI (HINGANGHAT)                  HINGANGHAT         19513.00
+  43  IRFAN SHEIKH (WANI)                      WANI              198389.00
+  44  JABBAR SK GANI BHAI (AKOLA BAZAR}        AKOLA BAZAR         2676.00
+  45  JAHIR ALI SARDAR ALI ( JAVED KICHI) YTL  YAVATMAL            3615.00
+  46  JUBER SHEIKH (PANDHARKAWDA)              PADHARKAWDA        18169.00
+  47  KARLEKAR FATAKA CENTER (WANI)            WANI                1746.00
+  48  LAKHAN MESHRAM (PKD)                     PANDHARKAVADA       6084.00
+------------------------------------------------------------------------------------------------
+                                     CONT.NEXT PAGE.......                                      
+------------------------------------------------------------------------------------------------
+                                       AS PER SHEDULE (C)                                       
+------------------------------------------------------------------------------------------------
+ SR.  ACCOUNT NAME                             PLACE            DR.AMOUNT         CR.AMOUNT
+------------------------------------------------------------------------------------------------
+  49  LALAMIYA SHEIKH HAIDAR (KINWAT)          KINWAT            752129.00
+  50  MAHESH WAGH ( WASHIM )                   WASHIM             40245.00
+  51  MAYUR SHEMBDE (WADKI)                    WADKI               2090.00
+  52  MOHIP SYED LATIFA ( GHATANJI )           GHATANJI            4063.00
+  53  MUKHTAR BHAI PATHAN (FULSAWANGI)         FULSAWANGI         62354.00
+  54  NAUSHAD RAJU KHAN ( VIKARM JAISAWAL) YTL YAVATMAL           48118.00
+  55  NEW SHIVA BALAJI DASARWAR                KINWAT                             50000.00
+  56  NIKHIL M. ( ADILABAD)                    ADILABAD           78071.00
+  57  NITIN PILLEWAR ( SADOBA -SAVALI)         NITIN SADOBA -      1870.00
+  58  PAVAN ROY ( DHAMANGAON )                  DHAMANGAON )      14126.00
+  59  PIR KHAN SAHEB (ICHODA )                 ICHODA              7017.00
+  60  PRAMOD PETKAR FATAKA CENTER ( KAYAR )    KAYAR               2125.00
+  61  PRATAP SINGH CHANDEL (MAHUR)             MAHUR              28783.00
+  62  PRAVIN PARALIKAR (NER)                   NER                65169.00
+  63  PREM KUMAR (ADILABAD)                    ADILABAD            3101.00
+  64  PRUTHVIRAJ DIXIT FHATAKA CENTER ( MAHUR) MAHUR                635.00
+  65  RAFIK MOHSIN KHAN ( WAI BAJAR)           WAI BAJAR          10382.00
+  66  RAHIL TAWWAR (PATANBORI)                 PATANBORI          30717.00
+  67  RAJU BHAI (SADOBA SAWALI)                SADOBA SAWALI       3200.00
+  68  RAJU LAXMAN BANDEWAR (MANDAVI)           MANDAVI             3341.00
+  69  RAKESH RAHURKAR (RALEGAON)               RALEGAON           32703.00
+  70  RAMESH GATKA ( UTNOOR)                   UTNOOR               560.00
+  71  RATNAM SANTOSH SHRIMANWAR ( MANDVI)      MANDVI               668.00
+  72  RAVI LONARE ( WARORA)                    WARORA             11333.00
+  73  ROUF KHAN FHATAKA CENTER ( GHATANJI)     GHATANJI            6083.00
+  74  RUSHIKESH RAVI BHAVSAR (NER)             NER                37438.00
+  75  SAGAR SHINDE (BASMAT NANDED)             BASMAT (NANDED)      800.00
+  76  SAI UTTARWAR (KINWAT)                    KINAWAT           280868.00
+  77  SAIPRASAD ASHOK TIRMANWAR(NILESH GAVANDE KINWAT             60287.00
+  78  SAJID BHAI AHMED (BELA)                  BELA               28827.00
+  79  SAJJAD MO EKABAL ( PATANBORI             PATANBORI         293852.00
+  80  SALMAN BADASHA KHAN ( PULAGAON)          PULAGAON           10660.00
+  81  SANDESH ARJUN RATHOD (KINHALA)           KINHALA TQ KALA      906.00
+  82  SANJEEV ( ADILABAD                       ADILABAD                            3033.00
+  83  SANTOSH SHENDE (BHAMBRAJA)               BHAMBRAJA          12067.00
+  84  SATYAM KANGNE (PARDI BODHADI)            PARDI BODHADI K    30600.00
+  85  SHAFI BHAI ABDUL (AKOLA BAJAR )          AKOLA BAJAR          642.00
+  86  SHAFIBHAI FATAKA CENTER (MUKUTBAN)       MUKUTBAN           11769.00
+  87  SHAKIL KURESHI (WARORA)                  WARORA              7300.00
+  88  SHAKTI WANKHEDE (PUSAD)                  PUSAD               3440.00
+  89  SHER KHAN PATHAN( GHATI-GHATANJI)        GHATI GHATANJI      1135.00
+  90  SHKIL SHIKH GANNI SHIKH ( YAVATMAL ) ROU YAVATMAL           11635.00
+  91  SOHEL SHEKH(WANI)                        WANI              393995.00
+  92  SRIDHAR LAXMI NARSIMHA SINU( NIRMAL      NIRMAL              7573.00
+  93  SUBHASH KOHAD (SARAKHANI)                SARAKHANI           2995.00
+  94  SUMIT KISHOR AGRAWAL (NAGPUR)            NAGPUR             63924.00
+  95  SUMIT YERAWAR ( ARNI)                    ARNI                1613.00
+  96  SUNIL D. DOLHARKAR (METKAR)              ARNI (DEURWADA)    23008.00
+  97  SUNIL DEVISINGH DIXIT (MAHUR )           MAHUR              69293.00
+  98  SURAJ PRAKASH MAHAJAN (MAREGAON)         MAREGAON           15500.00
+  99  SURESH SHARMA ( PATANBORI)               PATANBORI           6025.00
+ 100  TOUFIQ SK MANNU (AKOLA BAZAR)            AKOLA BAZAR         5840.00
+ 101  VIVEK TOTEWAR ( WANI )                   WANI               42792.00
+ 102  YAQUB BHAI (KAYAR)                       KAYAR              12595.00
+------------------------------------------------------------------------------------------------
+                                                       TOTAL :  4291230.00       209604.00
+------------------------------------------------------------------------------------------------
+                                          CASH IN HAND                                          
+                                       AS PER SHEDULE (D)                                       
+------------------------------------------------------------------------------------------------
+ SR.  ACCOUNT NAME                             PLACE            DR.AMOUNT         CR.AMOUNT
+------------------------------------------------------------------------------------------------
+   1  CASH A/C                                                 230366267.0
+------------------------------------------------------------------------------------------------
+                                     CONT.NEXT PAGE.......                                      
+------------------------------------------------------------------------------------------------
+                                       AS PER SHEDULE (D)                                       
+------------------------------------------------------------------------------------------------
+ SR.  ACCOUNT NAME                             PLACE            DR.AMOUNT         CR.AMOUNT
+------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+                                                       TOTAL : 230366267.0            0.00
+------------------------------------------------------------------------------------------------
+                            RAM FATAKA CENTER 01/04/2026 31/03/2027                             
+                                 BALANCE SHEET AS ON 31/03/2027                                 
+------------------------------------------------------------------------------------------------
+L I A B I L I T I E S               AMOUNT          A S S E T S                          AMOUNT
+------------------------------------------------------------------------------------------------
+PROP.CAPITAL A/C                        0.00          SUNDRY DEBTORS (SALE)           4291230.00
+AS PER SHEDULE (A)                                  AS PER SHEDULE (C)       
+
+PROVISION & PAYABLE ACCOUNTS          512.00        CASH IN HAND                     230366267.0
+AS PER SHEDULE (B)                                  AS PER SHEDULE (D)       
+
+  SUNDRY DEBTORS (SALE)            209604.00        CLOSING STOCK                           0.00
+AS PER SHEDULE (C)                                  AS PER TRADING A/C       
+
+------------------------------------------------------------------------------------------------
+                                   210116.00                                         234657497.0
+------------------------------------------------------------------------------------------------
+DIFFRENCE :  -234447381
+------------------------------------------------------------------------------------------------
+

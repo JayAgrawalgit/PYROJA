@@ -1,0 +1,82 @@
+
+RAM FATAKA CENTER 01/04/2026 31/03/2027
+AREA LIST 
+--------------------------------------------------------------------------------
+ SRL  NAME                                    CODE
+--------------------------------------------------------------------------------
+   1 ADILABAD                                 02   
+   2 AKOLA BAZAAR                             03   
+   3 ARNI                                     01   
+   4 ARVI (WARDHA)                            62   
+   5 BABULGAON                                05   
+   6 BALLARSHA                                04   
+   7 BASMAT (NANDED)                          69   
+   8 BELA                                     66   
+   9 BORI (PATAN)                             06   
+  10 CHANDRAPUR                               07   
+  11 CHICHKHED                                68   
+  12 CHORAMBA (GHT)                           08   
+  13 DARWHA                                   10   
+  14 DHANKI                                   51   
+  15 DIGRAS                                   09   
+  16 FULSAWANGI                               67   
+  17 GHATANJI                                 11   
+  18 GHATI (GHATANJI)                         14   
+  19 GHONSA                                   13   
+  20 GHOTI (GHT)                              12   
+  21 GHUGHUS                                  15   
+  22 HATGAON ( NANDED)                        56   
+  23 HINGANGHAT                               16   
+  24 ICHODA                                   45   
+  25 INDEVELLY                                61   
+  26 JARUR (GHATANJI)                         17   
+  27 KALAM                                    53   
+  28 KARANJA                                  59   
+  29 KARANJI                                  18   
+  30 KAYAR                                    19   
+  31 KINWAT                                   44   
+  32 KURLI                                    40   
+  33 LAKHMAPUR (MAHUR)                        20   
+  34 MAHAGON                                  57   
+  35 MAHUR                                    23   
+  36 MANDVI                                   37   
+  37 MANORA                                   43   
+  38 MARDI (MAREGAON)                         42   
+  39 MAREGAON                                 21   
+  40 MUKUTBAN                                 22   
+  41 NAGPUR                                   24   
+  42 NER                                      35   
+  43 NIRMAL                                   60   
+  44 OTHER                                    C    
+  45 PANDHARKAWDA                             25   
+  46 PANDHURNA ( MP)                          63   
+  47 PARWA                                    36   
+  48 PATANBORI                                47   
+  49 PULAGAON                                 52   
+  50 PUSAD                                    54   
+  51 RAJURA                                   27   
+  52 RALEGAON                                 26   
+  53 SADOBA SAWLI                             29   
+  54 SAMUDRAPUR ( HINGHANGHAT)                65   
+  55 SARKHANI                                 28   
+  56 SAYKHEDA ( PANDHARKAWDA)                 30   
+  57 SHIDOLA MINES                            39   
+  58 SHIROLI                                  38   
+  59 SUNDRY CREDITTORS                        B    
+  60 SUNDRY DEBTORS                           A    
+  61 TITVI                                    41   
+--------------------------------------------------------------------------------
+RAM FATAKA CENTER 01/04/2026 31/03/2027
+AREA LIST 
+--------------------------------------------------------------------------------
+ SRL  NAME                                    PLACE                     CONTACT PERSON                           CONTACT NO
+--------------------------------------------------------------------------------
+  62 UMARKHED                                 70   
+  63 UMRI (PANDHARKAWDA)                      31   
+  64 VADKI ( RALEGAON)                        64   
+  65 WAI BAJAR                                46   
+  66 WANI                                     33   
+  67 WARDHA                                   55   
+  68 WARORA                                   32   
+  69 YAVATMAL                                 34   
+--------------------------------------------------------------------------------

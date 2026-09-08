@@ -1,0 +1,63 @@
+@font-face {
+  font-family: 'Chivo';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/chivo/v21/va9Z4kzIxd1KFrBtW-13ZHhT-jDqdFwG1GrVN33AiKMJ.woff) format('woff');
+}
+@font-face {
+  font-family: 'Chivo';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/font_0.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Chivo';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(fonts/font_0.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Chivo';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(fonts/font_0.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Chivo';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url(fonts/font_0.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/font_1.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(fonts/font_1.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(fonts/font_1.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(fonts/font_1.woff2) format('woff2');
+}

@@ -1,0 +1,28 @@
+# Windows Sync Service Configuration
+
+server:
+  host: "0.0.0.0"
+  port: 8080
+  cors_origins: ["*"]
+
+foxpro:
+  # Base directory for the active fiscal year containing .DBF tables
+  # On Windows, this typically points to "D:\\FAVWIN\\D2627" or "C:\\FAVWIN\\D2627"
+  # Can be overridden via environment variable SYNC_FOXPRO_DATA_PATH
+  data_path: "../legacy-software-extracted/FAVWIN/D2627"
+  active_fiscal_year: "D2627"
+
+database:
+  # SQLite state database path (WAL mode)
+  path: "sync_service.sqlite3"
+
+cache:
+  # In-memory master data cache TTL in seconds
+  ttl_seconds: 30
+  # Automatically check file mtime before serving from cache
+  validate_mtime: true
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+  file: "sync_service.log"

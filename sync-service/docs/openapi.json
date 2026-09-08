@@ -1,0 +1,1356 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PYROWHOLESALE Windows Sync Service",
+    "description": "Local LAN synchronization and order queueing bridge between Android POS tablets and legacy Visual FoxPro 6.0",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "tags": [
+          "Health & Diagnostics"
+        ],
+        "summary": "Service health status",
+        "description": "Check connectivity to FoxPro DBF tables and report system health.",
+        "operationId": "get_health_api_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sync/products": {
+      "get": {
+        "tags": [
+          "Master Data Synchronization"
+        ],
+        "summary": "Synchronize product catalog",
+        "description": "Returns full catalog of items from ITEMMST.DBF joined with COMPMST and TAXMST.",
+        "operationId": "sync_products_api_sync_products_get",
+        "parameters": [
+          {
+            "name": "force_refresh",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Bypass cache and re-read from disk",
+              "default": false,
+              "title": "Force Refresh"
+            },
+            "description": "Bypass cache and re-read from disk"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductSyncResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sync/customers": {
+      "get": {
+        "tags": [
+          "Master Data Synchronization"
+        ],
+        "summary": "Synchronize customer/party accounts",
+        "description": "Returns active customer accounts from NAMEMST.DBF joined with AREAMST.",
+        "operationId": "sync_customers_api_sync_customers_get",
+        "parameters": [
+          {
+            "name": "force_refresh",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Bypass cache and re-read from disk",
+              "default": false,
+              "title": "Force Refresh"
+            },
+            "description": "Bypass cache and re-read from disk"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerSyncResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders": {
+      "post": {
+        "tags": [
+          "Order Capture & Queueing"
+        ],
+        "summary": "Submit draft order from tablet",
+        "description": "Validates customer and product codes against FoxPro masters, validates pack multiples, calculates financial totals, and queues order into SQLite.",
+        "operationId": "create_order_api_orders_post",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/pending": {
+      "get": {
+        "tags": [
+          "Order Capture & Queueing"
+        ],
+        "summary": "List all queued pending orders",
+        "description": "Returns all orders currently in QUEUED status waiting to be imported into FoxPro.",
+        "operationId": "get_pending_orders_api_orders_pending_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/{order_id}": {
+      "get": {
+        "tags": [
+          "Order Capture & Queueing"
+        ],
+        "summary": "Get order details by ID",
+        "description": "Retrieves full order information including all line items.",
+        "operationId": "get_order_api_orders__order_id__get",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Order Capture & Queueing"
+        ],
+        "summary": "Update an existing order",
+        "description": "Updates customer, line items, remarks, or status of an existing order in SQLite.",
+        "operationId": "update_order_api_orders__order_id__put",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Order Capture & Queueing"
+        ],
+        "summary": "Delete / cancel an order",
+        "description": "Removes an order and its associated line items from SQLite.",
+        "operationId": "delete_order_api_orders__order_id__delete",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderDeleteResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "General"
+        ],
+        "summary": "Root Info",
+        "operationId": "root_info__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CustomerItem": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code",
+            "description": "5-character FoxPro account code from NAMEMST.CODE"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Customer / Account name from NAMEMST.NAME"
+          },
+          "city": {
+            "type": "string",
+            "title": "City",
+            "description": "City or place from NAMEMST.PLACE"
+          },
+          "address_1": {
+            "type": "string",
+            "title": "Address 1",
+            "description": "Address line 1 from NAMEMST.ADD1"
+          },
+          "address_2": {
+            "type": "string",
+            "title": "Address 2",
+            "description": "Address line 2 from NAMEMST.ADD2"
+          },
+          "gstin": {
+            "type": "string",
+            "title": "Gstin",
+            "description": "TIN / CST / GST identification from NAMEMST.TIN or CST"
+          },
+          "phone": {
+            "type": "string",
+            "title": "Phone",
+            "description": "Contact phone number from NAMEMST.PH"
+          },
+          "contact_person": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Person",
+            "description": "Contact person name from NAMEMST.CONT"
+          },
+          "area_code": {
+            "type": "string",
+            "title": "Area Code",
+            "description": "Area code from NAMEMST.ACODE"
+          },
+          "area_name": {
+            "type": "string",
+            "title": "Area Name",
+            "description": "Resolved area / district name from AREAMST.NAME"
+          },
+          "credit_days": {
+            "type": "integer",
+            "title": "Credit Days",
+            "description": "Allowed credit duration in days from NAMEMST.DAY"
+          },
+          "credit_limit": {
+            "type": "number",
+            "title": "Credit Limit",
+            "description": "Credit limit amount from NAMEMST.LIMIT"
+          },
+          "current_balance": {
+            "type": "number",
+            "title": "Current Balance",
+            "description": "Current outstanding balance from NAMEMST.CB"
+          },
+          "balance_type": {
+            "type": "string",
+            "title": "Balance Type",
+            "description": "Debit ('D') or Credit ('C') from NAMEMST.DC"
+          },
+          "price_tier": {
+            "type": "string",
+            "title": "Price Tier",
+            "description": "Assigned wholesale pricing tier ('RETAIL' for 99999, else 'WHOLESALE')"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "name",
+          "city",
+          "address_1",
+          "address_2",
+          "gstin",
+          "phone",
+          "area_code",
+          "area_name",
+          "credit_days",
+          "credit_limit",
+          "current_balance",
+          "balance_type",
+          "price_tier"
+        ],
+        "title": "CustomerItem"
+      },
+      "CustomerSyncResponse": {
+        "properties": {
+          "sync_timestamp": {
+            "type": "string",
+            "title": "Sync Timestamp",
+            "description": "ISO 8601 server timestamp"
+          },
+          "active_fiscal_year": {
+            "type": "string",
+            "title": "Active Fiscal Year",
+            "description": "Active fiscal year folder, e.g. 'D2627'"
+          },
+          "dbf_checksum": {
+            "type": "string",
+            "title": "Dbf Checksum",
+            "description": "SHA-256 hash of NAMEMST.DBF"
+          },
+          "total_records": {
+            "type": "integer",
+            "title": "Total Records",
+            "description": "Count of returned customers"
+          },
+          "is_delta": {
+            "type": "boolean",
+            "title": "Is Delta",
+            "description": "Whether payload represents delta changes",
+            "default": false
+          },
+          "customers": {
+            "items": {
+              "$ref": "#/components/schemas/CustomerItem"
+            },
+            "type": "array",
+            "title": "Customers",
+            "description": "List of customer records"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sync_timestamp",
+          "active_fiscal_year",
+          "dbf_checksum",
+          "total_records"
+        ],
+        "title": "CustomerSyncResponse"
+      },
+      "DatabaseHealth": {
+        "properties": {
+          "exists": {
+            "type": "boolean",
+            "title": "Exists",
+            "description": "Whether SQLite state database file exists"
+          },
+          "path": {
+            "type": "string",
+            "title": "Path",
+            "description": "Path to SQLite database file"
+          },
+          "journal_mode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Journal Mode",
+            "description": "SQLite journal mode (e.g. 'WAL')"
+          },
+          "is_healthy": {
+            "type": "boolean",
+            "title": "Is Healthy",
+            "description": "Whether SQLite database is operational"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error",
+            "description": "Error if database is unavailable"
+          }
+        },
+        "type": "object",
+        "required": [
+          "exists",
+          "path",
+          "is_healthy"
+        ],
+        "title": "DatabaseHealth"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "'HEALTHY' or 'DEGRADED'"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version",
+            "description": "Sync service software version"
+          },
+          "timestamp": {
+            "type": "string",
+            "title": "Timestamp",
+            "description": "Current server ISO 8601 timestamp"
+          },
+          "active_fiscal_year": {
+            "type": "string",
+            "title": "Active Fiscal Year",
+            "description": "Configured fiscal year directory"
+          },
+          "data_path": {
+            "type": "string",
+            "title": "Data Path",
+            "description": "Configured FoxPro data path"
+          },
+          "database": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DatabaseHealth"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "SQLite state database diagnostics"
+          },
+          "tables": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/TableHealth"
+            },
+            "type": "object",
+            "title": "Tables",
+            "description": "Diagnostics per DBF table"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "version",
+          "timestamp",
+          "active_fiscal_year",
+          "data_path"
+        ],
+        "title": "HealthResponse"
+      },
+      "OrderCreate": {
+        "properties": {
+          "draft_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Draft Id",
+            "description": "Unique tablet draft identifier, e.g. 'TAB01-1048'"
+          },
+          "tablet_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tablet Id",
+            "description": "Identifier of submitting POS tablet",
+            "default": "TABLET-01"
+          },
+          "customer_code": {
+            "type": "string",
+            "title": "Customer Code",
+            "description": "5-character FoxPro account code from NAMEMST.CODE"
+          },
+          "customer_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Name",
+            "description": "Customer name (auto-resolved if omitted)"
+          },
+          "order_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Order Date",
+            "description": "Order date YYYY-MM-DD (defaults to today)"
+          },
+          "remarks": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Remarks",
+            "description": "Order notes / dispatch remarks"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OrderStatus"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Initial order status (QUEUED or DRAFT)",
+            "default": "QUEUED"
+          },
+          "line_items": {
+            "items": {
+              "$ref": "#/components/schemas/OrderLineItem"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Line Items",
+            "description": "List of items in order"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idempotency Key",
+            "description": "Unique UUID/token to prevent duplicate submissions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "draft_id",
+          "customer_code",
+          "line_items"
+        ],
+        "title": "OrderCreate"
+      },
+      "OrderDeleteResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "order_id": {
+            "type": "string",
+            "title": "Order Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message",
+          "order_id"
+        ],
+        "title": "OrderDeleteResponse"
+      },
+      "OrderLineItem": {
+        "properties": {
+          "item_code": {
+            "type": "string",
+            "title": "Item Code",
+            "description": "5-character FoxPro product code from ITEMMST.CODE"
+          },
+          "item_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Item Name",
+            "description": "Product description (auto-resolved if omitted)"
+          },
+          "pack": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pack",
+            "description": "Packing description, e.g. 'PKT', 'BOX'"
+          },
+          "qty_in_box": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Qty In Box",
+            "description": "Units per box/case from ITEMMST.QIB"
+          },
+          "qty": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Qty",
+            "description": "Quantity ordered (must be greater than 0)"
+          },
+          "rate": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Rate",
+            "description": "Selling price per unit/pack"
+          },
+          "tax_percentage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tax Percentage",
+            "description": "GST rate percentage (auto-resolved if omitted)"
+          },
+          "tax_amount": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tax Amount",
+            "description": "Computed GST amount"
+          },
+          "line_total": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Line Total",
+            "description": "Gross/net line total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "item_code",
+          "qty",
+          "rate"
+        ],
+        "title": "OrderLineItem"
+      },
+      "OrderListResponse": {
+        "properties": {
+          "total_records": {
+            "type": "integer",
+            "title": "Total Records",
+            "description": "Number of orders returned"
+          },
+          "orders": {
+            "items": {
+              "$ref": "#/components/schemas/OrderResponse"
+            },
+            "type": "array",
+            "title": "Orders",
+            "description": "List of order records"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_records"
+        ],
+        "title": "OrderListResponse"
+      },
+      "OrderResponse": {
+        "properties": {
+          "order_id": {
+            "type": "string",
+            "title": "Order Id",
+            "description": "Unique generated order ID, e.g. 'ORD-20260907-001'"
+          },
+          "draft_id": {
+            "type": "string",
+            "title": "Draft Id",
+            "description": "Tablet draft ID, e.g. 'TAB01-1048'"
+          },
+          "tablet_id": {
+            "type": "string",
+            "title": "Tablet Id",
+            "description": "Submitting tablet ID"
+          },
+          "customer_code": {
+            "type": "string",
+            "title": "Customer Code",
+            "description": "FoxPro customer code"
+          },
+          "customer_name": {
+            "type": "string",
+            "title": "Customer Name",
+            "description": "Customer name"
+          },
+          "order_date": {
+            "type": "string",
+            "title": "Order Date",
+            "description": "Order date (YYYY-MM-DD)"
+          },
+          "subtotal": {
+            "type": "number",
+            "title": "Subtotal",
+            "description": "Taxable line items sum"
+          },
+          "gst": {
+            "type": "number",
+            "title": "Gst",
+            "description": "Total GST amount"
+          },
+          "total": {
+            "type": "number",
+            "title": "Total",
+            "description": "Grand total payable"
+          },
+          "status": {
+            "$ref": "#/components/schemas/OrderStatus",
+            "description": "Current lifecycle status"
+          },
+          "remarks": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Remarks",
+            "description": "Order remarks"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idempotency Key",
+            "description": "Idempotency key"
+          },
+          "legacy_entry_no": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legacy Entry No",
+            "description": "Allocated FoxPro invoice # when completed"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At",
+            "description": "Creation ISO 8601 timestamp"
+          },
+          "updated_at": {
+            "type": "string",
+            "title": "Updated At",
+            "description": "Last update ISO 8601 timestamp"
+          },
+          "line_items": {
+            "items": {
+              "$ref": "#/components/schemas/OrderLineItem"
+            },
+            "type": "array",
+            "title": "Line Items",
+            "description": "Detailed line items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "order_id",
+          "draft_id",
+          "tablet_id",
+          "customer_code",
+          "customer_name",
+          "order_date",
+          "subtotal",
+          "gst",
+          "total",
+          "status",
+          "created_at",
+          "updated_at",
+          "line_items"
+        ],
+        "title": "OrderResponse"
+      },
+      "OrderStatus": {
+        "type": "string",
+        "enum": [
+          "DRAFT",
+          "QUEUED",
+          "COMPLETED",
+          "FAILED"
+        ],
+        "title": "OrderStatus"
+      },
+      "OrderUpdate": {
+        "properties": {
+          "customer_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Code",
+            "description": "Updated customer code"
+          },
+          "customer_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Name",
+            "description": "Updated customer name"
+          },
+          "remarks": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Remarks",
+            "description": "Updated order notes"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OrderStatus"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Updated status"
+          },
+          "line_items": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/OrderLineItem"
+                },
+                "type": "array",
+                "minItems": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Line Items",
+            "description": "Updated list of items"
+          }
+        },
+        "type": "object",
+        "title": "OrderUpdate"
+      },
+      "ProductItem": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code",
+            "description": "5-character FoxPro product code from ITEMMST.CODE (the sole product identifier)"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Product description from ITEMMST.NAME"
+          },
+          "company_code": {
+            "type": "string",
+            "title": "Company Code",
+            "description": "Manufacturer / company code from ITEMMST.CCODE"
+          },
+          "company_name": {
+            "type": "string",
+            "title": "Company Name",
+            "description": "Resolved company / brand name from COMPMST.NAME"
+          },
+          "group_code": {
+            "type": "string",
+            "title": "Group Code",
+            "description": "Group code from ITEMMST.GCODE, e.g. 'MIX'"
+          },
+          "group_name": {
+            "type": "string",
+            "title": "Group Name",
+            "description": "Resolved group category description"
+          },
+          "pack": {
+            "type": "string",
+            "title": "Pack",
+            "description": "Packing description from ITEMMST.PACK, e.g. 'PKT', 'BOX'"
+          },
+          "nick": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nick",
+            "description": "Product nickname from ITEMMST.NICK"
+          },
+          "qty_in_box": {
+            "type": "integer",
+            "title": "Qty In Box",
+            "description": "Inner unit quantity in box/case from ITEMMST.QIB"
+          },
+          "tax_percentage": {
+            "type": "number",
+            "title": "Tax Percentage",
+            "description": "Tax percentage from TAXMST.TAX"
+          },
+          "tax_code": {
+            "type": "string",
+            "title": "Tax Code",
+            "description": "Tax slab code from ITEMMST.TCODE, e.g. 'T1'"
+          },
+          "rate_type": {
+            "type": "string",
+            "title": "Rate Type",
+            "description": "Rate type flag from ITEMMST.RTTP ('P' = piece, etc.)"
+          },
+          "mrp": {
+            "type": "number",
+            "title": "Mrp",
+            "description": "Maximum Retail Price from ITEMMST.MRP"
+          },
+          "selling_rate": {
+            "type": "number",
+            "title": "Selling Rate",
+            "description": "Selling price per pack/unit from ITEMMST.SRATE"
+          },
+          "purchase_rate": {
+            "type": "number",
+            "title": "Purchase Rate",
+            "description": "Purchase price from ITEMMST.PRATE"
+          },
+          "stock_on_hand": {
+            "type": "number",
+            "title": "Stock On Hand",
+            "description": "Current closing quantity stock from ITEMMST.CQTY"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "description": "Whether product is active for billing",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "name",
+          "company_code",
+          "company_name",
+          "group_code",
+          "group_name",
+          "pack",
+          "qty_in_box",
+          "tax_percentage",
+          "tax_code",
+          "rate_type",
+          "mrp",
+          "selling_rate",
+          "purchase_rate",
+          "stock_on_hand"
+        ],
+        "title": "ProductItem"
+      },
+      "ProductSyncResponse": {
+        "properties": {
+          "sync_timestamp": {
+            "type": "string",
+            "title": "Sync Timestamp",
+            "description": "ISO 8601 server timestamp"
+          },
+          "active_fiscal_year": {
+            "type": "string",
+            "title": "Active Fiscal Year",
+            "description": "Active fiscal year folder, e.g. 'D2627'"
+          },
+          "dbf_checksum": {
+            "type": "string",
+            "title": "Dbf Checksum",
+            "description": "SHA-256 hash of ITEMMST.DBF for delta change detection"
+          },
+          "total_records": {
+            "type": "integer",
+            "title": "Total Records",
+            "description": "Count of returned products"
+          },
+          "is_delta": {
+            "type": "boolean",
+            "title": "Is Delta",
+            "description": "Whether payload represents delta changes",
+            "default": false
+          },
+          "products": {
+            "items": {
+              "$ref": "#/components/schemas/ProductItem"
+            },
+            "type": "array",
+            "title": "Products",
+            "description": "List of product records"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sync_timestamp",
+          "active_fiscal_year",
+          "dbf_checksum",
+          "total_records"
+        ],
+        "title": "ProductSyncResponse"
+      },
+      "TableHealth": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Table name, e.g. 'ITEMMST.DBF'"
+          },
+          "path": {
+            "type": "string",
+            "title": "Path",
+            "description": "Resolved absolute path"
+          },
+          "exists": {
+            "type": "boolean",
+            "title": "Exists",
+            "description": "Whether file exists on disk"
+          },
+          "record_count": {
+            "type": "integer",
+            "title": "Record Count",
+            "description": "Header total record count",
+            "default": 0
+          },
+          "checksum": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checksum",
+            "description": "SHA-256 digest"
+          },
+          "last_modified": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Modified",
+            "description": "Last modification timestamp"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error",
+            "description": "Error message if table could not be read"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "path",
+          "exists"
+        ],
+        "title": "TableHealth"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

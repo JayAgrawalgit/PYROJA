@@ -1,0 +1,26 @@
+{
+  "name": "pyrowholesale-tablet-pos",
+  "version": "1.0.0",
+  "description": "PYROWHOLESALE Android Tablet POS for RAM FATAKA CENTER",
+  "main": "app.js",
+  "scripts": {
+    "build": "mkdir -p www && cp index.html app.js tailwind.cdn.js material-symbols.css fonts.css www/ && cp -r fonts www/",
+    "sync": "npm run build && npx cap sync android",
+    "open": "npx cap open android",
+    "build:apk": "npm run sync && cd android && ./gradlew assembleDebug"
+  },
+  "keywords": [
+    "pos",
+    "fireworks",
+    "tablet",
+    "android",
+    "capacitor"
+  ],
+  "author": "RAM FATAKA CENTER",
+  "license": "ISC",
+  "dependencies": {
+    "@capacitor/android": "^8.5.1",
+    "@capacitor/cli": "^8.5.1",
+    "@capacitor/core": "^8.5.1"
+  }
+}

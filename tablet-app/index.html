@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>PYROWHOLESALE - Tablet POS Workstation</title>
+    <link href="material-symbols.css" rel="stylesheet"/>
+    <link href="fonts.css" rel="stylesheet"/>
+    <style>
+        @layer base {
+            html, body { margin: 0; padding: 0; }
+            body { overscroll-behavior: none; }
+            main > :first-child { margin-top: 0 !important; }
+            main > :last-child { margin-bottom: 0 !important; }
+        }
+        ::-webkit-scrollbar { display: none; }
+    </style>
+    <script src="tailwind.cdn.js"></script>
+    <script id="tailwind-config">
+        window.tailwind = window.tailwind || {};
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#0b1326",
+                        "surface-dim": "#0b1326",
+                        "surface-bright": "#31394d",
+                        "surface-container-lowest": "#060e20",
+                        "surface-container-low": "#131b2e",
+                        "surface-container": "#171f33",
+                        "surface-container-high": "#222a3d",
+                        "surface-container-highest": "#2d3449",
+                        "on-surface": "#dae2fd",
+                        "on-surface-variant": "#e2bfb2",
+                        "outline": "#a98a7e",
+                        "primary": "#ffb599",
+                        "primary-container": "#f66018",
+                        "on-primary": "#5a1c00",
+                        "on-primary-container": "#4f1700",
+                        "secondary": "#ffb77d",
+                        "tertiary": "#4edea3",
+                        "tertiary-container": "#00a572",
+                        "error": "#ffb4ab",
+                        "error-container": "#93000a",
+                        "background": "#0b1326"
+                    },
+                    fontFamily: {
+                        "headline-sm": ["Chivo", "sans-serif"],
+                        "headline-md": ["Chivo", "sans-serif"],
+                        "headline-lg": ["Chivo", "sans-serif"],
+                        "body-sm": ["Chivo", "sans-serif"],
+                        "body-md": ["Chivo", "sans-serif"],
+                        "body-lg": ["Chivo", "sans-serif"],
+                        "label-caps": ["JetBrains Mono", "monospace"],
+                        "label-numeric-sm": ["JetBrains Mono", "monospace"],
+                        "label-numeric-md": ["JetBrains Mono", "monospace"],
+                        "label-numeric-lg": ["JetBrains Mono", "monospace"]
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="bg-background font-body-md text-on-surface select-none">
+
+    <!-- TOP HEADER -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest">
+        <div class="h-24 w-full flex flex-col justify-between border-b border-surface-container-high">
+            <!-- System Status Strip -->
+            <div class="h-12 px-4 flex items-center justify-between bg-surface-container-low">
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2 mr-2">
+                        <span class="material-symbols-outlined text-primary-container text-[22px]">local_fire_department</span>
+                        <span class="font-headline-sm text-lg uppercase tracking-wider text-primary font-extrabold">PYROWHOLESALE</span>
+                        <span class="bg-surface-container-high text-outline font-label-caps text-[10px] px-1.5 py-0.5 rounded">V5.0 LIVE</span>
+                    </div>
+
+                    <!-- Online/Offline Indicator -->
+                    <div id="connection-pill" class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container text-tertiary font-label-caps text-[11px] font-bold">
+                        <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+                        <span id="connection-text">CONNECTING...</span>
+                    </div>
+
+                    <!-- Sync Status Indicator -->
+                    <div id="sync-queue-pill" class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container text-on-surface-variant font-label-numeric-sm text-[12px]">
+                        <span class="material-symbols-outlined text-secondary text-[16px]">sync</span>
+                        <span id="sync-queue-text">Local SQLite Ready</span>
+                    </div>
+                </div>
+
+                <!-- Right Controls -->
+                <div class="flex items-center gap-3">
+                    <button id="btn-sync-masters" class="flex items-center gap-1 px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-tertiary font-label-caps text-[11px] transition-colors" title="Sync products & customers from FoxPro">
+                        <span class="material-symbols-outlined text-[15px]">cloud_download</span>
+                        <span>PULL DBF MASTERS</span>
+                    </button>
+                    <div class="flex items-center gap-1 bg-surface-container-high px-2 py-1 rounded text-outline font-label-numeric-sm text-xs">
+                        <span class="material-symbols-outlined text-tertiary text-[15px]">print</span>
+                        <span>BT-80P READY</span>
+                    </div>
+                    <div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-on-primary">
+                        <span class="material-symbols-outlined text-[16px]">person</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Tabs Strip -->
+            <div id="customer-tabs-bar" class="h-12 px-2 flex items-center gap-2 bg-surface-container-lowest overflow-x-auto">
+                <!-- Tabs rendered dynamically -->
+            </div>
+        </div>
+    </header>
+
+    <!-- LEFT SIDEBAR: Categories -->
+    <aside class="fixed left-0 top-24 bottom-14 w-48 bg-surface-container-low z-40 flex flex-col justify-between p-2 border-r border-surface-container-high">
+        <div class="flex flex-col gap-1">
+            <div class="px-2 py-1 font-label-caps text-[10px] text-outline uppercase tracking-wider">Categories</div>
+            <nav id="category-nav" class="flex flex-col gap-1">
+                <button class="cat-btn flex items-center justify-between px-2.5 py-2 rounded bg-surface-container-high text-primary font-bold text-left text-sm" data-cat="ALL">
+                    <span>All Products</span>
+                    <span id="cat-count-all" class="font-label-numeric-sm text-xs">0</span>
+                </button>
+                <button class="cat-btn flex items-center justify-between px-2.5 py-2 rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface text-left text-sm" data-cat="MIX">
+                    <span>Mixed & Fancy</span>
+                    <span id="cat-count-mix" class="font-label-numeric-sm text-xs">-</span>
+                </button>
+            </nav>
+        </div>
+
+        <div class="flex flex-col gap-2">
+            <div class="p-2 rounded bg-surface-container text-on-surface-variant font-label-caps text-[10px]">
+                <div class="text-outline mb-0.5">SOURCE OF TRUTH</div>
+                <div class="text-tertiary font-bold">Visual FoxPro 6 (D2627)</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN BODY: Center Catalog (Cols 1-8) & Right Order Summary (Cols 9-12) -->
+    <div class="pl-48 pr-96">
+        <main class="relative pt-24 pb-14 w-full min-h-screen bg-surface">
+            <div class="p-3 flex flex-col gap-3">
+
+                <!-- Visible Startup Diagnostics Banner -->
+                <div id="diagnostics-server-banner" class="px-4 py-3 rounded-lg bg-surface-container-highest border-2 border-primary text-on-surface shadow-lg flex items-center justify-between font-mono">
+                    <div class="flex flex-col gap-0.5">
+                        <span class="text-primary font-bold text-xs uppercase tracking-wider">SERVER URL:</span>
+                        <span id="diagnostics-server-url" class="text-tertiary font-bold text-sm break-all font-mono">INITIALIZING...</span>
+                    </div>
+                    <span class="text-[10px] text-outline font-label-caps bg-surface-container px-2 py-1 rounded border border-surface-container-high">DIAGNOSTIC BANNER</span>
+                </div>
+
+                <!-- Alert / Notification Banner -->
+                <div id="notification-banner" class="hidden px-3 py-2 rounded bg-surface-container-high border border-tertiary text-on-surface flex items-center justify-between shadow-lg">
+                    <div class="flex items-center gap-2">
+                        <span id="notification-icon" class="material-symbols-outlined text-tertiary text-[18px]">check_circle</span>
+                        <span id="notification-msg" class="text-xs font-medium">Order submitted successfully</span>
+                    </div>
+                    <button onclick="document.getElementById('notification-banner').classList.add('hidden')" class="text-outline hover:text-on-surface text-xs font-bold">DISMISS</button>
+                </div>
+
+                <!-- Catalog Section -->
+                <section class="bg-surface-container-low rounded-lg p-3 shadow-md flex flex-col gap-3">
+                    <!-- Search & Filter Controls -->
+                    <div class="flex items-center gap-2">
+                        <div class="flex-1 flex items-center bg-surface-container-lowest rounded px-3 h-10 border border-surface-container-highest">
+                            <span class="material-symbols-outlined text-outline text-[18px] mr-2">search</span>
+                            <input id="input-search" class="w-full bg-transparent text-on-surface text-sm focus:outline-none placeholder:text-outline font-body-md" placeholder="Search FoxPro item code (e.g. 00013) or product name..." type="text"/>
+                            <button id="btn-clear-search" class="text-outline hover:text-on-surface p-1">
+                                <span class="material-symbols-outlined text-[16px]">close</span>
+                            </button>
+                        </div>
+                        <span class="font-label-caps text-secondary bg-surface-container px-2.5 py-1.5 rounded text-[11px]">Pack Multiples Enforced</span>
+                    </div>
+
+                    <!-- Dense Spreadsheet Catalog Table -->
+                    <div class="overflow-x-auto rounded border border-surface-container-high max-h-[calc(100vh-270px)] overflow-y-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead class="sticky top-0 z-10 bg-surface-container-lowest border-b border-surface-container-high text-outline font-label-caps text-[10px] uppercase">
+                                <tr>
+                                    <th class="px-3 py-2 w-20">CODE</th>
+                                    <th class="px-3 py-2">PRODUCT DESCRIPTION</th>
+                                    <th class="px-3 py-2">MANUFACTURER / BRAND</th>
+                                    <th class="px-3 py-2 text-center">PACK / BOX</th>
+                                    <th class="px-3 py-2 text-center">STOCK</th>
+                                    <th class="px-3 py-2 text-right">RATE (₹)</th>
+                                    <th class="px-3 py-2 text-center min-w-[14rem]">ORDER QTY</th>
+                                </tr>
+                            </thead>
+                            <tbody id="catalog-table-body" class="divide-y divide-surface-container-high font-body-md">
+                                <tr>
+                                    <td colspan="7" class="p-8 text-center text-outline font-label-caps">Loading FoxPro product catalog...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- RIGHT FIXED DRAWER: Order Execution & Cart -->
+    <aside class="fixed right-0 top-24 bottom-14 w-96 bg-surface-container-lowest z-40 flex flex-col p-3 border-l border-surface-container-high">
+        <!-- Active Customer Header Card -->
+        <div class="bg-surface-container-low rounded-lg p-2.5 shadow-sm flex flex-col gap-1 mb-2 border border-surface-container-high">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-1.5 min-w-0">
+                    <span class="material-symbols-outlined text-primary text-[18px]">storefront</span>
+                    <span id="cart-cust-name" class="font-headline-sm text-sm text-on-surface font-bold truncate">CASH A/C</span>
+                </div>
+                <span id="cart-cust-tier" class="font-label-caps text-[10px] bg-tertiary-container text-on-tertiary-container px-1 rounded font-bold">RETAIL</span>
+            </div>
+            <div class="flex justify-between items-center text-outline font-label-numeric-sm text-xs">
+                <span>Code: <span id="cart-cust-code" class="text-primary font-bold">99999</span></span>
+                <span>Area: <span id="cart-cust-area" class="text-on-surface">Local</span></span>
+                <span>Draft: <span id="cart-draft-id" class="text-secondary font-bold">TAB01-1048</span></span>
+            </div>
+        </div>
+
+        <!-- Active Cart Item List -->
+        <div class="flex-1 bg-surface-container-low rounded-lg shadow-sm overflow-hidden flex flex-col border border-surface-container-high mb-2">
+            <div class="p-2 bg-surface-container-lowest flex items-center justify-between border-b border-surface-container-high">
+                <span id="cart-line-count-label" class="font-label-caps text-[10px] text-outline uppercase tracking-wider">ACTIVE CART (0 ITEMS)</span>
+                <button id="btn-clear-cart" class="font-label-caps text-[10px] text-error hover:underline">CLEAR</button>
+            </div>
+            <div class="flex-1 overflow-y-auto max-h-64 p-1">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="text-outline font-label-caps text-[9px] border-b border-surface-container-high">
+                            <th class="px-2 py-1">ITEM</th>
+                            <th class="px-1 py-1 text-center">QTY</th>
+                            <th class="px-2 py-1 text-right">RATE</th>
+                            <th class="px-2 py-1 text-right">AMT</th>
+                            <th class="px-1 py-1"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-table-body" class="divide-y divide-surface-container-high">
+                        <tr>
+                            <td colspan="5" class="p-6 text-center text-outline font-label-caps text-[11px]">Cart is empty</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Totals Breakdown Card -->
+        <div class="p-3 bg-surface-container-low rounded-lg flex flex-col gap-1.5 border border-surface-container-high mb-2">
+            <div class="flex justify-between items-center text-xs">
+                <span class="text-on-surface-variant font-body-sm">Subtotal:</span>
+                <span id="summary-subtotal" class="font-label-numeric-sm text-on-surface font-semibold">₹0.00</span>
+            </div>
+            <div class="flex justify-between items-center text-xs">
+                <span class="text-on-surface-variant font-body-sm">GST (18% Pyro):</span>
+                <span id="summary-gst" class="font-label-numeric-sm text-secondary font-semibold">₹0.00</span>
+            </div>
+            <div class="h-px bg-surface-container-highest my-0.5"></div>
+            <div class="flex justify-between items-baseline">
+                <span class="font-headline-sm text-sm text-primary font-bold uppercase">Grand Total:</span>
+                <span id="summary-total" class="font-label-numeric-lg text-lg text-tertiary font-extrabold">₹0.00</span>
+            </div>
+        </div>
+
+        <!-- Action Submission Buttons -->
+        <div class="flex flex-col gap-2">
+            <button id="btn-submit-order" class="w-full h-11 rounded bg-primary-container text-on-primary-container font-headline-sm text-sm font-bold hover:bg-primary hover:text-on-primary flex items-center justify-center gap-2 transition-all shadow-md active:scale-98">
+                <span class="material-symbols-outlined text-[18px]">send_and_archive</span>
+                <span>Confirm & Dispatch Draft</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- FOOTER BAR -->
+    <footer class="fixed bottom-0 left-0 right-0 h-14 bg-surface-container-lowest z-50 px-4 flex items-center justify-between border-t border-surface-container-high">
+        <div class="flex items-center gap-4 text-xs font-label-numeric-sm">
+            <div class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-primary text-[16px]">storage</span>
+                <span class="text-outline">Storage: IndexedDB (SQLite WAL Mode)</span>
+            </div>
+            <span class="text-surface-bright">|</span>
+            <span class="text-on-surface-variant">FoxPro Billbook Series: <strong>ESTIMATE (E)</strong></span>
+        </div>
+    <!-- QUANTITY EDIT MODAL (Android Tablet-Optimized) -->
+    <div id="qty-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 select-none">
+        <div class="bg-surface-container-low border border-surface-container-high rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col">
+            
+            <!-- Modal Header -->
+            <div class="p-4 bg-surface-container-lowest border-b border-surface-container-high flex items-start justify-between">
+                <div class="flex flex-col">
+                    <div class="flex items-center gap-2">
+                        <span id="modal-product-code" class="font-label-numeric-md text-sm text-primary font-bold">#00013</span>
+                        <span id="modal-product-company" class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-label-caps text-[10px]">STANDARD</span>
+                        <span id="modal-product-pack-badge" class="px-2 py-0.5 rounded bg-secondary/20 text-secondary font-label-caps text-[10px]">Pack: 10</span>
+                    </div>
+                    <h3 id="modal-product-name" class="font-headline-sm text-base text-on-surface font-bold mt-1">PRODUCT NAME</h3>
+                    <div class="flex items-center gap-3 text-xs text-outline font-body-sm mt-0.5">
+                        <span>Rate: <strong id="modal-product-rate" class="text-on-surface font-label-numeric-sm font-semibold">₹0.00</strong></span>
+                        <span>|</span>
+                        <span>GST: <strong id="modal-product-tax" class="text-on-surface font-label-numeric-sm font-semibold">18%</strong></span>
+                        <span>|</span>
+                        <span>Stock: <strong id="modal-product-stock" class="text-tertiary font-label-numeric-sm font-bold">0</strong></span>
+                    </div>
+                </div>
+                <button id="btn-modal-close" class="text-outline hover:text-on-surface p-1.5 rounded-full hover:bg-surface-container transition-colors" title="Close">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-5 flex flex-col gap-4">
+                
+                <!-- Large Tablet-Friendly Numeric Input -->
+                <div class="flex flex-col gap-1.5">
+                    <div class="flex justify-between items-center text-xs font-label-caps text-outline uppercase tracking-wider">
+                        <span>Order Quantity</span>
+                        <span class="text-secondary text-[10px]">Max: 99,999</span>
+                    </div>
+                    <div class="flex items-center bg-surface-container-lowest rounded-xl border-2 border-primary-container focus-within:border-tertiary transition-colors px-3 py-2 shadow-inner">
+                        <span class="material-symbols-outlined text-primary text-[24px] mr-2">shopping_basket</span>
+                        <input id="modal-qty-input"
+                               type="number"
+                               inputmode="numeric"
+                               pattern="[0-9]*"
+                               min="0"
+                               max="99999"
+                               step="1"
+                               class="w-full bg-transparent text-center font-label-numeric-lg text-3xl font-extrabold text-on-surface focus:outline-none placeholder:text-outline/40"
+                               placeholder="0" />
+                        <button id="btn-modal-input-clear" class="text-outline hover:text-error p-1 rounded transition-colors" title="Clear input">
+                            <span class="material-symbols-outlined text-[20px]">backspace</span>
+                        </button>
+                    </div>
+                    <!-- Live Line Calculation Preview -->
+                    <div class="flex items-center justify-between px-2 text-xs font-label-numeric-sm">
+                        <span class="text-outline">Est. Line Total:</span>
+                        <div class="flex items-baseline gap-2">
+                            <span id="modal-calc-taxable" class="text-on-surface font-semibold">₹0.00 (excl. GST)</span>
+                            <span class="text-outline">|</span>
+                            <span id="modal-calc-total" class="text-tertiary font-bold text-sm">₹0.00 (incl. GST)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wholesale Quick-Set Preset Buttons -->
+                <div class="flex flex-col gap-1.5">
+                    <span class="font-label-caps text-[11px] text-outline uppercase tracking-wider">Wholesale Quick Picks (Set Exact):</span>
+                    <div class="grid grid-cols-4 sm:grid-cols-7 gap-1.5">
+                        <button class="btn-preset-qty py-2 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-label-numeric-sm text-xs font-bold transition-all active:scale-95 text-center cursor-pointer" data-val="10">10</button>
+                        <button class="btn-preset-qty py-2 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-label-numeric-sm text-xs font-bold transition-all active:scale-95 text-center cursor-pointer" data-val="25">25</button>
+                        <button class="btn-preset-qty py-2 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-label-numeric-sm text-xs font-bold transition-all active:scale-95 text-center cursor-pointer" data-val="100">100</button>
+                        <button class="btn-preset-qty py-2 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-label-numeric-sm text-xs font-bold transition-all active:scale-95 text-center cursor-pointer" data-val="250">250</button>
+                        <button class="btn-preset-qty py-2 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-label-numeric-sm text-xs font-bold transition-all active:scale-95 text-center cursor-pointer" data-val="500">500</button>
+                        <button class="btn-preset-qty py-2 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-label-numeric-sm text-xs font-bold transition-all active:scale-95 text-center cursor-pointer" data-val="1000">1K</button>
+                        <button class="btn-preset-qty py-2 rounded-lg bg-surface-container-high hover:bg-surface-bright text-primary font-label-numeric-sm text-xs font-bold transition-all active:scale-95 text-center cursor-pointer" data-val="10000">10K</button>
+                    </div>
+                </div>
+
+                <!-- Wholesale Quick Add Increments -->
+                <div class="flex flex-col gap-1.5">
+                    <span class="font-label-caps text-[11px] text-outline uppercase tracking-wider">Quick Add (Increment):</span>
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <button id="btn-modal-add-pack" class="flex-1 py-2 px-2.5 rounded-lg bg-surface-container hover:bg-surface-bright text-secondary font-label-numeric-sm text-xs font-bold transition-all active:scale-95 text-center flex items-center justify-center gap-1 cursor-pointer">
+                            <span>+1 Pack (</span><span id="modal-pack-increment-label">10</span><span>)</span>
+                        </button>
+                        <button class="btn-increment-qty py-2 px-3 rounded-lg bg-surface-container hover:bg-surface-bright text-on-surface font-label-numeric-sm text-xs font-bold transition-all active:scale-95 cursor-pointer" data-delta="10">+10</button>
+                        <button class="btn-increment-qty py-2 px-3 rounded-lg bg-surface-container hover:bg-surface-bright text-on-surface font-label-numeric-sm text-xs font-bold transition-all active:scale-95 cursor-pointer" data-delta="50">+50</button>
+                        <button class="btn-increment-qty py-2 px-3 rounded-lg bg-surface-container hover:bg-surface-bright text-on-surface font-label-numeric-sm text-xs font-bold transition-all active:scale-95 cursor-pointer" data-delta="100">+100</button>
+                        <button class="btn-increment-qty py-2 px-3 rounded-lg bg-surface-container hover:bg-surface-bright text-on-surface font-label-numeric-sm text-xs font-bold transition-all active:scale-95 cursor-pointer" data-delta="500">+500</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer: Action Buttons -->
+            <div class="p-4 bg-surface-container-lowest border-t border-surface-container-high flex items-center justify-between gap-3">
+                <button id="btn-modal-clear" class="h-11 px-4 rounded-lg bg-error-container/30 hover:bg-error-container text-error font-headline-sm text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer">
+                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                    <span>Clear (0)</span>
+                </button>
+                <div class="flex items-center gap-2">
+                    <button id="btn-modal-cancel" class="h-11 px-5 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-headline-sm text-xs font-bold transition-colors cursor-pointer">
+                        Cancel
+                    </button>
+                    <button id="btn-modal-apply" class="h-11 px-6 rounded-lg bg-primary-container text-on-primary-container hover:bg-primary font-headline-sm text-sm font-bold shadow-md flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer">
+                        <span class="material-symbols-outlined text-[18px]">check</span>
+                        <span>Apply Quantity</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- CLIENT SCRIPT -->
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const pos = new POSController();
+            window.pos = pos;
+
+            // Diagnostic Server URL Banner Element
+            const diagnosticsServerUrl = document.getElementById("diagnostics-server-url");
+            function updateDiagnosticBanner() {
+                if (diagnosticsServerUrl && window.pos && window.pos.client) {
+                    diagnosticsServerUrl.textContent = window.pos.client.serverUrl;
+                }
+            }
+            updateDiagnosticBanner();
+            console.log("[DIAGNOSTIC STARTUP] App initializing. Initial URL:", pos.client.serverUrl);
+
+            // UI Elements
+            const connectionPill = document.getElementById("connection-pill");
+            const connectionText = document.getElementById("connection-text");
+            const syncQueuePill = document.getElementById("sync-queue-pill");
+            const syncQueueText = document.getElementById("sync-queue-text");
+            const btnSyncMasters = document.getElementById("btn-sync-masters");
+            const customerTabsBar = document.getElementById("customer-tabs-bar");
+            const catalogTableBody = document.getElementById("catalog-table-body");
+            const cartTableBody = document.getElementById("cart-table-body");
+            const inputSearch = document.getElementById("input-search");
+            const btnClearSearch = document.getElementById("btn-clear-search");
+            const btnSubmitOrder = document.getElementById("btn-submit-order");
+            const btnClearCart = document.getElementById("btn-clear-cart");
+
+            const cartCustName = document.getElementById("cart-cust-name");
+            const cartCustCode = document.getElementById("cart-cust-code");
+            const cartCustArea = document.getElementById("cart-cust-area");
+            const cartCustTier = document.getElementById("cart-cust-tier");
+            const cartDraftId = document.getElementById("cart-draft-id");
+            const cartLineCountLabel = document.getElementById("cart-line-count-label");
+
+            const summarySubtotal = document.getElementById("summary-subtotal");
+            const summaryGst = document.getElementById("summary-gst");
+            const summaryTotal = document.getElementById("summary-total");
+
+            const notificationBanner = document.getElementById("notification-banner");
+            const notificationMsg = document.getElementById("notification-msg");
+            const notificationIcon = document.getElementById("notification-icon");
+
+            function showNotification(msg, isError = false) {
+                notificationBanner.classList.remove("hidden");
+                notificationMsg.innerText = msg;
+                if (isError) {
+                    notificationBanner.className = "px-3 py-2 rounded bg-error-container border border-error text-on-error flex items-center justify-between shadow-lg";
+                    notificationIcon.innerText = "error";
+                    notificationIcon.className = "material-symbols-outlined text-error text-[18px]";
+                } else {
+                    notificationBanner.className = "px-3 py-2 rounded bg-surface-container-high border border-tertiary text-on-surface flex items-center justify-between shadow-lg";
+                    notificationIcon.innerText = "check_circle";
+                    notificationIcon.className = "material-symbols-outlined text-tertiary text-[18px]";
+                }
+            }
+
+            // Render Functions
+            function renderCustomerTabs() {
+                customerTabsBar.innerHTML = "";
+                // Show top 6 customers as fast tabs
+                const topCustomers = pos.customers.slice(0, 6);
+                for (const cust of topCustomers) {
+                    const isActive = pos.activeCustomer && pos.activeCustomer.code === cust.code;
+                    const itemCount = pos.getCustomerCartItemCount(cust.code);
+                    const totals = pos.getCartTotals(cust.code);
+
+                    const tab = document.createElement("button");
+                    tab.className = `flex items-center gap-2 px-3 py-1.5 rounded-t-lg transition-colors text-left flex-shrink-0 ${
+                        isActive ? "bg-surface-container-high text-primary font-bold shadow-sm" : "bg-surface-container text-on-surface-variant hover:bg-surface-container-high"
+                    }`;
+                    tab.innerHTML = `
+                        <span class="material-symbols-outlined text-[16px]">${cust.code === '99999' ? 'payments' : 'business'}</span>
+                        <div class="flex flex-col">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-xs truncate max-w-[120px]">${cust.name}</span>
+                                ${itemCount > 0 ? `<span class="bg-primary text-on-primary font-label-numeric-sm text-[10px] font-bold px-1.5 py-0.2 rounded-full">${itemCount} (${totals.total > 0 ? '₹' + Math.round(totals.total) : ''})</span>` : ''}
+                            </div>
+                            <span class="font-label-numeric-sm text-[10px] text-outline">#${cust.code} (${cust.price_tier})</span>
+                        </div>
+                    `;
+                    tab.onclick = () => {
+                        pos.setCustomer(cust.code);
+                    };
+                    customerTabsBar.appendChild(tab);
+                }
+            }
+
+            function renderCatalog() {
+                const items = pos.getFilteredProducts();
+                document.getElementById("cat-count-all").innerText = pos.products.length;
+
+                if (items.length === 0) {
+                    catalogTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="p-8 text-center text-outline font-label-caps">No products found matching filters</td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                // Render first 100 items for snappy performance
+                const displayItems = items.slice(0, 100);
+                catalogTableBody.innerHTML = displayItems.map(p => {
+                    const cartItem = pos.cart.get(p.code);
+                    const currentQty = cartItem ? cartItem.qty : 0;
+                    const packStep = pos.getProductPackSize(p);
+
+                    return `
+                        <tr class="hover:bg-surface-container transition-colors ${currentQty > 0 ? 'bg-surface-container-high' : ''}">
+                            <td class="px-3 py-2 font-label-numeric-md text-primary font-bold">${p.code}</td>
+                            <td class="px-3 py-2">
+                                <div class="font-headline-sm text-sm text-on-surface font-semibold">${p.name}</div>
+                                <div class="font-body-sm text-xs text-outline">Pack: ${p.pack} | Inner: ${p.qty_in_box} units | GST: ${p.tax_percentage}%</div>
+                            </td>
+                            <td class="px-3 py-2">
+                                <span class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-label-caps text-[10px]">${p.company_name}</span>
+                            </td>
+                            <td class="px-3 py-2 text-center font-label-numeric-sm text-xs text-on-surface-variant">${p.qty_in_box} / ${p.pack}</td>
+                            <td class="px-3 py-2 text-center font-label-numeric-sm text-xs ${p.stock_on_hand > 0 ? 'text-tertiary font-bold' : 'text-error'}">${p.stock_on_hand}</td>
+                            <td class="px-3 py-2 text-right font-label-numeric-md text-on-surface font-bold">₹${p.selling_rate.toFixed(2)}</td>
+                            <td class="px-3 py-2 text-center">
+                                <div class="flex items-center justify-center gap-1">
+                                    <button class="btn-qty-step-minus px-1.5 h-8 rounded bg-surface-container hover:bg-surface-bright text-on-surface font-label-numeric-sm text-[11px] font-bold transition-all active:scale-95 cursor-pointer" data-code="${p.code}" data-step="${packStep}" title="Subtract ${packStep} units">-${packStep}</button>
+                                    <button class="btn-qty-minus w-7 h-8 rounded bg-surface-container-lowest hover:bg-surface-variant text-on-surface font-bold text-sm transition-all active:scale-95 cursor-pointer" data-code="${p.code}" title="Subtract 1 unit">-1</button>
+                                    <button class="btn-qty-value min-w-[3.5rem] px-2 h-8 rounded bg-surface-container-lowest font-label-numeric-md text-xs font-extrabold transition-all active:scale-95 text-center flex items-center justify-center gap-1 cursor-pointer select-none ${currentQty > 0 ? 'text-tertiary border-2 border-tertiary shadow-sm' : 'text-outline border border-surface-container-highest hover:border-outline'}" data-code="${p.code}" title="Tap to enter quantity directly">
+                                        <span>${currentQty}</span>
+                                        <span class="material-symbols-outlined text-[13px] opacity-70">edit</span>
+                                    </button>
+                                    <button class="btn-qty-plus w-7 h-8 rounded bg-surface-container-lowest hover:bg-surface-variant text-on-surface font-bold text-sm transition-all active:scale-95 cursor-pointer" data-code="${p.code}" title="Add 1 unit">+1</button>
+                                    <button class="btn-qty-step-plus px-1.5 h-8 rounded bg-surface-container hover:bg-surface-bright text-primary font-label-numeric-sm text-[11px] font-bold transition-all active:scale-95 cursor-pointer" data-code="${p.code}" data-step="${packStep}" title="Add ${packStep} units">+${packStep}</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join("");
+
+                // Attach stepper click handlers
+                catalogTableBody.querySelectorAll(".btn-qty-step-minus").forEach(btn => {
+                    btn.onclick = (e) => {
+                        const code = e.currentTarget.getAttribute("data-code");
+                        const step = parseInt(e.currentTarget.getAttribute("data-step"), 10) || 10;
+                        pos.updateCartQuantity(code, -step, true);
+                    };
+                });
+
+                catalogTableBody.querySelectorAll(".btn-qty-minus").forEach(btn => {
+                    btn.onclick = (e) => {
+                        const code = e.currentTarget.getAttribute("data-code");
+                        pos.updateCartQuantity(code, -1, true);
+                    };
+                });
+
+                catalogTableBody.querySelectorAll(".btn-qty-value").forEach(btn => {
+                    btn.onclick = (e) => {
+                        const code = e.currentTarget.getAttribute("data-code");
+                        openQuantityDialog(code);
+                    };
+                });
+
+                catalogTableBody.querySelectorAll(".btn-qty-plus").forEach(btn => {
+                    btn.onclick = (e) => {
+                        const code = e.currentTarget.getAttribute("data-code");
+                        pos.updateCartQuantity(code, 1, true);
+                    };
+                });
+
+                catalogTableBody.querySelectorAll(".btn-qty-step-plus").forEach(btn => {
+                    btn.onclick = (e) => {
+                        const code = e.currentTarget.getAttribute("data-code");
+                        const step = parseInt(e.currentTarget.getAttribute("data-step"), 10) || 10;
+                        pos.updateCartQuantity(code, step, true);
+                    };
+                });
+            }
+
+            function renderCart() {
+                // Customer details
+                if (pos.activeCustomer) {
+                    cartCustName.innerText = pos.activeCustomer.name;
+                    cartCustCode.innerText = pos.activeCustomer.code;
+                    cartCustArea.innerText = pos.activeCustomer.area_name || "Local";
+                    cartCustTier.innerText = pos.activeCustomer.price_tier;
+                }
+                cartDraftId.innerText = pos.currentDraftId;
+
+                const items = Array.from(pos.cart.values());
+                cartLineCountLabel.innerText = `ACTIVE CART (${items.length} ITEMS)`;
+
+                if (items.length === 0) {
+                    cartTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="p-6 text-center text-outline font-label-caps text-[11px]">Cart is empty</td>
+                        </tr>
+                    `;
+                } else {
+                    cartTableBody.innerHTML = items.map(entry => {
+                        const lineTaxable = Math.round(entry.qty * entry.rate * 100) / 100;
+                        return `
+                            <tr class="hover:bg-surface-container transition-colors">
+                                <td class="px-2 py-1.5">
+                                    <div class="font-label-numeric-sm text-xs text-primary font-bold">${entry.product.code}</div>
+                                    <div class="truncate max-w-[120px] text-[11px] text-on-surface-variant">${entry.product.name}</div>
+                                </td>
+                                <td class="px-1 py-1.5 text-center">
+                                    <button class="btn-cart-qty-edit px-2 py-0.5 rounded bg-surface-container hover:bg-surface-bright font-label-numeric-sm text-xs font-bold text-tertiary border border-tertiary/40 transition-all active:scale-95 cursor-pointer" data-code="${entry.product.code}" title="Tap to edit quantity directly">
+                                        ${entry.qty}
+                                    </button>
+                                </td>
+                                <td class="px-2 py-1.5 text-right font-label-numeric-sm text-[11px] text-on-surface-variant">₹${entry.rate.toFixed(0)}</td>
+                                <td class="px-2 py-1.5 text-right font-label-numeric-sm text-xs text-on-surface font-bold">₹${lineTaxable.toFixed(0)}</td>
+                                <td class="px-1 py-1.5 text-center">
+                                    <button class="btn-remove-item text-outline hover:text-error" data-code="${entry.product.code}">
+                                        <span class="material-symbols-outlined text-[14px]">close</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join("");
+
+                    cartTableBody.querySelectorAll(".btn-cart-qty-edit").forEach(btn => {
+                        btn.onclick = (e) => {
+                            const code = e.currentTarget.getAttribute("data-code");
+                            openQuantityDialog(code);
+                        };
+                    });
+
+                    cartTableBody.querySelectorAll(".btn-remove-item").forEach(btn => {
+                        btn.onclick = (e) => {
+                            const code = e.currentTarget.getAttribute("data-code");
+                            pos.updateCartQuantity(code, 0, false);
+                        };
+                    });
+                }
+
+                // Render Totals
+                const totals = pos.getCartTotals();
+                summarySubtotal.innerText = `₹${totals.subtotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
+                summaryGst.innerText = `₹${totals.gst.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
+                summaryTotal.innerText = `₹${totals.total.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
+            }
+
+            function updateUI() {
+                renderCustomerTabs();
+                renderCatalog();
+                renderCart();
+            }
+
+            // Listen to state changes
+            pos.onStateUpdated = (evt) => {
+                if (evt.type === "SYNC_EVENT") {
+                    const detail = evt.detail;
+                    if (detail.isOnline !== undefined) {
+                        if (detail.isOnline) {
+                            connectionPill.className = "flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container text-tertiary font-label-caps text-[11px] font-bold";
+                            connectionText.innerText = "ONLINE (LAN 8080)";
+                        } else {
+                            connectionPill.className = "flex items-center gap-1.5 px-2.5 py-1 rounded bg-error-container text-on-error font-label-caps text-[11px] font-bold";
+                            connectionText.innerText = "OFFLINE (SQLite Cache)";
+                        }
+                    }
+
+                    if (detail.event === "ENQUEUED") {
+                        syncQueueText.innerText = `Order Queued (Pending Upload)`;
+                        showNotification(`Draft ${detail.item.draft_id} queued locally. Auto-syncing...`);
+                    } else if (detail.event === "SYNCED") {
+                        syncQueueText.innerText = `Synced (Order #${detail.result.order_id})`;
+                        showNotification(`Draft ${detail.item.draft_id} uploaded to server: ${detail.result.order_id}`);
+                    } else if (detail.event === "FAILED") {
+                        syncQueueText.innerText = `Sync Failed (Will Retry)`;
+                        showNotification(`Upload error for draft ${detail.item.draft_id}: ${detail.error}`, true);
+                    }
+                }
+
+                updateDiagnosticBanner();
+                updateUI();
+            };
+
+            // Event Listeners
+            inputSearch.addEventListener("input", (e) => {
+                pos.searchQuery = e.target.value.trim();
+                renderCatalog();
+            });
+
+            btnClearSearch.onclick = () => {
+                inputSearch.value = "";
+                pos.searchQuery = "";
+                renderCatalog();
+            };
+
+            btnClearCart.onclick = () => {
+                pos.clearCart();
+            };
+
+            btnSyncMasters.onclick = async () => {
+                btnSyncMasters.disabled = true;
+                btnSyncMasters.innerHTML = `<span class="material-symbols-outlined text-[15px] animate-spin">refresh</span><span>SYNCING...</span>`;
+                const ok = await pos.refreshMastersFromServer();
+                btnSyncMasters.disabled = false;
+                btnSyncMasters.innerHTML = `<span class="material-symbols-outlined text-[15px]">cloud_download</span><span>PULL DBF MASTERS</span>`;
+                if (ok) {
+                    showNotification(`Downloaded ${pos.products.length} products & ${pos.customers.length} accounts from FoxPro.`);
+                } else {
+                    showNotification(`Could not reach Sync Service. Using offline SQLite cache.`, true);
+                }
+            };
+
+            btnSubmitOrder.onclick = async () => {
+                try {
+                    btnSubmitOrder.disabled = true;
+                    btnSubmitOrder.innerText = "Submitting...";
+                    await pos.submitCurrentOrder();
+                } catch (err) {
+                    showNotification(err.message, true);
+                } finally {
+                    btnSubmitOrder.disabled = false;
+                    btnSubmitOrder.innerHTML = `<span class="material-symbols-outlined text-[18px]">send_and_archive</span><span>Confirm & Dispatch Draft</span>`;
+                }
+            };
+            // ==========================================
+            // QUANTITY MODAL CONTROLLER (Android Tablet)
+            // ==========================================
+            const qtyModal = document.getElementById("qty-modal");
+            const modalProductCode = document.getElementById("modal-product-code");
+            const modalProductCompany = document.getElementById("modal-product-company");
+            const modalProductPackBadge = document.getElementById("modal-product-pack-badge");
+            const modalProductName = document.getElementById("modal-product-name");
+            const modalProductRate = document.getElementById("modal-product-rate");
+            const modalProductTax = document.getElementById("modal-product-tax");
+            const modalProductStock = document.getElementById("modal-product-stock");
+            const modalPackIncrementLabel = document.getElementById("modal-pack-increment-label");
+            const modalQtyInput = document.getElementById("modal-qty-input");
+            const btnModalInputClear = document.getElementById("btn-modal-input-clear");
+            const modalCalcTaxable = document.getElementById("modal-calc-taxable");
+            const modalCalcTotal = document.getElementById("modal-calc-total");
+            const btnModalClose = document.getElementById("btn-modal-close");
+            const btnModalClear = document.getElementById("btn-modal-clear");
+            const btnModalCancel = document.getElementById("btn-modal-cancel");
+            const btnModalApply = document.getElementById("btn-modal-apply");
+            const btnModalAddPack = document.getElementById("btn-modal-add-pack");
+
+            let activeModalProduct = null;
+
+            function openQuantityDialog(productCode) {
+                const product = pos.products.find(p => p.code === productCode);
+                if (!product) return;
+                activeModalProduct = product;
+
+                const cartItem = pos.cart.get(product.code);
+                const currentQty = cartItem ? cartItem.qty : 0;
+                const packStep = pos.getProductPackSize(product);
+
+                modalProductCode.innerText = `#${product.code}`;
+                modalProductCompany.innerText = product.company_name;
+                modalProductPackBadge.innerText = `Pack: ${packStep} (${product.pack || 'PCS'})`;
+                modalProductName.innerText = product.name;
+                modalProductRate.innerText = `₹${product.selling_rate.toFixed(2)}`;
+                modalProductTax.innerText = `${product.tax_percentage || 0}%`;
+                modalProductStock.innerText = product.stock_on_hand;
+                modalPackIncrementLabel.innerText = packStep;
+
+                modalQtyInput.value = currentQty;
+                updateModalCalculations();
+
+                qtyModal.classList.remove("hidden");
+
+                // Auto-focus and highlight input on Android tablets
+                setTimeout(() => {
+                    modalQtyInput.focus();
+                    modalQtyInput.select();
+                }, 50);
+            }
+
+            function closeQuantityDialog() {
+                qtyModal.classList.add("hidden");
+                activeModalProduct = null;
+            }
+
+            function sanitizeModalQty() {
+                const raw = modalQtyInput.value;
+                if (raw === null || raw === undefined || raw === "") return 0;
+                const parsed = parseInt(raw, 10);
+                if (isNaN(parsed) || parsed < 0) return 0;
+                if (parsed > 99999) return 99999;
+                return parsed;
+            }
+
+            function updateModalCalculations() {
+                if (!activeModalProduct) return;
+                const qty = sanitizeModalQty();
+                const rate = activeModalProduct.selling_rate || 0;
+                const taxPct = activeModalProduct.tax_percentage || 0;
+
+                const taxable = Math.round(qty * rate * 100) / 100;
+                const taxAmt = Math.round(taxable * (taxPct / 100) * 100) / 100;
+                const grandTotal = Math.round((taxable + taxAmt) * 100) / 100;
+
+                modalCalcTaxable.innerText = `₹${taxable.toLocaleString("en-IN", { minimumFractionDigits: 2 })} (excl. GST)`;
+                modalCalcTotal.innerText = `₹${grandTotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })} (incl. GST)`;
+            }
+
+            function applyQuantityDialog() {
+                if (!activeModalProduct) return;
+                const finalQty = sanitizeModalQty();
+                pos.updateCartQuantity(activeModalProduct.code, finalQty, false);
+                closeQuantityDialog();
+            }
+
+            // Modal Event Listeners
+            modalQtyInput.addEventListener("input", () => {
+                const val = modalQtyInput.value;
+                if (val !== "") {
+                    const parsed = parseInt(val, 10);
+                    if (!isNaN(parsed) && parsed > 99999) {
+                        modalQtyInput.value = 99999;
+                    }
+                }
+                updateModalCalculations();
+            });
+
+            modalQtyInput.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    applyQuantityDialog();
+                } else if (e.key === "Escape") {
+                    e.preventDefault();
+                    closeQuantityDialog();
+                }
+            });
+
+            btnModalClose.onclick = closeQuantityDialog;
+            btnModalCancel.onclick = closeQuantityDialog;
+            btnModalApply.onclick = applyQuantityDialog;
+
+            btnModalClear.onclick = () => {
+                modalQtyInput.value = 0;
+                applyQuantityDialog();
+            };
+
+            btnModalInputClear.onclick = () => {
+                modalQtyInput.value = "";
+                updateModalCalculations();
+                modalQtyInput.focus();
+            };
+
+            // Wholesale Quick-Picks (Set Exact)
+            document.querySelectorAll(".btn-preset-qty").forEach(btn => {
+                btn.onclick = () => {
+                    const val = parseInt(btn.getAttribute("data-val"), 10) || 0;
+                    modalQtyInput.value = Math.min(99999, val);
+                    updateModalCalculations();
+                    modalQtyInput.focus();
+                };
+            });
+
+            // Quick Add Increments
+            document.querySelectorAll(".btn-increment-qty").forEach(btn => {
+                btn.onclick = () => {
+                    const delta = parseInt(btn.getAttribute("data-delta"), 10) || 0;
+                    const current = sanitizeModalQty();
+                    modalQtyInput.value = Math.min(99999, current + delta);
+                    updateModalCalculations();
+                    modalQtyInput.focus();
+                };
+            });
+
+            // Add 1 Pack button
+            btnModalAddPack.onclick = () => {
+                if (!activeModalProduct) return;
+                const packStep = pos.getProductPackSize(activeModalProduct);
+                const current = sanitizeModalQty();
+                modalQtyInput.value = Math.min(99999, current + packStep);
+                updateModalCalculations();
+                modalQtyInput.focus();
+            };
+
+            // Close on backdrop click
+            qtyModal.onclick = (e) => {
+                if (e.target === qtyModal) {
+                    closeQuantityDialog();
+                }
+            };
+
+            // Initialize POS
+            console.log("[DIAGNOSTIC STARTUP] Calling pos.init()...");
+            await pos.init();
+            console.log("[DIAGNOSTIC STARTUP] pos.init() resolved. Updating diagnostic banner with active serverUrl:", pos.client.serverUrl);
+            updateDiagnosticBanner();
+            updateUI();
+        });
+    </script>
+</body>
+</html>

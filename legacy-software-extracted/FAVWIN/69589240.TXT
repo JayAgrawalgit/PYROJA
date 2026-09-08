@@ -1,0 +1,529 @@
+
+                            RAM FATAKA CENTER 01/04/2026 31/03/2027                             
+------------------------------------------------------------------------------------------------
+LEDGER OF :  CASH A/C      (99999)
+PLACE     :  
+DATED ON  :  01/04/2026-31/03/2027                                                PAGE NO.   1
+------------------------------------------------------------------------------------------------
+DATE      PARTICULARS                                  DEBIT         CREDIT          BALANCE
+------------------------------------------------------------------------------------------------
+01/04/26  OPENING BALANCE                         228444268.0                   228444268.0 Dr
+01/04/26  NEW SHIVA BALAJI DASARWAR                  29000.00          --       228473268.0 Dr RV/   27
+          CASH RECD                               
+          REC. NO. 14311 ( S DEEP LAXXMI )        
+03/04/26  BALU RAHATE (WAORA)                         3000.00          --       228476268.0 Dr RV/    1
+          UPI RAM                                 
+          REC. NO. 14318                          
+04/04/26  RAMESH GATKA ( UTNOOR)                     36000.00          --       228512268.0 Dr RV/    2
+          CASH RECD                               
+          REC. NO. 14319                          
+06/04/26  PRUTHVIRAJ DIXIT FHATAKA CENTER ( MAHUR)   12000.00          --       228524268.0 Dr RV/    3
+          UPI RAM                                 
+          REC. NO. 14320                          
+07/04/26  AMOL BHASAKRWAR ( MAHUR)                    6000.00          --       228530268.0 Dr RV/    4
+          UPI RAM                                 
+          REC. NO. 14321                          
+07/04/26  PRAMOD PETKAR FATAKA CENTER ( KAYAR )       4500.00          --       228534768.0 Dr RV/    5
+          UPI RAM                                 
+          REC. NO. 14322                          
+08/04/26  BUTLE FATAKA CENTER (ARNI)                 16000.00          --       228550768.0 Dr RV/    7
+          UPI RAM                                 
+          REC. NO. 14324                          
+08/04/26  RAVI LONARE ( WARORA)                      14000.00          --       228564768.0 Dr RV/    8
+          CASH RECD                               
+          REC. NO. 14325 ( VANRAJ)                
+08/04/26  RAVI LONARE ( WARORA)                      17000.00          --       228581768.0 Dr RV/    9
+          CASH RECD                               
+          REC. NO. 14326                          
+08/04/26  MAHESH HOLEGARE (ARNI)                      4000.00          --       228585768.0 Dr RV/   10
+          UPI GOVIND                              
+          REC. NO. 14326                          
+08/04/26  SANTOSH SHENDE (BHAMBRAJA)                 20000.00          --       228605768.0 Dr RV/   11
+          CASH RECD                               
+          REC. NO. 14328                          
+08/04/26  DATTATRAY GENERAL STORES(ARNI)             12935.00          --       228618703.0 Dr RV/   12
+          CASH RECD                               
+          REC. NO. 14329                          
+08/04/26  NEW SHIVA BALAJI DASARWAR                  14000.00          --       228632703.0 Dr RV/   25
+          CASH RECD                               
+          REC. NO. 14311 ( VANRAJ)                
+10/04/26  RAHIL TAWWAR (PATANBORI)                   10000.00          --       228642703.0 Dr RV/   13
+          CASH RECD                               
+          REC. NO,. 14330                         
+10/04/26  NEW SHIVA BALAJI DASARWAR                  10000.00          --       228652703.0 Dr RV/   26
+          CASH RECD                               
+          REC. NO. 14345 ( VANRAJ)                
+11/04/26  SUHAS SHIRBHATE( KALAM)                     3915.00          --       228656618.0 Dr RV/   14
+          UPI GOVIND                              
+          REC. NO,. 14331                         
+13/04/26  UMAKANT GHADGE ( INDRAVELI)                 3770.00          --       228660388.0 Dr RV/   15
+          UPI RAM                                 
+          REC. NO. 14332                          
+13/04/26  SHARAD AMBADAS UGHADE( WADAKI                500.00          --       228660888.0 Dr RV/   20
+          UPI GOVIND                              
+          REC. NO. 14337                          
+------------------------------------------------------------------------------------------------
+                            RAM FATAKA CENTER 01/04/2026 31/03/2027                             
+------------------------------------------------------------------------------------------------
+LEDGER OF :  CASH A/C
+PLACE     :  
+DATED ON  :  13/04/2026-31/03/2027                                                PAGE NO.   2
+------------------------------------------------------------------------------------------------
+DATE      PARTICULARS                                  DEBIT         CREDIT          BALANCE
+------------------------------------------------------------------------------------------------
+14/04/26  RAJU MORE (MAREGAON)                        7000.00          --       228667888.0 Dr RV/   16
+          CASH RECD                               
+          REC. NO. 14332 ( VANRAJ)                
+15/04/26  IMROZ BHAI (HINGANGHAT)                    35000.00          --       228702888.0 Dr RV/   17
+          UPI RAM                                 
+          REC. NO. 14334                          
+15/04/26  BUTLE FATAKA CENTER (ARNI)                 30000.00          --       228732888.0 Dr RV/   18
+          UPI RAM                                 
+          REC. NO. 14335                          
+15/04/26  SATYAM KANGNE (PARDI BODHADI)              40000.00          --       228772888.0 Dr RV/   28
+          CASH RECD                               
+          REC. NO. 14347 ( VANRAJ)                
+16/04/26  IBRAHIM BHAI (SARKHANI)                    10000.00          --       228782888.0 Dr RV/   19
+          UPI GOVIND                              
+          REC. NO. 14336                          
+16/04/26  SAJJAD MO EKABAL ( PATANBORI                6300.00          --       228789188.0 Dr RV/   21
+          UPI GOVIND                              
+          REC. NO. 14338                          
+17/04/26  SALE ACCOUNT                                6340.00          --       228795528.0 Dr E /   19
+          INV.NO.E /   19                         
+17/04/26  HARSHAD VADZADE (ARNI )                     8000.00          --       228803528.0 Dr RV/   22
+          UPI GOVIND                              
+          REC. NO. 14339                          
+17/04/26  SURAJ PRAKASH MAHAJAN (MAREGAON)           10000.00          --       228813528.0 Dr RV/   23
+          UPI RAM                                 
+          REC. NO. 14341                          
+21/04/26  BUTLE FATAKA CENTER (ARNI)                 20000.00          --       228833528.0 Dr RV/   24
+          UPI RAM                                 
+          REC. NO. 14340                          
+22/04/26  SALE ACCOUNT                                3936.00          --       228837464.0 Dr E /   24
+          INV.NO.E /   24                         
+22/04/26  CHANDEKAR FATAKA CENTER (WAI BAJAR )        5000.00          --       228842464.0 Dr RV/   58
+          UPI GOVIND                              
+          REC. NO. 14377                          
+23/04/26  BUTLE FATAKA CENTER (ARNI)                 10000.00          --       228852464.0 Dr RV/   41
+          UPI RAM                                 
+          REC. NO. 14360                          
+24/04/26  UMAKANT GHADGE ( INDRAVELI)                 5305.00          --       228857769.0 Dr RV/   34
+          UPI RAM                                 
+          REC. NO. 14353                          
+26/04/26  SATYAM KANGNE (PARDI BODHADI)              17280.00          --       228875049.0 Dr RV/   29
+          CASH RECD                               
+          REC. NO. 14348 ( VANRAJ)                
+26/04/26  ISMAIL IBRAHIM (HIGHANGHAT) SHUNID BHAI     4510.00          --       228879559.0 Dr RV/   30
+          UPI RAM                                 
+          REC. NO. 14349                          
+26/04/26  PRUTHVIRAJ DIXIT FHATAKA CENTER ( MAHUR)    6950.00          --       228886509.0 Dr RV/   31
+          UPI RAM                                 
+          REC. NO. 14350                          
+28/04/26  UMAKANT GHADGE ( INDRAVELI)                 5435.00          --       228891944.0 Dr RV/   32
+          UPI RAM                                 
+          REC. NO. 14351                          
+28/04/26  BUTLE FATAKA CENTER (ARNI)                 40000.00          --       228931944.0 Dr RV/   33
+          CASH RECD                               
+          REC. NO. 14351( VANRAJ )                
+------------------------------------------------------------------------------------------------
+                            RAM FATAKA CENTER 01/04/2026 31/03/2027                             
+------------------------------------------------------------------------------------------------
+LEDGER OF :  CASH A/C
+PLACE     :  
+DATED ON  :  28/04/2026-31/03/2027                                                PAGE NO.   3
+------------------------------------------------------------------------------------------------
+DATE      PARTICULARS                                  DEBIT         CREDIT          BALANCE
+------------------------------------------------------------------------------------------------
+28/04/26  CHANDEKAR FATAKA CENTER (WAI BAJAR )        4000.00          --       228935944.0 Dr RV/   35
+          UPI GOVIND                              
+          REC. NO. 14354                          
+28/04/26  SUNIL DEVISINGH DIXIT (MAHUR )             10690.00          --       228946634.0 Dr RV/   36
+          UPI GOVIND                              
+          REC. NO. 14355                          
+29/04/26  NEW SHIVA BALAJI DASARWAR                   9050.00          --       228955684.0 Dr RV/   37
+          CASH RECD                               
+          REC. NO. 14356 ( VANRAJ)                
+29/04/26  SAI UTTARWAR (KINWAT)                       2660.00          --       228958344.0 Dr RV/   38
+          UPI RAM                                 
+          REC. NO. 14357                          
+29/04/26  RAVI LONARE ( WARORA)                      26700.00          --       228985044.0 Dr RV/   39
+          CASH RECD                               
+          REC. NO. 14358( VANRAJ )                
+29/04/26  SUHAS SHIRBHATE( KALAM)                     2750.00          --       228987794.0 Dr RV/   59
+          UPI GOVIND                              
+          REC. NO. 14378                          
+30/04/26  IMROZ BHAI (HINGANGHAT)                    20000.00          --       229007794.0 Dr RV/   40
+          CASH RECD                               
+          REC. NO. 14359 ( VANRAJ)                
+30/04/26  SUMIT YERAWAR ( ARNI)                       9900.00          --       229017694.0 Dr RV/   42
+          CASH RECD                               
+          REC. NO. 14361 ( VANRAJ )               
+30/04/26  SHARAD AMBADAS UGHADE( WADAKI                500.00          --       229018194.0 Dr RV/   60
+          UPI GOVIND                              
+          REC. NO. 14379                          
+02/05/26  BUTLE FATAKA CENTER (ARNI)                 15000.00          --       229033194.0 Dr RV/   43
+          CASH RECD                               
+          REC. NO. 14362 ( VANARAJ)               
+02/05/26  RAHIL TAWWAR (PATANBORI)                   46000.00          --       229079194.0 Dr RV/   44
+          CASH RECD                               
+          REC . NO 14363 ( RETI )                 
+02/05/26  NEW SHIVA BALAJI DASARWAR                  15165.00          --       229094359.0 Dr RV/   45
+          CASH RECD                               
+          REC NO . 14364 ( VANRAJ)                
+02/05/26  NEW SHIVA BALAJI DASARWAR                   9120.00          --       229103479.0 Dr RV/   47
+          UPI RAM                                 
+          REC NO 14366                            
+02/05/26  YUVRAJ DIXSIT (MAHUR)                      11641.00          --       229115120.0 Dr RV/   46
+          CASH RECD                               
+          REC NO . 14365 ( VANRAJ)                
+03/05/26  RAJESH NAVAKARKAR (WARORA)                  5700.00          --       229120820.0 Dr RV/   48
+          UPI RAM                                 
+          REC NO 14367                            
+05/05/26  NEW SHIVA BALAJI DASARWAR                   2325.00          --       229123145.0 Dr RV/   49
+          UPI RAM                                 
+          REC. NO. 14368                          
+05/05/26  BUTLE FATAKA CENTER (ARNI)                 25000.00          --       229148145.0 Dr RV/   50
+          CASH RECD                               
+          REC. NO. 14369 ( VANRAJ)                
+06/05/26  MAHESH HOLEGARE (ARNI)                     10000.00          --       229158145.0 Dr RV/   51
+          CASH RECD                               
+          REC. NO. 14370 ( VANRAJ )               
+------------------------------------------------------------------------------------------------
+                            RAM FATAKA CENTER 01/04/2026 31/03/2027                             
+------------------------------------------------------------------------------------------------
+LEDGER OF :  CASH A/C
+PLACE     :  
+DATED ON  :  06/05/2026-31/03/2027                                                PAGE NO.   4
+------------------------------------------------------------------------------------------------
+DATE      PARTICULARS                                  DEBIT         CREDIT          BALANCE
+------------------------------------------------------------------------------------------------
+06/05/26  NEW SHIVA BALAJI DASARWAR                  11440.00          --       229169585.0 Dr RV/   52
+          UPI RAM                                 
+          REC. NO. 14371                          
+06/05/26  QAYUM KHAN AALLAS KHAN ( WAI BAZAR )       24200.00          --       229193785.0 Dr RV/   53
+          CASH RECD                               
+          REC. NO,. 14372 ( VANRAJ)               
+07/05/26  AMOL VAZALWAR ( PATANBORI)                  7000.00          --       229200785.0 Dr RV/   54
+          UPI RAM                                 
+          REC NO. 14373                           
+08/05/26  UMAKANT GHADGE ( INDRAVELI)                 6460.00          --       229207245.0 Dr RV/   56
+          UPI GOVIND                              
+          REC. NO. 14375                          
+09/05/26  NEW SHIVA BALAJI DASARWAR                   9000.00          --       229216245.0 Dr RV/   55
+          UPI RAM                                 
+          REC NO. 14374                           
+10/05/26  NEW SHIVA BALAJI DASARWAR                   7000.00          --       229223245.0 Dr RV/   57
+          UPI RAM                                 
+          REC. NO. 14376                          
+12/05/26  YUVRAJ DIXSIT (MAHUR)                       6300.00          --       229229545.0 Dr RV/   61
+          UPI GOVIND                              
+          REC. NO. 14380                          
+12/05/26  BUTLE FATAKA CENTER (ARNI)                 45000.00          --       229274545.0 Dr RV/   62
+          CASH RECD                               
+          REC. NO. 14381 ( VANRAJ)                
+13/05/26  KIRAN WEVARE FATAKA CENTRE( HATGAON)        8740.00          --       229283285.0 Dr RV/   63
+          UPI GOVIND                              
+          REC. NO. 14382                          
+14/05/26  AMOL BHASAKRWAR ( MAHUR)                    7000.00          --       229290285.0 Dr RV/   64
+          UPI RAM                                 
+          REC. NO. 14383                          
+15/05/26  SUVIDHA PLASTIC (PUSAD)                    32060.00          --       229322345.0 Dr RV/   67
+          CASH RECD                               
+          REC. NO. 14386 ( VANRAJ)                
+16/05/26  CHANDRASHEKHAR MAROTI  BHASKARWAR(F        15000.00          --       229337345.0 Dr RV/   65
+          CASH RECD                               
+          REC NO. 14384                           
+16/05/26  IMROZ BHAI (HINGANGHAT)                    12500.00          --       229349845.0 Dr RV/   66
+          CASH RECD                               
+          REC. NO. 14385                          
+16/05/26  ASRAR BHAI (YAVATMAL)                      17500.00          --       229367345.0 Dr RV/   78
+          CASH RECD                               
+          REC. NO. 14397                          
+17/05/26  NEW SHIVA BALAJI DASARWAR                   5000.00          --       229372345.0 Dr RV/   68
+          UPI RAM                                 
+          REC. NO 14387                           
+19/05/26  ARYAN FATAKA CENTRE (MAREGAON)              9005.00          --       229381350.0 Dr RV/   69
+          UPI RAM                                 
+          REC. NO. 14388                          
+19/05/26  BUTLE FATAKA CENTER (ARNI)                 20000.00          --       229401350.0 Dr RV/   70
+          CASH RECD                               
+          REC. NO. 14389 ( VANARAJ)               
+19/05/26  AKSHAY URKUDE ( ARNI)                       5000.00          --       229406350.0 Dr RV/   71
+          UPI GOVIND                              
+          REC. NO. 14390                          
+------------------------------------------------------------------------------------------------
+                            RAM FATAKA CENTER 01/04/2026 31/03/2027                             
+------------------------------------------------------------------------------------------------
+LEDGER OF :  CASH A/C
+PLACE     :  
+DATED ON  :  19/05/2026-31/03/2027                                                PAGE NO.   5
+------------------------------------------------------------------------------------------------
+DATE      PARTICULARS                                  DEBIT         CREDIT          BALANCE
+------------------------------------------------------------------------------------------------
+21/05/26  NEW SHIVA BALAJI DASARWAR                   5000.00          --       229411350.0 Dr RV/   72
+          UPI RAM                                 
+          REC. NO. 14391                          
+21/05/26  SUMIT YERAWAR ( ARNI)                      11000.00          --       229422350.0 Dr RV/   74
+          CASH RECD                               
+          REC. NO. 14393 ( AFROJ )                
+22/05/26  HARSHAD VADZADE (ARNI )                    16600.00          --       229438950.0 Dr RV/   73
+          CASH RECD                               
+          REC. NO. 14392                          
+25/05/26  BUTLE FATAKA CENTER (ARNI)                 14200.00          --       229453150.0 Dr RV/   75
+          CASH RECD                               
+          REC. NO. 14394 ( AFAROJ )               
+25/05/26  GAJANAN NAGORAO YANNARWAR ( PARWA)          3000.00          --       229456150.0 Dr RV/   76
+          UPI RAM                                 
+          REC, NO. 14395                          
+25/05/26  IMROZ BHAI (HINGANGHAT)                    15000.00          --       229471150.0 Dr RV/   77
+          CASH RECD                               
+          REC. NO. 14396 ( AFROJ )                
+25/05/26  MILIND TUNDALKAR (DEHANI)                   4200.00          --       229475350.0 Dr RV/   79
+          CASH RECD                               
+          REC. NO. 14398 ( AFROJ)                 
+25/05/26  SUNIL DEVISINGH DIXIT (MAHUR )             41690.00          --       229517040.0 Dr RV/   80
+          CASH RECD                               
+          REC. NO. 14399 ( AFROJ)                 
+25/05/26  SACHIN BHOYAR ( WARORA                      9083.00          --       229526123.0 Dr RV/   81
+          UPI RAM                                 
+          REC. NO. 14400                          
+25/05/26  RAVI LONARE ( WARORA)                      20000.00          --       229546123.0 Dr RV/   82
+          CASH RECD                               
+          REC. NO. 14401 ( VANRAJ)                
+26/05/26  SURAJ PRAKASH MAHAJAN (MAREGAON)           15000.00          --       229561123.0 Dr RV/   83
+          UPI RAM                                 
+          REC. NO. 14402                          
+26/05/26  RAHIL TAWWAR (PATANBORI)                   10000.00          --       229571123.0 Dr RV/   84
+          CASH RECD                               
+          REC. NO. 14403                          
+27/05/26  CHANDRASHEKHAR MAROTI  BHASKARWAR(F        10240.00          --       229581363.0 Dr RV/   85
+          UPI RAM                                 
+          REC. NO. 14405 ( AFROJ )                
+27/05/26  IMRAN SHEIKH (KURLI)                        4900.00          --       229586263.0 Dr RV/   86
+          CASH RECD                               
+          REC. NO. 14406 ( AFROJ )                
+27/05/26  MAYUR SHEMBDE (WADKI)                       8000.00          --       229594263.0 Dr RV/   87
+          CASH RECD                               
+          REC. NO. 14407 ( AFROJ )                
+02/06/26  UMAKANT GHADGE ( INDRAVELI)                 6900.00          --       229601163.0 Dr RV/   88
+          CASH RECD                               
+          REC. NO.  14408 AFROAJ                  
+02/06/26  NEW SHIVA BALAJI DASARWAR                   5100.00          --       229606263.0 Dr RV/   89
+          CASH RECD                               
+          REC. NO. 14409 ( AFROAJ )               
+02/06/26  PRAMOD PETKAR FATAKA CENTER ( KAYAR )       5000.00          --       229611263.0 Dr RV/   90
+          CASH RECD                               
+          REC. NO. 14410 ( AFROAJ)                
+------------------------------------------------------------------------------------------------
+                            RAM FATAKA CENTER 01/04/2026 31/03/2027                             
+------------------------------------------------------------------------------------------------
+LEDGER OF :  CASH A/C
+PLACE     :  
+DATED ON  :  02/06/2026-31/03/2027                                                PAGE NO.   6
+------------------------------------------------------------------------------------------------
+DATE      PARTICULARS                                  DEBIT         CREDIT          BALANCE
+------------------------------------------------------------------------------------------------
+03/06/26  AMOL BHASAKRWAR ( MAHUR)                    7022.00          --       229618285.0 Dr RV/   91
+          UPI RAM                                 
+          REC. NO. 14411                          
+05/06/26  YAQUB BHAI (KAYAR)                         10000.00          --       229628285.0 Dr RV/   92
+          UPI GOVIND                              
+          REC. NO. 14412                          
+06/06/26  PRUTHVIRAJ DIXIT FHATAKA CENTER ( MAHUR)    5800.00          --       229634085.0 Dr RV/   93
+          UPI RAM                                 
+          REC. NO. 14413                          
+06/06/26  BUTLE FATAKA CENTER (ARNI)                  5000.00          --       229639085.0 Dr RV/   94
+          CASH RECD                               
+          REC, NO. 14414 ( UMESH)                 
+14/06/26  AMOL BHASAKRWAR ( MAHUR)                    4000.00          --       229643085.0 Dr RV/   95
+          UPI RAM                                 
+          REC. NO. 14415                          
+16/06/26  AMOL BHASAKRWAR ( MAHUR)                    4425.00          --       229647510.0 Dr RV/   96
+          UPI RAM                                 
+          REC, NO, 14416                          
+19/06/26  SUMIT YERAWAR ( ARNI)                       3220.00          --       229650730.0 Dr RV/   97
+          UPI ON QR                               
+          REC. NO. 14417                          
+21/06/26  AMOL BHASAKRWAR ( MAHUR)                    5000.00          --       229655730.0 Dr RV/   98
+          UPI RAM                                 
+          REC. NO. 14418                          
+22/06/26  RIYAJ KAJI FATAKA CENTER (GHOTI)            7200.00          --       229662930.0 Dr RV/   99
+          UPI RAM                                 
+          REC. NO. 14419                          
+23/06/26  RAJU MORE (MAREGAON)                       10000.00          --       229672930.0 Dr RV/  100
+          CASH RECD                               
+          REC. NO. 14420 ( AFROJA)                
+25/06/26  BUTLE FATAKA CENTER (ARNI)                 12000.00          --       229684930.0 Dr RV/  102
+          CASH RECD                               
+          REC. NO. 14422                          
+25/06/26  HARSHAD VADZADE (ARNI )                     5000.00          --       229689930.0 Dr RV/  101
+          CASH RECD                               
+          REC. NO. 14421                          
+25/06/26  CHANDRASHEKHAR MAROTI  BHASKARWAR(F         9360.00          --       229699290.0 Dr RV/  103
+          CASH RECD                               
+          REC. NO. 14423                          
+25/06/26  ROHIT SONTAKKE(GHUGHUS)                     4000.00          --       229703290.0 Dr RV/  104
+          UPI GOVIND                              
+          REC. NO. 14424                          
+01/07/26  YUVRAJ DIXSIT (MAHUR)                       3960.00          --       229707250.0 Dr RV/  105
+          CASH RECD                               
+          rec. no. 14425                          
+04/07/26  SAI UTTARWAR (KINWAT)                       6000.00          --       229713250.0 Dr RV/  106
+          UPI RAM                                 
+          REC. NO. 14426                          
+04/07/26  MAHESH HOLEGARE (ARNI)                      1795.00          --       229715045.0 Dr RV/  107
+          UPI GOVIND                              
+          REC. NO. 14427                          
+05/07/26  CHANDEKAR FATAKA CENTER (WAI BAJAR )        5000.00          --       229720045.0 Dr RV/  108
+          UPI GOVIND                              
+          REC. NO. 14428                          
+------------------------------------------------------------------------------------------------
+                            RAM FATAKA CENTER 01/04/2026 31/03/2027                             
+------------------------------------------------------------------------------------------------
+LEDGER OF :  CASH A/C
+PLACE     :  
+DATED ON  :  05/07/2026-31/03/2027                                                PAGE NO.   7
+------------------------------------------------------------------------------------------------
+DATE      PARTICULARS                                  DEBIT         CREDIT          BALANCE
+------------------------------------------------------------------------------------------------
+07/07/26  AYUB BHAI NATIONAL HARDWARE FATAKA CENTE    1900.00          --       229721945.0 Dr RV/  109
+          UPI RAM                                 
+          REC. NO. 14429                          
+09/07/26  RAVI LONARE ( WARORA)                       6700.00          --       229728645.0 Dr RV/  110
+          UPI GOVIND                              
+          REC. NO. 14430                          
+10/07/26  BUTLE FATAKA CENTER (ARNI)                 10000.00          --       229738645.0 Dr RV/  111
+          CASH RECD                               
+          REC. NO. 14431 ( AFROJ)                 
+12/07/26  NEW SHIVA BALAJI DASARWAR                  11550.00          --       229750195.0 Dr RV/  113
+          UPI GOVIND                              
+          REC. NO. 14433                          
+13/07/26  RAJESH NAVAKARKAR (WARORA)                  7915.00          --       229758110.0 Dr RV/  112
+          CASH RECD                               
+          REC. NO. 14432                          
+14/07/26  MAYUR SHEMBDE (WADKI)                       2000.00          --       229760110.0 Dr RV/  114
+          UPI GOVIND                              
+          REC. NO. 14434                          
+22/07/26  RAMESH YERNE ( WANI )                       3960.00          --       229764070.0 Dr RV/  115
+          UPI ON QR                               
+          REC. NO. 14435                          
+26/07/26  AMOL BHASAKRWAR ( MAHUR)                    5000.00          --       229769070.0 Dr RV/  116
+          UPI RAM                                 
+          REC. NO. 14437                          
+28/07/26  SATYAM KANGNE (PARDI BODHADI)              30600.00          --       229799670.0 Dr RV/  132
+          CASH RECD                               
+          REC. NO. 14452                          
+31/07/26  YUVRAJ DIXSIT (MAHUR)                       6030.00          --       229805700.0 Dr RV/  117
+          UPI RAM                                 
+          REC. NO. 14437                          
+01/08/26  AYUB BHAI NATIONAL HARDWARE FATAKA CENTE    2982.00          --       229808682.0 Dr RV/  118
+          CASH RECD                               
+          REC. NO. 14438                          
+01/08/26  ESHWAR CRACKERS ( BHAINSA)                  2100.00          --       229810782.0 Dr RV/  119
+          UPI RAM                                 
+          REC. NO. 14439                          
+02/08/26  NIKHIL M. ( ADILABAD)                      20000.00          --       229830782.0 Dr RV/  120
+          UPI GOVIND                              
+          REC. NO. 14440                          
+04/08/26  RAJU MORE (MAREGAON)                        8001.00          --       229838783.0 Dr RV/  121
+          CASH RECD                               
+          REC. NO. 14441 ( AFROS)                 
+04/08/26  NEW SHIVA BALAJI DASARWAR                  50000.00          --       229888783.0 Dr RV/  122
+          UPI ON QR                               
+          REC. NO. 14442                          
+06/08/26  NIKHIL M. ( ADILABAD)                      50000.00          --       229938783.0 Dr RV/  123
+          UPI RAM                                 
+          REM. NO. 14443                          
+06/08/26  NIKHIL M. ( ADILABAD)                      81336.00          --       230020119.0 Dr RV/  124
+          UPI RAM                                 
+          REM. NO. 14444                          
+07/08/26  BASHIR SHAHA ( SELU HINGNI)               150000.00          --       230170119.0 Dr RV/  125
+          CASH RECD                               
+          REC. NO. 14445                          
+------------------------------------------------------------------------------------------------
+                            RAM FATAKA CENTER 01/04/2026 31/03/2027                             
+------------------------------------------------------------------------------------------------
+LEDGER OF :  CASH A/C
+PLACE     :  
+DATED ON  :  07/08/2026-31/03/2027                                                PAGE NO.   8
+------------------------------------------------------------------------------------------------
+DATE      PARTICULARS                                  DEBIT         CREDIT          BALANCE
+------------------------------------------------------------------------------------------------
+07/08/26  SAI UTTARWAR (KINWAT)                       3890.00          --       230174009.0 Dr RV/  126
+          UPI ON QR                               
+          REC. NO. 14446                          
+09/08/26  SALE ACCOUNT                               23670.00          --       230197679.0 Dr E /  104
+          INV.NO.E /  104                         
+09/08/26  AMOL BHASAKRWAR ( MAHUR)                    4140.00          --       230201819.0 Dr RV/  127
+          UPI RAM                                 
+          REC. NO. 14447                          
+09/08/26  VIVEK TOTEWAR ( WANI )                     50000.00          --       230251819.0 Dr RV/  128
+          CASH RECD                               
+          REC. NO. 14448                          
+09/08/26  IRFAN SHEIKH (WANI)                        50000.00          --       230301819.0 Dr RV/  129
+          CASH RECD                               
+          REC. NO. 14449                          
+10/08/26  AVNESH BOMIDWAR (ADILABAD)                 95000.00          --       230396819.0 Dr RV/  130
+          UPI RAM                                 
+          REC. NO. 14450                          
+14/08/26  IRFAN SHEIKH (WANI)                        50000.00          --       230446819.0 Dr RV/  131
+          CASH RECD                               
+          REC. NO. 14451                          
+17/08/26  WAMSHI ( ADILABAD)                         18065.00          --       230464884.0 Dr RV/  134
+          UPI ON QR                               
+          REC. NO. 14454                          
+17/08/26  AMIT KAKARANIYA ( AMRAVATI )              120000.00          --       230584884.0 Dr RV/  135
+          CASH RECD                               
+          REC. NO. 14455                          
+17/08/26  AKSHAY URKUDE ( ARNI)                       6625.00          --       230591509.0 Dr RV/  137
+          UPI GOVIND                              
+          REC. NO. 14457                          
+18/08/26  AVNESH BOMIDWAR (ADILABAD)                 90000.00          --       230681509.0 Dr RV/  136
+          UPI RAM                                 
+          REC. NO. 14456                          
+18/08/26  BUTLE FATAKA CENTER (ARNI)                 10000.00          --       230691509.0 Dr RV/  138
+          CASH RECD                               
+          REC. NO. 14458                          
+19/08/26  SACHIN BHOYAR ( WARORA                    100000.00          --       230791509.0 Dr RV/  139
+          CASH RECD                               
+          REC. NO. 14459                          
+19/08/26  VIKAS PIPLE PANDERKAWADA                  175535.00          --       230967044.0 Dr RV/  140
+          CASH RECD                               
+          REC. NO. 14460 ( VANRAJ)                
+19/08/26  SACHIN BHOYAR ( WARORA                    100000.00          --       231067044.0 Dr RV/  141
+          BY CHEQUE TRF                           
+          REC. NO. 14461                          
+19/08/26  AMIT KAKARANIYA ( AMRAVATI )               28100.00          --       231095144.0 Dr RV/  142
+          UPI GOVIND                              
+          REC. NO. 14462                          
+19/08/26  AMIT KAKARANIYA ( AMRAVATI )               20000.00          --       231115144.0 Dr RV/  143
+          CASH RECD                               
+          REC. NO. 14463( DEPOSTED TO AXIS BANK)  
+20/08/26  SALE ACCOUNT                               10540.00          --       231125684.0 Dr E /  106
+          INV.NO.E /  106                         
+20/08/26  RAJESH NAVAKARKAR (WARORA)                200000.00          --       231325684.0 Dr RV/  144
+          RTGS / NEFT TO HDFC 2469                
+          REC NO 14464                            
+------------------------------------------------------------------------------------------------
+                            RAM FATAKA CENTER 01/04/2026 31/03/2027                             
+------------------------------------------------------------------------------------------------
+LEDGER OF :  CASH A/C
+PLACE     :  
+DATED ON  :  20/08/2026-31/03/2027                                                PAGE NO.   9
+------------------------------------------------------------------------------------------------
+DATE      PARTICULARS                                  DEBIT         CREDIT          BALANCE
+------------------------------------------------------------------------------------------------
+20/08/26  DESARDA FATAKA CENTRE (JALNA)              46000.00          --       231371684.0 Dr RV/  145
+          CASH RECD TO DIRECT                     
+          REC NO 14465                            
+20/08/26  DESARDA FATAKA CENTRE (JALNA)              35000.00          --       231406684.0 Dr RV/  146
+          CASH RECD                               
+          REC NO 14466                            
+20/08/26  HARI BHAU SHEVATKAR ( BODHADI)                --           1000.00    231405684.0 Dr JV/    1
+          UPI GOVIND                              
+------------------------------------------------------------------------------------------------
+GRAND TOTAL  :                                    231406684.0        1000.00    231405684.0 Dr
+------------------------------------------------------------------------------------------------
+TOTAL AS ON  :20/08/2026 31/03/2027                2962416.00        1000.00
+------------------------------------------------------------------------------------------------

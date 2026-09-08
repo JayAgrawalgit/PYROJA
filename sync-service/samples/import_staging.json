@@ -1,0 +1,82 @@
+{
+  "version": "1.0",
+  "exported_at": "2026-09-07T01:30:00.000Z",
+  "environment": "D2627",
+  "series": "E",
+  "default_user": "RAM",
+  "default_salesman": "SELF",
+  "orders": [
+    {
+      "order_id": "ord_9c8b7a6e-5d4c-4b3a-a2f1-0e9d8c7b6a5f",
+      "draft_id": "TAB01-1048",
+      "tablet_id": "TAB-01",
+      "customer_code": "01149",
+      "customer_name": "NEW SHIVA BALAJI DASARWAR",
+      "order_date": "20260907",
+      "area_code": "44   ",
+      "series": "E",
+      "gross_amount": 2600.00,
+      "add_amount": 0.00,
+      "less_amount": 0.00,
+      "round_off": 0.00,
+      "net_amount": 2600.00,
+      "user": "RAM",
+      "salesman": "SELF",
+      "note": "DRAFT:TAB01-1048",
+      "remarks": "URGENT FESTIVAL DISPATCH",
+      "items": [
+        {
+          "line_no": 1,
+          "item_code": "06122",
+          "item_name": "STANDARD 10CM ELECTRIC SPARKLE",
+          "group_code": "MIX  ",
+          "company_code": "50   ",
+          "unit": "BOX  ",
+          "rate_type": "P",
+          "quantity": 15.0,
+          "rate": 110.0,
+          "gross_amount": 1650.00,
+          "tax_code": "CST  ",
+          "tax_percent": 0.0,
+          "taxable_amount": 1650.00,
+          "tax_amount": 0.0,
+          "net_amount": 1650.00
+        },
+        {
+          "line_no": 2,
+          "item_code": "02152",
+          "item_name": "1117- RING CAPS (1OOPKT= 1 BOX)RACHNA",
+          "group_code": "MIX  ",
+          "company_code": "41   ",
+          "unit": "PKT  ",
+          "rate_type": "P",
+          "quantity": 50.0,
+          "rate": 6.0,
+          "gross_amount": 300.00,
+          "tax_code": "CST  ",
+          "tax_percent": 0.0,
+          "taxable_amount": 300.00,
+          "tax_amount": 0.0,
+          "net_amount": 300.00
+        },
+        {
+          "line_no": 3,
+          "item_code": "02157",
+          "item_name": "1121- MISSILE SIREN(127X1)TITANIC ORIGIN",
+          "group_code": "MIX  ",
+          "company_code": "41   ",
+          "unit": "PKT  ",
+          "rate_type": "P",
+          "quantity": 10.0,
+          "rate": 65.0,
+          "gross_amount": 650.00,
+          "tax_code": "CST  ",
+          "tax_percent": 0.0,
+          "taxable_amount": 650.00,
+          "tax_amount": 0.0,
+          "net_amount": 650.00
+        }
+      ]
+    }
+  ]
+}
