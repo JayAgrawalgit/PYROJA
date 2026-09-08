@@ -112,26 +112,26 @@
         </div>
     </header>
 
-    <!-- LEFT SIDEBAR: Categories -->
+    <!-- LEFT SIDEBAR: Showroom Categories (COMPMST.DBF) -->
     <aside class="fixed left-0 top-24 bottom-14 w-48 bg-surface-container-low z-40 flex flex-col justify-between p-2 border-r border-surface-container-high">
-        <div class="flex flex-col gap-1">
-            <div class="px-2 py-1 font-label-caps text-[10px] text-outline uppercase tracking-wider">Categories</div>
-            <nav id="category-nav" class="flex flex-col gap-1">
-                <button class="cat-btn flex items-center justify-between px-2.5 py-2 rounded bg-surface-container-high text-primary font-bold text-left text-sm" data-cat="ALL">
+        <div class="flex flex-col gap-1 overflow-hidden flex-1">
+            <div class="px-2 py-1 font-label-caps text-[10px] text-outline uppercase tracking-wider flex justify-between items-center">
+                <span>Categories</span>
+                <span id="cat-total-count-badge" class="font-label-numeric-sm text-[10px] text-primary">53</span>
+            </div>
+            <nav id="category-nav" class="flex flex-col gap-1 overflow-y-auto max-h-[calc(100vh-210px)] pr-1">
+                <!-- Dynamically populated categories -->
+                <button class="cat-btn flex items-center justify-between px-2.5 py-2 rounded bg-surface-container-high text-primary font-bold text-left text-xs" data-cat="ALL">
                     <span>All Products</span>
                     <span id="cat-count-all" class="font-label-numeric-sm text-xs">0</span>
-                </button>
-                <button class="cat-btn flex items-center justify-between px-2.5 py-2 rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface text-left text-sm" data-cat="MIX">
-                    <span>Mixed & Fancy</span>
-                    <span id="cat-count-mix" class="font-label-numeric-sm text-xs">-</span>
                 </button>
             </nav>
         </div>
 
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-1 pt-2 border-t border-surface-container-high">
             <div class="p-2 rounded bg-surface-container text-on-surface-variant font-label-caps text-[10px]">
                 <div class="text-outline mb-0.5">SOURCE OF TRUTH</div>
-                <div class="text-tertiary font-bold">Visual FoxPro 6 (D2627)</div>
+                <div class="text-tertiary font-bold truncate">COMPMST.DBF (53 Sec)</div>
             </div>
         </div>
     </aside>
@@ -171,6 +171,18 @@
                             </button>
                         </div>
                         <span class="font-label-caps text-secondary bg-surface-container px-2.5 py-1.5 rounded text-[11px]">Pack Multiples Enforced</span>
+                    </div>
+
+                    <!-- Category Breadcrumb & Sub-Category (Pack Type) Filter Bar -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 bg-surface-container-lowest p-2.5 rounded-lg border border-surface-container-high shadow-inner">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="material-symbols-outlined text-primary text-[20px]">category</span>
+                            <span id="active-category-title" class="font-headline-sm text-xs font-bold text-on-surface truncate uppercase tracking-wide">ALL PRODUCTS</span>
+                            <span id="active-category-count-badge" class="bg-surface-container-high text-primary font-label-numeric-sm text-[11px] font-bold px-2 py-0.5 rounded-full">0 items</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 overflow-x-auto max-w-full py-0.5" id="subcategory-chips-bar">
+                            <!-- Pack chips rendered dynamically: ALL, BOX, PKT, PCS, BAG, ROLL, TIN, OTHERS -->
+                        </div>
                     </div>
 
                     <!-- Dense Spreadsheet Catalog Table -->
@@ -390,6 +402,54 @@
         </div>
     </div>
 
+    <!-- CUSTOMER PICKER MODAL (Create New Order / Switch Account Across All 880+ Accounts) -->
+    <div id="customer-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 select-none">
+        <div class="bg-surface-container-low border border-surface-container-high rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
+            <!-- Header -->
+            <div class="p-4 bg-surface-container-lowest border-b border-surface-container-high flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary text-[22px]">person_add</span>
+                    <h3 class="font-headline-sm text-base text-on-surface font-bold">Select Customer for New Order</h3>
+                </div>
+                <button id="btn-cust-modal-close" class="text-outline hover:text-on-surface p-1.5 rounded-full hover:bg-surface-container transition-colors" title="Close">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+
+            <!-- Instant Cash Account Quick-Button & Search -->
+            <div class="p-3 bg-surface-container flex flex-col gap-2 border-b border-surface-container-high">
+                <button id="btn-quick-cash-order" class="w-full py-2.5 px-4 rounded-xl bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary font-headline-sm text-xs font-extrabold flex items-center justify-between shadow-sm transition-all active:scale-98 cursor-pointer">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">payments</span>
+                        <span>CREATE CASH ORDER (CASH A/C #99999)</span>
+                    </div>
+                    <span class="font-label-caps text-[10px] bg-primary/20 px-2 py-0.5 rounded">1-TAP INSTANT</span>
+                </button>
+
+                <div class="flex items-center bg-surface-container-lowest rounded-xl px-3 h-11 border border-surface-container-highest focus-within:border-primary">
+                    <span class="material-symbols-outlined text-outline text-[20px] mr-2">search</span>
+                    <input id="input-cust-search" type="text" class="w-full bg-transparent text-on-surface text-sm focus:outline-none placeholder:text-outline font-body-md" placeholder="Search 880+ customers by name, code (e.g. 00042), or area..."/>
+                    <button id="btn-cust-search-clear" class="text-outline hover:text-on-surface p-1">
+                        <span class="material-symbols-outlined text-[16px]">close</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Customer Search Results List -->
+            <div id="customer-picker-list" class="flex-1 overflow-y-auto p-2 divide-y divide-surface-container-high max-h-[50vh]">
+                <!-- Rendered dynamically -->
+            </div>
+
+            <!-- Footer -->
+            <div class="p-3 bg-surface-container-lowest border-t border-surface-container-high flex justify-between items-center text-xs text-outline font-label-numeric-sm">
+                <span id="cust-modal-count">Showing accounts...</span>
+                <button id="btn-cust-modal-cancel" class="px-4 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-semibold text-xs transition-colors">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- CLIENT SCRIPT -->
     <script src="app.js"></script>
     <script>
@@ -453,37 +513,174 @@
             // Render Functions
             function renderCustomerTabs() {
                 customerTabsBar.innerHTML = "";
-                // Show top 6 customers as fast tabs
-                const topCustomers = pos.customers.slice(0, 6);
-                for (const cust of topCustomers) {
-                    const isActive = pos.activeCustomer && pos.activeCustomer.code === cust.code;
-                    const itemCount = pos.getCustomerCartItemCount(cust.code);
-                    const totals = pos.getCartTotals(cust.code);
 
-                    const tab = document.createElement("button");
-                    tab.className = `flex items-center gap-2 px-3 py-1.5 rounded-t-lg transition-colors text-left flex-shrink-0 ${
-                        isActive ? "bg-surface-container-high text-primary font-bold shadow-sm" : "bg-surface-container text-on-surface-variant hover:bg-surface-container-high"
+                // Render all currently open customer tabs
+                for (const code of pos.openCustomerTabs) {
+                    const cust = pos.customers.find(c => c.code === code) || {
+                        code,
+                        name: code === "99999" ? "CASH A/C" : `CUST #${code}`,
+                        price_tier: "RETAIL"
+                    };
+
+                    const isActive = pos.activeCustomer && pos.activeCustomer.code === code;
+                    const itemCount = pos.getCustomerCartItemCount(code);
+                    const totals = pos.getCartTotals(code);
+
+                    const tab = document.createElement("div");
+                    tab.className = `flex items-center gap-1.5 pl-3 pr-2 py-1.5 rounded-t-lg transition-colors text-left flex-shrink-0 cursor-pointer ${
+                        isActive ? "bg-surface-container-high text-primary font-bold shadow-sm border-b-2 border-primary" : "bg-surface-container text-on-surface-variant hover:bg-surface-container-high"
                     }`;
                     tab.innerHTML = `
-                        <span class="material-symbols-outlined text-[16px]">${cust.code === '99999' ? 'payments' : 'business'}</span>
-                        <div class="flex flex-col">
-                            <div class="flex items-center gap-1.5">
-                                <span class="text-xs truncate max-w-[120px]">${cust.name}</span>
-                                ${itemCount > 0 ? `<span class="bg-primary text-on-primary font-label-numeric-sm text-[10px] font-bold px-1.5 py-0.2 rounded-full">${itemCount} (${totals.total > 0 ? '₹' + Math.round(totals.total) : ''})</span>` : ''}
+                        <div class="flex items-center gap-1.5 flex-1 min-w-0" data-cust-code="${code}">
+                            <span class="material-symbols-outlined text-[16px]">${code === '99999' ? 'payments' : 'storefront'}</span>
+                            <div class="flex flex-col">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-xs truncate max-w-[120px]">${cust.name}</span>
+                                    ${itemCount > 0 ? `<span class="bg-primary text-on-primary font-label-numeric-sm text-[10px] font-bold px-1.5 py-0.2 rounded-full">${itemCount} (${totals.total > 0 ? '₹' + Math.round(totals.total) : ''})</span>` : ''}
+                                </div>
+                                <span class="font-label-numeric-sm text-[10px] text-outline">#${cust.code} (${cust.price_tier || 'RET'})</span>
                             </div>
-                            <span class="font-label-numeric-sm text-[10px] text-outline">#${cust.code} (${cust.price_tier})</span>
                         </div>
+                        ${pos.openCustomerTabs.length > 1 ? `
+                            <button class="btn-close-tab text-outline hover:text-error hover:bg-surface-container-highest p-0.5 rounded transition-colors ml-1" data-close-code="${code}" title="Close draft tab">
+                                <span class="material-symbols-outlined text-[14px]">close</span>
+                            </button>
+                        ` : ''}
                     `;
-                    tab.onclick = () => {
-                        pos.setCustomer(cust.code);
+
+                    // Click tab to switch customer
+                    tab.querySelector(`[data-cust-code="${code}"]`).onclick = () => {
+                        pos.setCustomer(code);
                     };
+
+                    // Close tab button
+                    const closeBtn = tab.querySelector(".btn-close-tab");
+                    if (closeBtn) {
+                        closeBtn.onclick = (e) => {
+                            e.stopPropagation();
+                            pos.closeCustomerTab(code);
+                        };
+                    }
+
                     customerTabsBar.appendChild(tab);
                 }
+
+                // "+ NEW ORDER" Button
+                const newOrderBtn = document.createElement("button");
+                newOrderBtn.id = "btn-new-order-tab";
+                newOrderBtn.className = "flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary-container hover:bg-primary text-on-primary-container hover:text-on-primary font-headline-sm text-xs font-extrabold shadow-sm transition-all active:scale-95 cursor-pointer whitespace-nowrap ml-1";
+                newOrderBtn.innerHTML = `
+                    <span class="material-symbols-outlined text-[16px]">add</span>
+                    <span>+ NEW ORDER</span>
+                `;
+                newOrderBtn.onclick = () => {
+                    openCustomerPickerModal();
+                };
+                customerTabsBar.appendChild(newOrderBtn);
+            }
+
+            function renderCategories() {
+                const nav = document.getElementById("category-nav");
+                const badge = document.getElementById("cat-total-count-badge");
+                if (!nav) return;
+                nav.innerHTML = "";
+
+                if (badge) {
+                    badge.innerText = pos.categories.length || "0";
+                }
+
+                // "All Products" button
+                const allBtn = document.createElement("button");
+                const isAllActive = pos.selectedCategory === "ALL";
+                allBtn.className = `cat-btn flex items-center justify-between px-2.5 py-1.5 rounded text-left text-xs transition-colors cursor-pointer ${
+                    isAllActive ? "bg-surface-container-high text-primary font-bold shadow-sm border-l-4 border-primary" : "text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface"
+                }`;
+                allBtn.setAttribute("data-cat", "ALL");
+                allBtn.innerHTML = `
+                    <span class="truncate">All Products</span>
+                    <span id="cat-count-all" class="font-label-numeric-sm text-[11px] bg-surface-container px-1.5 py-0.2 rounded">${pos.products.length}</span>
+                `;
+                allBtn.onclick = () => {
+                    pos.selectedCategory = "ALL";
+                    pos.selectedSubCategory = "ALL";
+                    renderCategories();
+                    renderSubCategoryChips();
+                    renderCatalog();
+                };
+                nav.appendChild(allBtn);
+
+                // Showroom Categories from FoxPro COMPMST.DBF
+                for (const cat of pos.categories) {
+                    const isActive = pos.selectedCategory === cat.code || pos.selectedCategory === cat.name;
+                    const btn = document.createElement("button");
+                    btn.className = `cat-btn flex items-center justify-between px-2 py-1.5 rounded text-left text-xs transition-colors cursor-pointer ${
+                        isActive ? "bg-surface-container-high text-primary font-bold shadow-sm border-l-4 border-primary" : "text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface"
+                    }`;
+                    btn.setAttribute("data-cat", cat.code);
+                    const srPrefix = cat.sr ? `${String(cat.sr).padStart(2, '0')}. ` : "";
+                    btn.innerHTML = `
+                        <span class="truncate pr-1" title="${cat.name}">${srPrefix}${cat.name}</span>
+                        <span class="font-label-numeric-sm text-[10px] ${cat.item_count > 0 ? 'bg-surface-container text-on-surface' : 'text-outline/40'} px-1 py-0.2 rounded ml-auto flex-shrink-0">${cat.item_count || 0}</span>
+                    `;
+                    btn.onclick = () => {
+                        pos.selectedCategory = cat.code;
+                        pos.selectedSubCategory = "ALL";
+                        renderCategories();
+                        renderSubCategoryChips();
+                        renderCatalog();
+                    };
+                    nav.appendChild(btn);
+                }
+            }
+
+            function renderSubCategoryChips() {
+                const chipsBar = document.getElementById("subcategory-chips-bar");
+                const titleEl = document.getElementById("active-category-title");
+                const countEl = document.getElementById("active-category-count-badge");
+                if (!chipsBar) return;
+
+                // Update category header title
+                if (pos.selectedCategory === "ALL") {
+                    if (titleEl) titleEl.innerText = "ALL SHOWROOM PRODUCTS";
+                } else {
+                    const found = pos.categories.find(c => c.code === pos.selectedCategory || c.name === pos.selectedCategory);
+                    if (titleEl) {
+                        titleEl.innerText = found ? (found.sr ? `${String(found.sr).padStart(2, '0')}. ${found.name}` : found.name) : pos.selectedCategory;
+                    }
+                }
+
+                const filtered = pos.getFilteredProducts();
+                if (countEl) countEl.innerText = `${filtered.length} items`;
+
+                const packTypes = ["ALL", "BOX", "PKT", "PCS", "BAG", "ROLL", "TIN", "OTHERS"];
+                chipsBar.innerHTML = packTypes.map(pt => {
+                    const isSubActive = pos.selectedSubCategory === pt;
+                    return `
+                        <button class="btn-subcat-chip px-2.5 py-1 rounded-full text-[11px] font-label-caps transition-all cursor-pointer whitespace-nowrap ${
+                            isSubActive ? 'bg-primary text-on-primary font-bold shadow-sm' : 'bg-surface-container text-on-surface-variant hover:bg-surface-container-high'
+                        }" data-subcat="${pt}">
+                            ${pt === 'ALL' ? 'All Packs' : pt}
+                        </button>
+                    `;
+                }).join("");
+
+                chipsBar.querySelectorAll(".btn-subcat-chip").forEach(btn => {
+                    btn.onclick = () => {
+                        const subcat = btn.getAttribute("data-subcat");
+                        pos.selectedSubCategory = subcat;
+                        renderSubCategoryChips();
+                        renderCatalog();
+                    };
+                });
             }
 
             function renderCatalog() {
                 const items = pos.getFilteredProducts();
-                document.getElementById("cat-count-all").innerText = pos.products.length;
+                const countAllEl = document.getElementById("cat-count-all");
+                if (countAllEl) countAllEl.innerText = pos.products.length;
+
+                const countEl = document.getElementById("active-category-count-badge");
+                if (countEl) countEl.innerText = `${items.length} items`;
 
                 if (items.length === 0) {
                     catalogTableBody.innerHTML = `
@@ -637,6 +834,8 @@
 
             function updateUI() {
                 renderCustomerTabs();
+                renderCategories();
+                renderSubCategoryChips();
                 renderCatalog();
                 renderCart();
             }
@@ -873,6 +1072,119 @@
             qtyModal.onclick = (e) => {
                 if (e.target === qtyModal) {
                     closeQuantityDialog();
+                }
+            };
+
+            // ==========================================
+            // CUSTOMER PICKER MODAL (Android Tablet)
+            // ==========================================
+            const customerModal = document.getElementById("customer-modal");
+            const btnQuickCashOrder = document.getElementById("btn-quick-cash-order");
+            const inputCustSearch = document.getElementById("input-cust-search");
+            const btnCustSearchClear = document.getElementById("btn-cust-search-clear");
+            const btnCustModalClose = document.getElementById("btn-cust-modal-close");
+            const btnCustModalCancel = document.getElementById("btn-cust-modal-cancel");
+            const customerPickerList = document.getElementById("customer-picker-list");
+            const custModalCount = document.getElementById("cust-modal-count");
+
+            function openCustomerPickerModal() {
+                inputCustSearch.value = "";
+                renderCustomerPickerList("");
+                customerModal.classList.remove("hidden");
+                setTimeout(() => {
+                    inputCustSearch.focus();
+                }, 50);
+            }
+
+            function closeCustomerPickerModal() {
+                customerModal.classList.add("hidden");
+            }
+
+            function renderCustomerPickerList(query = "") {
+                let custs = pos.customers;
+                if (query) {
+                    const q = query.trim().toUpperCase();
+                    custs = custs.filter(c => 
+                        (c.name && c.name.toUpperCase().includes(q)) ||
+                        (c.code && c.code.includes(q)) ||
+                        (c.area_name && c.area_name.toUpperCase().includes(q)) ||
+                        (c.phone && c.phone.includes(q))
+                    );
+                }
+
+                custModalCount.innerText = `${custs.length} accounts found`;
+
+                if (custs.length === 0) {
+                    customerPickerList.innerHTML = `
+                        <div class="p-8 text-center text-outline font-label-caps text-xs">
+                            No accounts found matching "${query}"
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Render first 50 matches for instant response
+                const display = custs.slice(0, 50);
+                customerPickerList.innerHTML = display.map(c => {
+                    const isAlreadyOpen = pos.openCustomerTabs.includes(c.code);
+                    const isActive = pos.activeCustomer && pos.activeCustomer.code === c.code;
+                    const draftCount = pos.getCustomerCartItemCount(c.code);
+
+                    return `
+                        <div class="cust-picker-row p-2.5 flex items-center justify-between hover:bg-surface-container transition-colors cursor-pointer rounded-lg ${isActive ? 'bg-surface-container-high' : ''}" data-code="${c.code}">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <span class="material-symbols-outlined text-primary text-[20px]">${c.code === '99999' ? 'payments' : 'storefront'}</span>
+                                <div class="flex flex-col min-w-0">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-headline-sm text-sm font-bold text-on-surface truncate">${c.name}</span>
+                                        <span class="font-label-numeric-sm text-xs font-bold text-primary">#${c.code}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 text-[11px] text-outline">
+                                        <span>Area: <strong class="text-on-surface-variant font-medium">${c.area_name || 'LOCAL'}</strong></span>
+                                        <span>•</span>
+                                        <span>Tier: <strong class="text-on-surface-variant font-medium">${c.price_tier || 'RETAIL'}</strong></span>
+                                        ${c.phone ? `<span>•</span><span>Tel: ${c.phone}</span>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 flex-shrink-0">
+                                ${draftCount > 0 ? `<span class="bg-primary/20 text-primary font-label-numeric-sm text-[10px] font-bold px-2 py-0.5 rounded-full">${draftCount} items</span>` : ''}
+                                ${isAlreadyOpen ? `<span class="bg-surface-container-highest text-outline font-label-caps text-[10px] px-2 py-0.5 rounded">TAB OPEN</span>` : `<span class="material-symbols-outlined text-outline text-[18px]">chevron_right</span>`}
+                            </div>
+                        </div>
+                    `;
+                }).join("");
+
+                customerPickerList.querySelectorAll(".cust-picker-row").forEach(row => {
+                    row.onclick = () => {
+                        const code = row.getAttribute("data-code");
+                        pos.openCustomerTab(code);
+                        closeCustomerPickerModal();
+                    };
+                });
+            }
+
+            btnQuickCashOrder.onclick = () => {
+                pos.openCustomerTab("99999");
+                closeCustomerPickerModal();
+            };
+
+            inputCustSearch.addEventListener("input", (e) => {
+                renderCustomerPickerList(e.target.value);
+            });
+
+            btnCustSearchClear.onclick = () => {
+                inputCustSearch.value = "";
+                renderCustomerPickerList("");
+                inputCustSearch.focus();
+            };
+
+            btnCustModalClose.onclick = closeCustomerPickerModal;
+            btnCustModalCancel.onclick = closeCustomerPickerModal;
+
+            customerModal.onclick = (e) => {
+                if (e.target === customerModal) {
+                    closeCustomerPickerModal();
                 }
             };
 
