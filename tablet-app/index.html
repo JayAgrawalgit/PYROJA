@@ -90,8 +90,8 @@
                 </div>
 
                 <!-- Right Controls -->
-                <div class="flex items-center gap-3">
-                    <button id="btn-sync-masters" class="flex items-center gap-1 px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-tertiary font-label-caps text-[11px] transition-colors" title="Sync products & customers from FoxPro">
+                <div class="flex items-center gap-2.5">
+                    <button id="btn-sync-masters" class="flex items-center gap-1 px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-tertiary font-label-caps text-[11px] transition-colors cursor-pointer" title="Sync products & customers from FoxPro">
                         <span class="material-symbols-outlined text-[15px]">cloud_download</span>
                         <span>PULL DBF MASTERS</span>
                     </button>
@@ -99,6 +99,9 @@
                         <span class="material-symbols-outlined text-tertiary text-[15px]">print</span>
                         <span>BT-80P READY</span>
                     </div>
+                    <button id="btn-open-settings" class="w-8 h-8 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface hover:text-primary flex items-center justify-center transition-colors cursor-pointer border border-surface-container-highest shadow-sm active:scale-95" title="Server Configuration">
+                        <span class="material-symbols-outlined text-[19px]">settings</span>
+                    </button>
                     <div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-on-primary">
                         <span class="material-symbols-outlined text-[16px]">person</span>
                     </div>
@@ -445,6 +448,95 @@
                 <span id="cust-modal-count">Showing accounts...</span>
                 <button id="btn-cust-modal-cancel" class="px-4 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-semibold text-xs transition-colors">
                     Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SERVER CONFIGURATION MODAL (Android Tablet) -->
+    <div id="server-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 select-none">
+        <div class="bg-surface-container-low border border-surface-container-high rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden flex flex-col">
+            <!-- Header -->
+            <div class="p-4 bg-surface-container-lowest border-b border-surface-container-high flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary text-[24px]">dns</span>
+                    <h3 class="font-headline-sm text-base text-on-surface font-bold">Server Configuration</h3>
+                </div>
+                <button id="btn-server-modal-close" class="text-outline hover:text-on-surface p-1.5 rounded-full hover:bg-surface-container transition-colors cursor-pointer" title="Close">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="p-5 flex flex-col gap-4">
+                <!-- Server URL Input -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="input-server-url" class="font-label-caps text-xs text-outline uppercase tracking-wider flex justify-between items-center">
+                        <span>Sync Service Base URL</span>
+                        <span class="text-primary text-[10px] lowercase">e.g. http://10.97.175.219:8080</span>
+                    </label>
+                    <div class="flex items-center bg-surface-container-lowest rounded-xl border-2 border-surface-container-highest focus-within:border-primary transition-colors px-3 py-2.5 shadow-inner">
+                        <span class="material-symbols-outlined text-primary text-[22px] mr-2">wifi_tethering</span>
+                        <input id="input-server-url"
+                               type="url"
+                               autocomplete="off"
+                               spellcheck="false"
+                               class="w-full bg-transparent text-on-surface font-mono text-sm focus:outline-none placeholder:text-outline"
+                               placeholder="http://192.168.1.100:8080" />
+                        <button id="btn-server-url-clear" class="text-outline hover:text-error p-1 rounded transition-colors cursor-pointer" title="Clear input">
+                            <span class="material-symbols-outlined text-[18px]">backspace</span>
+                        </button>
+                    </div>
+                    <div id="server-url-error" class="hidden text-error text-xs font-medium flex items-center gap-1 mt-0.5">
+                        <span class="material-symbols-outlined text-[14px]">error</span>
+                        <span id="server-url-error-text">Malformed URL</span>
+                    </div>
+                </div>
+
+                <!-- Test Connection Section -->
+                <div class="flex items-center justify-between gap-3 bg-surface-container rounded-xl p-3 border border-surface-container-high">
+                    <div class="flex flex-col min-w-0">
+                        <span class="text-xs font-bold text-on-surface">Health Probe</span>
+                        <div id="test-connection-result" class="text-xs font-mono text-outline flex items-center gap-1.5 mt-0.5">
+                            <span class="w-2 h-2 rounded-full bg-outline"></span>
+                            <span>Not tested yet</span>
+                        </div>
+                    </div>
+                    <button id="btn-test-connection" class="h-10 px-4 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-headline-sm text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer whitespace-nowrap shadow-sm">
+                        <span class="material-symbols-outlined text-[16px]">network_check</span>
+                        <span>Test Connection</span>
+                    </button>
+                </div>
+
+                <!-- Diagnostics Panel -->
+                <div class="bg-surface-container-lowest rounded-xl p-3 border border-surface-container-high flex flex-col gap-2 font-mono text-xs">
+                    <div class="flex justify-between items-center text-outline font-label-caps text-[10px] pb-1 border-b border-surface-container-high">
+                        <span>RUNTIME DIAGNOSTICS</span>
+                        <span class="text-tertiary">SYNC ENGINE</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-outline">Active Server:</span>
+                        <span id="diag-active-url" class="text-primary font-bold truncate max-w-[280px]">http://...</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-outline">Connection State:</span>
+                        <span id="diag-online-status" class="px-2 py-0.5 rounded text-[10px] font-bold bg-surface-container text-tertiary">ONLINE</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-outline">Last Successful Sync:</span>
+                        <span id="diag-last-sync" class="text-on-surface">Never</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="p-4 bg-surface-container-lowest border-t border-surface-container-high flex items-center justify-between">
+                <button id="btn-server-modal-cancel" class="h-11 px-5 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-headline-sm text-xs font-bold transition-colors cursor-pointer">
+                    Cancel
+                </button>
+                <button id="btn-server-modal-save" class="h-11 px-6 rounded-lg bg-primary-container text-on-primary-container hover:bg-primary font-headline-sm text-sm font-bold shadow-md flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer">
+                    <span class="material-symbols-outlined text-[18px]">save</span>
+                    <span>Save & Sync</span>
                 </button>
             </div>
         </div>
@@ -1185,6 +1277,215 @@
             customerModal.onclick = (e) => {
                 if (e.target === customerModal) {
                     closeCustomerPickerModal();
+                }
+            };
+
+            // ==========================================
+            // SERVER CONFIGURATION MODAL CONTROLLER
+            // ==========================================
+            const btnOpenSettings = document.getElementById("btn-open-settings");
+            const serverModal = document.getElementById("server-modal");
+            const btnServerModalClose = document.getElementById("btn-server-modal-close");
+            const btnServerModalCancel = document.getElementById("btn-server-modal-cancel");
+            const btnServerModalSave = document.getElementById("btn-server-modal-save");
+            const inputServerUrl = document.getElementById("input-server-url");
+            const btnServerUrlClear = document.getElementById("btn-server-url-clear");
+            const serverUrlError = document.getElementById("server-url-error");
+            const serverUrlErrorText = document.getElementById("server-url-error-text");
+            const btnTestConnection = document.getElementById("btn-test-connection");
+            const testConnectionResult = document.getElementById("test-connection-result");
+            const diagActiveUrl = document.getElementById("diag-active-url");
+            const diagOnlineStatus = document.getElementById("diag-online-status");
+            const diagLastSync = document.getElementById("diag-last-sync");
+
+            function showServerUrlError(msg) {
+                serverUrlError.classList.remove("hidden");
+                serverUrlErrorText.innerText = msg;
+            }
+
+            function hideServerUrlError() {
+                serverUrlError.classList.add("hidden");
+                serverUrlErrorText.innerText = "";
+            }
+
+            function validateServerUrl(rawUrl) {
+                if (!rawUrl || !rawUrl.trim()) {
+                    return { valid: false, error: "Server URL cannot be empty." };
+                }
+                let trimmed = rawUrl.trim();
+                // Prepend http:// if user entered IP/domain without protocol
+                if (!trimmed.startsWith("http://") && !trimmed.startsWith("https://")) {
+                    trimmed = "http://" + trimmed;
+                }
+                // Remove trailing slash
+                trimmed = trimmed.replace(/\/+$/, "");
+
+                try {
+                    const parsed = new URL(trimmed);
+                    if (!parsed.protocol.startsWith("http")) {
+                        return { valid: false, error: "URL protocol must be http:// or https://" };
+                    }
+                    if (!parsed.hostname) {
+                        return { valid: false, error: "URL is missing a valid host." };
+                    }
+                    return { valid: true, url: trimmed };
+                } catch (e) {
+                    return { valid: false, error: "Malformed URL. Example: http://192.168.1.100:8080" };
+                }
+            }
+
+            async function openServerModal() {
+                // Load current value from pos.client.serverUrl
+                inputServerUrl.value = pos.client.serverUrl || "";
+                hideServerUrlError();
+
+                testConnectionResult.innerHTML = `
+                    <span class="w-2 h-2 rounded-full bg-outline"></span>
+                    <span>Ready to probe</span>
+                `;
+
+                // Update runtime diagnostics
+                diagActiveUrl.innerText = pos.client.serverUrl || "Not Configured";
+                
+                const isOnline = pos.queue ? pos.queue.isOnline : navigator.onLine;
+                if (isOnline) {
+                    diagOnlineStatus.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-surface-container text-tertiary";
+                    diagOnlineStatus.innerText = "ONLINE (LAN 8080)";
+                } else {
+                    diagOnlineStatus.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-error-container text-on-error";
+                    diagOnlineStatus.innerText = "OFFLINE (SQLite Cache)";
+                }
+
+                try {
+                    const metaSync = await pos.db.get("meta", "last_sync");
+                    if (metaSync && metaSync.value) {
+                        diagLastSync.innerText = new Date(metaSync.value).toLocaleString("en-IN");
+                    } else {
+                        diagLastSync.innerText = "Never synced";
+                    }
+                } catch (e) {
+                    diagLastSync.innerText = "Unknown";
+                }
+
+                serverModal.classList.remove("hidden");
+                setTimeout(() => {
+                    inputServerUrl.focus();
+                    inputServerUrl.select();
+                }, 50);
+            }
+
+            function closeServerModal() {
+                serverModal.classList.add("hidden");
+            }
+
+            btnOpenSettings.onclick = openServerModal;
+            btnServerModalClose.onclick = closeServerModal;
+            btnServerModalCancel.onclick = closeServerModal;
+            serverModal.onclick = (e) => {
+                if (e.target === serverModal) closeServerModal();
+            };
+
+            btnServerUrlClear.onclick = () => {
+                inputServerUrl.value = "";
+                hideServerUrlError();
+                inputServerUrl.focus();
+            };
+
+            inputServerUrl.addEventListener("input", () => {
+                hideServerUrlError();
+            });
+
+            inputServerUrl.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    btnServerModalSave.click();
+                } else if (e.key === "Escape") {
+                    e.preventDefault();
+                    closeServerModal();
+                }
+            });
+
+            btnTestConnection.onclick = async () => {
+                const check = validateServerUrl(inputServerUrl.value);
+                if (!check.valid) {
+                    showServerUrlError(check.error);
+                    return;
+                }
+                hideServerUrlError();
+
+                btnTestConnection.disabled = true;
+                btnTestConnection.innerHTML = `<span class="material-symbols-outlined text-[16px] animate-spin">refresh</span><span>Testing...</span>`;
+                testConnectionResult.innerHTML = `<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span><span>GET ${check.url}/api/health...</span>`;
+
+                const startTime = performance.now();
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 6000);
+                    const res = await fetch(`${check.url}/api/health`, {
+                        method: "GET",
+                        cache: "no-store",
+                        signal: controller.signal
+                    });
+                    clearTimeout(timeoutId);
+                    const latency = Math.round(performance.now() - startTime);
+
+                    if (res.ok) {
+                        testConnectionResult.innerHTML = `
+                            <span class="text-tertiary font-bold flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[16px]">check_circle</span>
+                                <span>✓ Connected (${latency}ms)</span>
+                            </span>
+                        `;
+                    } else {
+                        testConnectionResult.innerHTML = `
+                            <span class="text-error font-bold flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[16px]">cancel</span>
+                                <span>✗ Connection Failed (HTTP ${res.status}) (${latency}ms)</span>
+                            </span>
+                        `;
+                    }
+                } catch (err) {
+                    const latency = Math.round(performance.now() - startTime);
+                    const isTimeout = err.name === "AbortError";
+                    testConnectionResult.innerHTML = `
+                        <span class="text-error font-bold flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[16px]">cancel</span>
+                            <span>✗ Connection Failed (${isTimeout ? 'Timeout 6s' : (err.message || 'Network Error')}) (${latency}ms)</span>
+                        </span>
+                    `;
+                } finally {
+                    btnTestConnection.disabled = false;
+                    btnTestConnection.innerHTML = `<span class="material-symbols-outlined text-[16px]">network_check</span><span>Test Connection</span>`;
+                }
+            };
+
+            btnServerModalSave.onclick = async () => {
+                const check = validateServerUrl(inputServerUrl.value);
+                if (!check.valid) {
+                    showServerUrlError(check.error);
+                    return;
+                }
+                hideServerUrlError();
+
+                btnServerModalSave.disabled = true;
+                btnServerModalSave.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span><span>Saving & Syncing...</span>`;
+
+                try {
+                    const ok = await pos.updateServerUrl(check.url);
+                    updateDiagnosticBanner();
+                    updateUI();
+                    closeServerModal();
+
+                    if (ok) {
+                        showNotification(`Server URL set to ${check.url}. Master catalog refreshed.`);
+                    } else {
+                        showNotification(`Server URL saved to ${check.url}, but server is unreachable. Using offline cache.`, true);
+                    }
+                } catch (err) {
+                    showServerUrlError(err.message || "Failed to update server URL");
+                } finally {
+                    btnServerModalSave.disabled = false;
+                    btnServerModalSave.innerHTML = `<span class="material-symbols-outlined text-[18px]">save</span><span>Save & Sync</span>`;
                 }
             };
 
