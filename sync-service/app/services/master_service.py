@@ -11,6 +11,8 @@ from app.db.database import Database
 from app.dbf.reader import DBFReader
 from app.schemas.health import DatabaseHealth, HealthResponse, TableHealth
 from app.schemas.sync import (
+    CategoryItem,
+    CategorySyncResponse,
     CustomerItem,
     CustomerSyncResponse,
     ProductItem,
@@ -39,6 +41,7 @@ class MasterDataService:
         # In-memory caches: (timestamp, checksum, data)
         self._cached_products: Optional[Tuple[float, str, List[ProductItem]]] = None
         self._cached_customers: Optional[Tuple[float, str, List[CustomerItem]]] = None
+        self._cached_categories: Optional[Tuple[float, str, List[CategoryItem]]] = None
 
     def get_table_path(self, filename: str) -> Path:
         """Resolve path to a DBF table in the active data directory."""
@@ -291,6 +294,77 @@ class MasterDataService:
             total_records=len(customers),
             is_delta=False,
             customers=customers,
+        )
+
+    def get_categories_sync(self, force_refresh: bool = False) -> CategorySyncResponse:
+        """Fetch showroom categories/sections from COMPMST.DBF sorted by sequence number SR."""
+        comp_path = self.get_table_path("COMPMST.DBF")
+        if not comp_path.is_file():
+            raise FileNotFoundError(f"Category master table not found: {comp_path}")
+
+        now = time.time()
+        current_mtime = comp_path.stat().st_mtime
+
+        # Check cache
+        if not force_refresh and self._cached_categories is not None:
+            cached_time, cached_checksum, cached_items = self._cached_categories
+            if now - cached_time < self.config.cache.ttl_seconds:
+                if not self.config.cache.validate_mtime or current_mtime <= cached_time:
+                    return CategorySyncResponse(
+                        sync_timestamp=datetime.now(timezone.utc).isoformat(),
+                        active_fiscal_year=self.config.foxpro.active_fiscal_year,
+                        dbf_checksum=cached_checksum,
+                        total_records=len(cached_items),
+                        categories=cached_items,
+                    )
+
+        t0 = time.time()
+        comp_records, checksum, _ = self._read_table_records("COMPMST.DBF")
+
+        # Compute active item counts per CCODE from ITEMMST
+        item_counts = {}
+        try:
+            item_records, _, _ = self._read_table_records("ITEMMST.DBF")
+            for r in item_records:
+                if r.get("CODE"):
+                    cc = str(r.get("CCODE", "")).strip()
+                    item_counts[cc] = item_counts.get(cc, 0) + 1
+        except Exception as e:
+            logger.warning(f"Could not compute item counts for categories: {e}")
+
+        categories: List[CategoryItem] = []
+        for r in comp_records:
+            code = str(r.get("CODE", "")).strip()
+            if not code:
+                continue
+            name = str(r.get("NAME", "")).strip()
+            sr = int(r.get("SR", 0) or 0)
+            categories.append(
+                CategoryItem(
+                    code=code,
+                    name=name,
+                    sr=sr,
+                    item_count=item_counts.get(code, 0),
+                )
+            )
+
+        # Sort primarily by SR sequence (1..43..), secondarily by code
+        categories.sort(key=lambda c: (c.sr if c.sr > 0 else 9999, c.code))
+
+        duration_ms = (time.time() - t0) * 1000
+        logger.info(f"Loaded {len(categories)} categories from COMPMST.DBF in {duration_ms:.1f}ms")
+
+        self._cached_categories = (now, checksum, categories)
+        if self.db:
+            self.db.set_sync_state("COMPMST_CHECKSUM", checksum)
+            self.db.set_sync_state("COMPMST_COUNT", str(len(categories)))
+
+        return CategorySyncResponse(
+            sync_timestamp=datetime.now(timezone.utc).isoformat(),
+            active_fiscal_year=self.config.foxpro.active_fiscal_year,
+            dbf_checksum=checksum,
+            total_records=len(categories),
+            categories=categories,
         )
 
     def check_health(self) -> HealthResponse:

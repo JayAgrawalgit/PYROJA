@@ -63,3 +63,19 @@ class CustomerSyncResponse(BaseModel):
     total_records: int = Field(..., description="Count of returned customers")
     is_delta: bool = Field(False, description="Whether payload represents delta changes")
     customers: List[CustomerItem] = Field(default_factory=list, description="List of customer records")
+
+
+class CategoryItem(BaseModel):
+    code: str = Field(..., description="Showroom section code from COMPMST.CODE")
+    name: str = Field(..., description="Showroom section title from COMPMST.NAME")
+    sr: int = Field(0, description="Showroom section sequence number from COMPMST.SR")
+    item_count: int = Field(0, description="Active items count in this section")
+
+
+class CategorySyncResponse(BaseModel):
+    sync_timestamp: str = Field(..., description="ISO 8601 server timestamp")
+    active_fiscal_year: str = Field(..., description="Active fiscal year folder, e.g. 'D2627'")
+    dbf_checksum: str = Field(..., description="SHA-256 hash of COMPMST.DBF")
+    total_records: int = Field(..., description="Count of returned categories")
+    categories: List[CategoryItem] = Field(default_factory=list, description="List of category records")
+

@@ -1,9 +1,28 @@
 """Master data synchronization endpoints for Android tablets."""
 
 from fastapi import APIRouter, Query, Request
-from app.schemas.sync import CustomerSyncResponse, ProductSyncResponse
+from app.schemas.sync import (
+    CategorySyncResponse,
+    CustomerSyncResponse,
+    ProductSyncResponse,
+)
 
 router = APIRouter(prefix="/api/sync", tags=["Master Data Synchronization"])
+
+
+@router.get(
+    "/categories",
+    response_model=CategorySyncResponse,
+    summary="Synchronize showroom categories / sections",
+    description="Returns showroom sections from COMPMST.DBF sorted by sequence number SR.",
+)
+async def sync_categories(
+    request: Request,
+    force_refresh: bool = Query(False, description="Bypass cache and re-read from disk"),
+) -> CategorySyncResponse:
+    """Stream showroom categories for tablet left-sidebar navigation."""
+    master_service = request.app.state.master_service
+    return master_service.get_categories_sync(force_refresh=force_refresh)
 
 
 @router.get(
@@ -34,3 +53,4 @@ async def sync_customers(
     """Stream active customers for tablet checkout & search."""
     master_service = request.app.state.master_service
     return master_service.get_customers_sync(force_refresh=force_refresh)
+
