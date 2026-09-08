@@ -43,7 +43,7 @@ console.log("[DIAGNOSTIC] Initial selected DEFAULT_SERVER_URL:", DEFAULT_SERVER_
 class TabletDB {
     constructor() {
         this.dbName = "PyroWholesalePOS";
-        this.version = 1;
+        this.version = 2;
         this.db = null;
     }
 
@@ -68,6 +68,11 @@ class TabletDB {
                     const custStore = db.createObjectStore("customers", { keyPath: "code" });
                     custStore.createIndex("by_name", "name", { unique: false });
                     custStore.createIndex("by_area", "area_name", { unique: false });
+                }
+                // Showroom Categories Store (SR 1 to 53 from COMPMST.DBF)
+                if (!db.objectStoreNames.contains("categories")) {
+                    const catStore = db.createObjectStore("categories", { keyPath: "code" });
+                    catStore.createIndex("by_sr", "sr", { unique: false });
                 }
                 // Local Draft Orders Store
                 if (!db.objectStoreNames.contains("drafts")) {
@@ -199,6 +204,19 @@ class SyncClient {
         }
         const data = await res.json();
         console.log(`[DIAGNOSTIC CUSTOMER SYNC SUCCESS] Received ${data.customers ? data.customers.length : 0} customers`);
+        return data;
+    }
+
+    async fetchCategories(forceRefresh = false) {
+        const url = `${this.serverUrl}/api/sync/categories${forceRefresh ? "?force_refresh=true" : ""}`;
+        console.log(`[DIAGNOSTIC CATEGORY SYNC] Fetching categories from: ${url}`);
+        const res = await diagnosticFetch(url, { method: "GET" });
+        if (!res.ok) {
+            console.error(`[DIAGNOSTIC CATEGORY SYNC FAILED] Status: ${res.status}`);
+            throw new Error(`Failed to fetch categories: ${res.status}`);
+        }
+        const data = await res.json();
+        console.log(`[DIAGNOSTIC CATEGORY SYNC SUCCESS] Received ${data.categories ? data.categories.length : 0} categories`);
         return data;
     }
 
@@ -376,13 +394,16 @@ class POSController {
 
         this.products = [];
         this.customers = [];
+        this.categories = [];
         this.activeCustomer = null;
+        this.openCustomerTabs = ["99999"];
         
         // Multi-customer scoped draft billing store:
         // customer_code -> { draftId, customerCode, cart: Map(itemCode -> {product, qty, rate}), createdAt, updatedAt }
         this.customerDrafts = new Map();
 
         this.selectedCategory = "ALL";
+        this.selectedSubCategory = "ALL";
         this.selectedBrand = "ALL";
         this.searchQuery = "";
 
@@ -391,6 +412,88 @@ class POSController {
 
     generateDraftId() {
         return `TAB01-${Math.floor(1000 + Math.random() * 9000)}`;
+    }
+
+    openCustomerTab(customerCode) {
+        if (!customerCode) return;
+        if (!this.openCustomerTabs.includes(customerCode)) {
+            this.openCustomerTabs.push(customerCode);
+            this.persistOpenCustomerTabs();
+        }
+        this.setCustomer(customerCode);
+    }
+
+    closeCustomerTab(customerCode) {
+        if (this.openCustomerTabs.length <= 1) {
+            return;
+        }
+        const idx = this.openCustomerTabs.indexOf(customerCode);
+        if (idx !== -1) {
+            this.openCustomerTabs.splice(idx, 1);
+            this.persistOpenCustomerTabs();
+        }
+        if (this.activeCustomer && this.activeCustomer.code === customerCode) {
+            const nextCode = this.openCustomerTabs[0];
+            this.setCustomer(nextCode);
+        } else {
+            this.onStateUpdated({ type: "CUSTOMER_TAB_CLOSED" });
+        }
+    }
+
+    async persistOpenCustomerTabs() {
+        try {
+            if (typeof localStorage !== "undefined") {
+                localStorage.setItem("pyro_open_customer_tabs", JSON.stringify(this.openCustomerTabs));
+            }
+            if (this.db && this.db.db) {
+                await this.db.put("meta", { key: "open_customer_tabs", value: this.openCustomerTabs });
+            }
+        } catch (e) {
+            console.warn("[DIAGNOSTIC TABS] Failed to persist open customer tabs:", e);
+        }
+    }
+
+    async loadOpenCustomerTabs() {
+        try {
+            let tabs = null;
+            const metaRec = await this.db.get("meta", "open_customer_tabs").catch(() => null);
+            if (metaRec && Array.isArray(metaRec.value) && metaRec.value.length > 0) {
+                tabs = metaRec.value;
+            } else if (typeof localStorage !== "undefined") {
+                const local = localStorage.getItem("pyro_open_customer_tabs");
+                if (local) {
+                    const parsed = JSON.parse(local);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        tabs = parsed;
+                    }
+                }
+            }
+
+            const tabsSet = new Set(tabs || ["99999"]);
+            // Include any customer who has active draft items
+            for (const [code, draft] of this.customerDrafts.entries()) {
+                if (draft.cart && draft.cart.size > 0) {
+                    tabsSet.add(code);
+                }
+            }
+            this.openCustomerTabs = Array.from(tabsSet);
+        } catch (e) {
+            console.warn("[DIAGNOSTIC TABS] Failed to load open customer tabs:", e);
+            this.openCustomerTabs = ["99999"];
+        }
+    }
+
+    extractCategoriesFromProducts() {
+        const map = new Map();
+        for (const p of this.products) {
+            const code = p.company_code || "000";
+            const name = p.company_name || "General";
+            if (!map.has(code)) {
+                map.set(code, { code, sr: 999, name, item_count: 0 });
+            }
+            map.get(code).item_count += 1;
+        }
+        return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
     }
 
     ensureCustomerDraft(customerCode) {
@@ -549,19 +652,30 @@ class POSController {
         }
         console.log("[DIAGNOSTIC INIT] Final selected URL for SyncClient:", this.client.serverUrl);
 
-        // Restore persisted active customer drafts
+        // Restore persisted active customer drafts and open customer tabs
         await this.loadPersistedDrafts();
+        await this.loadOpenCustomerTabs();
 
         // Initialize background queue
         console.log("[DIAGNOSTIC INIT] Starting BackgroundSyncQueue...");
         this.queue = new BackgroundSyncQueue(this.db, this.client, (evt) => this.handleSyncEvent(evt));
         this.queue.start();
 
-        // Load local catalog and customers
-        console.log("[DIAGNOSTIC INIT] Querying local IndexedDB for cached products and customers...");
+        // Load local catalog, customers, and categories
+        console.log("[DIAGNOSTIC INIT] Querying local IndexedDB for cached products, customers, and categories...");
         this.products = await this.db.getAll("products");
         this.customers = await this.db.getAll("customers");
-        console.log(`[DIAGNOSTIC INIT] Local cache results: ${this.products.length} products, ${this.customers.length} customers.`);
+        try {
+            this.categories = await this.db.getAll("categories");
+        } catch (catErr) {
+            this.categories = [];
+        }
+
+        if ((!this.categories || this.categories.length === 0) && this.products.length > 0) {
+            this.categories = this.extractCategoriesFromProducts();
+        }
+
+        console.log(`[DIAGNOSTIC INIT] Local cache results: ${this.products.length} products, ${this.customers.length} customers, ${this.categories.length} categories.`);
 
         // If local cache is empty, trigger initial sync
         if (this.products.length === 0 || this.customers.length === 0) {
@@ -571,15 +685,20 @@ class POSController {
             console.log("[DIAGNOSTIC INIT] Local cache has existing records. Skipping initial fetch.");
         }
 
-        // Set default customer (CASH A/C or first customer)
+        // Set default active customer from openCustomerTabs or fallback
+        const primaryCode = this.openCustomerTabs[0] || "99999";
+        const matchedCust = this.customers.find(c => c.code === primaryCode);
         const cashCust = this.customers.find(c => c.code === "99999");
-        this.activeCustomer = cashCust || this.customers[0] || {
+        this.activeCustomer = matchedCust || cashCust || this.customers[0] || {
             code: "99999",
             name: "CASH A/C",
             price_tier: "RETAIL"
         };
         // Ensure active customer draft exists
         this.ensureCustomerDraft(this.activeCustomer.code);
+        if (!this.openCustomerTabs.includes(this.activeCustomer.code)) {
+            this.openCustomerTabs.unshift(this.activeCustomer.code);
+        }
         console.log(`[DIAGNOSTIC INIT] Default active customer: ${this.activeCustomer.name} (#${this.activeCustomer.code})`);
         console.log("[DIAGNOSTIC INIT] === POSController.init() COMPLETE ===");
     }
@@ -602,10 +721,14 @@ class POSController {
     async refreshMastersFromServer() {
         console.log(`[DIAGNOSTIC SYNC] refreshMastersFromServer() started. Target server URL: ${this.client.serverUrl}`);
         try {
-            console.log("[DIAGNOSTIC SYNC] Calling fetchProducts() and fetchCustomers() concurrently via Promise.all...");
-            const [prodData, custData] = await Promise.all([
+            console.log("[DIAGNOSTIC SYNC] Calling fetchProducts(), fetchCustomers(), and fetchCategories() concurrently via Promise.all...");
+            const [prodData, custData, catData] = await Promise.all([
                 this.client.fetchProducts(),
-                this.client.fetchCustomers()
+                this.client.fetchCustomers(),
+                this.client.fetchCategories().catch(err => {
+                    console.warn("[DIAGNOSTIC SYNC] Category fetch from server failed or unsupported, will extract from products:", err);
+                    return null;
+                })
             ]);
 
             console.log(`[DIAGNOSTIC SYNC] Master data received! Products: ${prodData.products ? prodData.products.length : 0}, Customers: ${custData.customers ? custData.customers.length : 0}`);
@@ -613,10 +736,21 @@ class POSController {
             this.products = prodData.products || [];
             this.customers = custData.customers || [];
 
-            console.log(`[DIAGNOSTIC SYNC] Saving ${this.products.length} products and ${this.customers.length} customers to IndexedDB...`);
+            if (catData && Array.isArray(catData.categories) && catData.categories.length > 0) {
+                this.categories = catData.categories;
+            } else {
+                this.categories = this.extractCategoriesFromProducts();
+            }
+
+            console.log(`[DIAGNOSTIC SYNC] Saving ${this.products.length} products, ${this.customers.length} customers, and ${this.categories.length} categories to IndexedDB...`);
             // Batch save to local SQLite / IndexedDB
             await this.db.putBatch("products", this.products);
             await this.db.putBatch("customers", this.customers);
+            try {
+                await this.db.putBatch("categories", this.categories);
+            } catch (errCat) {
+                console.warn("[DIAGNOSTIC SYNC] Could not write to categories store:", errCat);
+            }
             await this.db.put("meta", { key: "last_sync", value: new Date().toISOString() });
             console.log("[DIAGNOSTIC SYNC] IndexedDB write complete. Last sync timestamp updated.");
 
@@ -633,6 +767,10 @@ class POSController {
         const found = this.customers.find(c => c.code === code);
         if (found) {
             this.activeCustomer = found;
+            if (!this.openCustomerTabs.includes(found.code)) {
+                this.openCustomerTabs.push(found.code);
+                this.persistOpenCustomerTabs();
+            }
             this.ensureCustomerDraft(found.code);
             this.persistCustomerDrafts();
             this.onStateUpdated({ type: "CUSTOMER_CHANGED", customer: found });
@@ -643,11 +781,24 @@ class POSController {
         let items = this.products;
 
         if (this.selectedBrand !== "ALL") {
-            items = items.filter(p => p.company_name.toUpperCase().includes(this.selectedBrand.toUpperCase()));
+            items = items.filter(p => p.company_name && p.company_name.toUpperCase().includes(this.selectedBrand.toUpperCase()));
         }
 
         if (this.selectedCategory !== "ALL") {
-            items = items.filter(p => p.group_code.toUpperCase() === this.selectedCategory.toUpperCase());
+            items = items.filter(p => (p.company_code === this.selectedCategory) || (p.company_name === this.selectedCategory));
+        }
+
+        if (this.selectedSubCategory !== "ALL") {
+            const sub = this.selectedSubCategory.toUpperCase();
+            if (sub === "OTHERS") {
+                const commonPacks = ["PKT", "BOX", "PCS", "BAG", "ROLL", "CASE", "TIN"];
+                items = items.filter(p => {
+                    const pPack = (p.pack || "").toUpperCase();
+                    return !commonPacks.some(c => pPack.includes(c));
+                });
+            } else {
+                items = items.filter(p => (p.pack || "").toUpperCase().includes(sub));
+            }
         }
 
         if (this.searchQuery) {
