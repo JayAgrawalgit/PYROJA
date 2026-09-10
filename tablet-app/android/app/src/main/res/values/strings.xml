@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">PYROWHOLESALE POS</string>
-    <string name="title_activity_main">PYROWHOLESALE POS</string>
+    <string name="app_name">PYROJA</string>
+    <string name="title_activity_main">PYROJA</string>
     <string name="package_name">com.pyrowholesale.pos</string>
     <string name="custom_url_scheme">com.pyrowholesale.pos</string>
 </resources>
