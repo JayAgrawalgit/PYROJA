@@ -1,5 +1,5 @@
 /**
- * PYROWHOLESALE - Tablet POS Client Engine
+ * PYROJA - Tablet POS Client Engine
  * 
  * Features:
  * - Direct consumption of Windows Sync Service REST APIs:
