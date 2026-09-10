@@ -1,6 +1,6 @@
 {
   "appId": "com.pyrowholesale.pos",
-  "appName": "PYROWHOLESALE POS",
+  "appName": "PYROJA",
   "webDir": "www",
   "server": {
     "cleartext": true,
