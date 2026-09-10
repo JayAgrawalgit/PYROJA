@@ -1,7 +1,7 @@
 {
-  "name": "pyrowholesale-tablet-pos",
+  "name": "pyroja-tablet-pos",
   "version": "1.0.0",
-  "description": "PYROWHOLESALE Android Tablet POS for RAM FATAKA CENTER",
+  "description": "PYROJA Android Tablet POS for RAM FATAKA CENTER",
   "main": "app.js",
   "scripts": {
     "build": "mkdir -p www && cp index.html app.js tailwind.cdn.js material-symbols.css fonts.css www/ && cp -r fonts www/",
