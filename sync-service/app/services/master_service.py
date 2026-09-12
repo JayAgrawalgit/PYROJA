@@ -18,6 +18,8 @@ from app.schemas.sync import (
     CustomerSyncResponse,
     ProductItem,
     ProductSyncResponse,
+    SubCategoryItem,
+    SubcategorySyncResponse,
 )
 
 logger = logging.getLogger(__name__)
@@ -43,6 +45,7 @@ class MasterDataService:
         self._cached_products: Optional[Tuple[float, str, List[ProductItem]]] = None
         self._cached_customers: Optional[Tuple[float, str, List[CustomerItem]]] = None
         self._cached_categories: Optional[Tuple[float, str, List[CategoryItem]]] = None
+        self._cached_subcategories: Optional[Tuple[float, str, List[SubCategoryItem]]] = None
 
     def get_table_path(self, filename: str) -> Path:
         """Resolve path to a DBF table in the active data directory."""
@@ -366,6 +369,71 @@ class MasterDataService:
             dbf_checksum=checksum,
             total_records=len(categories),
             categories=categories,
+        )
+
+    def get_subcategories_sync(self, force_refresh: bool = False) -> SubcategorySyncResponse:
+        """Fetch showroom subcategories/pack classifications derived from ITEMMST.PACK and GROUPSUB.DBF."""
+        item_path = self.get_table_path("ITEMMST.DBF")
+        if not item_path.is_file():
+            raise FileNotFoundError(f"Item master table not found: {item_path}")
+
+        now = time.time()
+        current_mtime = item_path.stat().st_mtime
+
+        if not force_refresh and self._cached_subcategories is not None:
+            cached_time, cached_checksum, cached_items = self._cached_subcategories
+            if now - cached_time < self.config.cache.ttl_seconds:
+                if not self.config.cache.validate_mtime or current_mtime <= cached_time:
+                    return SubcategorySyncResponse(
+                        sync_timestamp=datetime.now(timezone.utc).isoformat(),
+                        active_fiscal_year=self.config.foxpro.active_fiscal_year,
+                        dbf_checksum=cached_checksum,
+                        total_records=len(cached_items),
+                        subcategories=cached_items,
+                    )
+
+        t0 = time.time()
+        item_records, checksum, _ = self._read_table_records("ITEMMST.DBF")
+
+        # Standard pack list order required by Beta specification
+        standard_order = ["PKT", "BOX", "PCS", "BAG", "ROLL", "TIN", "BUNDLE", "OTHERS"]
+        pack_counts: Dict[str, int] = {k: 0 for k in standard_order}
+
+        for r in item_records:
+            if not r.get("CODE"):
+                continue
+            p = str(r.get("PACK", "")).strip().upper()
+            if not p:
+                continue
+            matched = False
+            for std in standard_order[:-1]:
+                if std in p:
+                    pack_counts[std] += 1
+                    matched = True
+                    break
+            if not matched:
+                pack_counts["OTHERS"] += 1
+
+        subcategories: List[SubCategoryItem] = []
+        for std in standard_order:
+            subcategories.append(
+                SubCategoryItem(
+                    code=std,
+                    name=std if std != "OTHERS" else "Others / Unclassified",
+                    item_count=pack_counts[std],
+                )
+            )
+
+        duration_ms = (time.time() - t0) * 1000
+        logger.info(f"Generated {len(subcategories)} subcategories from ITEMMST.PACK in {duration_ms:.1f}ms")
+
+        self._cached_subcategories = (now, checksum, subcategories)
+        return SubcategorySyncResponse(
+            sync_timestamp=datetime.now(timezone.utc).isoformat(),
+            active_fiscal_year=self.config.foxpro.active_fiscal_year,
+            dbf_checksum=checksum,
+            total_records=len(subcategories),
+            subcategories=subcategories,
         )
 
     def check_health(self) -> HealthResponse:

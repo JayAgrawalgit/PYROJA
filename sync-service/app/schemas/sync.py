@@ -79,3 +79,18 @@ class CategorySyncResponse(BaseModel):
     total_records: int = Field(..., description="Count of returned categories")
     categories: List[CategoryItem] = Field(default_factory=list, description="List of category records")
 
+
+class SubCategoryItem(BaseModel):
+    code: str = Field(..., description="Subcategory pack code from ITEMMST.PACK, e.g. 'PKT', 'BOX'")
+    name: str = Field(..., description="Subcategory display name")
+    item_count: int = Field(0, description="Count of active products in this subcategory")
+
+
+class SubcategorySyncResponse(BaseModel):
+    sync_timestamp: str = Field(..., description="ISO 8601 server timestamp")
+    active_fiscal_year: str = Field(..., description="Active fiscal year folder, e.g. 'D2627'")
+    dbf_checksum: str = Field(..., description="SHA-256 hash of ITEMMST.DBF")
+    total_records: int = Field(..., description="Count of returned subcategories")
+    subcategories: List[SubCategoryItem] = Field(default_factory=list, description="List of subcategory records")
+
+

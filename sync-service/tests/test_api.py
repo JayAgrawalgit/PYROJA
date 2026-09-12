@@ -101,6 +101,28 @@ def test_sync_customers_endpoint(test_client):
     assert cash_customer["price_tier"] == "RETAIL"
 
 
+def test_sync_categories_endpoint(test_client):
+    response = test_client.get("/api/sync/categories")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["total_records"] == 53
+    assert len(data["categories"]) == 53
+    first = data["categories"][0]
+    assert first["sr"] == 1
+    assert first["name"] == "ROLL AND DOT CAPS"
+
+
+def test_sync_subcategories_endpoint(test_client):
+    response = test_client.get("/api/sync/subcategories")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["total_records"] >= 8
+    subcat_codes = [s["code"] for s in data["subcategories"]]
+    for expected in ["PKT", "BOX", "PCS", "BAG", "ROLL", "TIN", "OTHERS"]:
+        assert expected in subcat_codes
+
+
+
 def test_import_staging_endpoints(test_client, tmp_path):
     out_file = str(tmp_path / "temp_staging.json")
     response = test_client.post("/api/import/stage", json={"output_file": out_file})

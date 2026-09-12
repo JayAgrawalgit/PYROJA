@@ -5,6 +5,7 @@ from app.schemas.sync import (
     CategorySyncResponse,
     CustomerSyncResponse,
     ProductSyncResponse,
+    SubcategorySyncResponse,
 )
 
 router = APIRouter(prefix="/api/sync", tags=["Master Data Synchronization"])
@@ -23,6 +24,21 @@ async def sync_categories(
     """Stream showroom categories for tablet left-sidebar navigation."""
     master_service = request.app.state.master_service
     return master_service.get_categories_sync(force_refresh=force_refresh)
+
+
+@router.get(
+    "/subcategories",
+    response_model=SubcategorySyncResponse,
+    summary="Synchronize showroom subcategories / pack types",
+    description="Returns showroom subcategories derived from ITEMMST.PACK and GROUPSUB.DBF.",
+)
+async def sync_subcategories(
+    request: Request,
+    force_refresh: bool = Query(False, description="Bypass cache and re-read from disk"),
+) -> SubcategorySyncResponse:
+    """Stream showroom subcategories / pack classifications."""
+    master_service = request.app.state.master_service
+    return master_service.get_subcategories_sync(force_refresh=force_refresh)
 
 
 @router.get(

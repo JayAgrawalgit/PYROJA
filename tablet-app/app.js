@@ -43,7 +43,7 @@ console.log("[DIAGNOSTIC] Initial selected DEFAULT_SERVER_URL:", DEFAULT_SERVER_
 class TabletDB {
     constructor() {
         this.dbName = "PYROJA";
-        this.version = 2;
+        this.version = 3;
         this.db = null;
     }
 
@@ -64,6 +64,11 @@ class TabletDB {
         if (!db.objectStoreNames.contains("categories")) {
             const catStore = db.createObjectStore("categories", { keyPath: "code" });
             catStore.createIndex("by_sr", "sr", { unique: false });
+        }
+        // Showroom Subcategories / Pack Store (from ITEMMST.PACK and GROUPSUB.DBF)
+        if (!db.objectStoreNames.contains("subcategories")) {
+            const subStore = db.createObjectStore("subcategories", { keyPath: "code" });
+            subStore.createIndex("by_count", "item_count", { unique: false });
         }
         // Local Draft Orders Store
         if (!db.objectStoreNames.contains("drafts")) {
@@ -295,6 +300,19 @@ class SyncClient {
         return data;
     }
 
+    async fetchSubcategories(forceRefresh = false) {
+        const url = `${this.serverUrl}/api/sync/subcategories${forceRefresh ? "?force_refresh=true" : ""}`;
+        console.log(`[DIAGNOSTIC SUBCATEGORY SYNC] Fetching subcategories from: ${url}`);
+        const res = await diagnosticFetch(url, { method: "GET" });
+        if (!res.ok) {
+            console.error(`[DIAGNOSTIC SUBCATEGORY SYNC FAILED] Status: ${res.status}`);
+            throw new Error(`Failed to fetch subcategories: ${res.status}`);
+        }
+        const data = await res.json();
+        console.log(`[DIAGNOSTIC SUBCATEGORY SYNC SUCCESS] Received ${data.subcategories ? data.subcategories.length : 0} subcategories`);
+        return data;
+    }
+
     async submitOrder(orderPayload, idempotencyKey) {
         const headers = { "Content-Type": "application/json" };
         if (idempotencyKey) {
@@ -470,6 +488,8 @@ class POSController {
         this.products = [];
         this.customers = [];
         this.categories = [];
+        this.subcategories = [];
+        this.lastSync = null;
         this.activeCustomer = null;
         this.openCustomerTabs = ["99999"];
         
@@ -491,23 +511,25 @@ class POSController {
 
     openCustomerTab(customerCode) {
         if (!customerCode) return;
-        if (!this.openCustomerTabs.includes(customerCode)) {
-            this.openCustomerTabs.push(customerCode);
+        const cleanCode = String(customerCode).trim();
+        if (!this.openCustomerTabs.includes(cleanCode)) {
+            this.openCustomerTabs.push(cleanCode);
             this.persistOpenCustomerTabs();
         }
-        this.setCustomer(customerCode);
+        this.setCustomer(cleanCode);
     }
 
     closeCustomerTab(customerCode) {
+        const cleanCode = String(customerCode).trim();
         if (this.openCustomerTabs.length <= 1) {
             return;
         }
-        const idx = this.openCustomerTabs.indexOf(customerCode);
+        const idx = this.openCustomerTabs.indexOf(cleanCode);
         if (idx !== -1) {
             this.openCustomerTabs.splice(idx, 1);
             this.persistOpenCustomerTabs();
         }
-        if (this.activeCustomer && this.activeCustomer.code === customerCode) {
+        if (this.activeCustomer && String(this.activeCustomer.code).trim() === cleanCode) {
             const nextCode = this.openCustomerTabs[0];
             this.setCustomer(nextCode);
         } else {
@@ -569,6 +591,32 @@ class POSController {
             map.get(code).item_count += 1;
         }
         return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    extractSubcategoriesFromProducts() {
+        const standardOrder = ["PKT", "BOX", "PCS", "BAG", "ROLL", "TIN", "BUNDLE", "OTHERS"];
+        const counts = {};
+        standardOrder.forEach(k => counts[k] = 0);
+        for (const p of this.products) {
+            const pack = (p.pack || "").toUpperCase().trim();
+            if (!pack) continue;
+            let matched = false;
+            for (const std of standardOrder.slice(0, -1)) {
+                if (pack.includes(std)) {
+                    counts[std] += 1;
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched) {
+                counts["OTHERS"] += 1;
+            }
+        }
+        return standardOrder.map(code => ({
+            code,
+            name: code === "OTHERS" ? "Others / Unclassified" : code,
+            item_count: counts[code]
+        }));
     }
 
     ensureCustomerDraft(customerCode) {
@@ -744,8 +792,8 @@ class POSController {
         this.queue = new BackgroundSyncQueue(this.db, this.client, (evt) => this.handleSyncEvent(evt));
         this.queue.start();
 
-        // Load local catalog, customers, and categories
-        console.log("[DIAGNOSTIC INIT] Querying local IndexedDB for cached products, customers, and categories...");
+        // Load local catalog, customers, categories, subcategories, and last sync
+        console.log("[DIAGNOSTIC INIT] Querying local IndexedDB for cached products, customers, categories, and subcategories...");
         this.products = await this.db.getAll("products");
         this.customers = await this.db.getAll("customers");
         try {
@@ -753,12 +801,27 @@ class POSController {
         } catch (catErr) {
             this.categories = [];
         }
+        try {
+            this.subcategories = await this.db.getAll("subcategories");
+        } catch (subErr) {
+            this.subcategories = [];
+        }
+
+        try {
+            const lastSyncRec = await this.db.get("meta", "last_sync");
+            this.lastSync = (lastSyncRec && lastSyncRec.value) ? lastSyncRec.value : (typeof localStorage !== "undefined" ? localStorage.getItem("pyro_last_sync") : null);
+        } catch (metaErr) {
+            this.lastSync = typeof localStorage !== "undefined" ? localStorage.getItem("pyro_last_sync") : null;
+        }
 
         if ((!this.categories || this.categories.length === 0) && this.products.length > 0) {
             this.categories = this.extractCategoriesFromProducts();
         }
+        if ((!this.subcategories || this.subcategories.length === 0) && this.products.length > 0) {
+            this.subcategories = this.extractSubcategoriesFromProducts();
+        }
 
-        console.log(`[DIAGNOSTIC INIT] Local cache results: ${this.products.length} products, ${this.customers.length} customers, ${this.categories.length} categories.`);
+        console.log(`[DIAGNOSTIC INIT] Local cache results: ${this.products.length} products, ${this.customers.length} customers, ${this.categories.length} categories, ${this.subcategories.length} subcategories.`);
 
         // If local cache is empty, trigger initial sync
         if (this.products.length === 0 || this.customers.length === 0) {
@@ -804,12 +867,16 @@ class POSController {
     async refreshMastersFromServer() {
         console.log(`[DIAGNOSTIC SYNC] refreshMastersFromServer() started. Target server URL: ${this.client.serverUrl}`);
         try {
-            console.log("[DIAGNOSTIC SYNC] Calling fetchProducts(), fetchCustomers(), and fetchCategories() concurrently via Promise.all...");
-            const [prodData, custData, catData] = await Promise.all([
+            console.log("[DIAGNOSTIC SYNC] Calling fetchProducts(), fetchCustomers(), fetchCategories(), and fetchSubcategories() concurrently via Promise.all...");
+            const [prodData, custData, catData, subData] = await Promise.all([
                 this.client.fetchProducts(),
                 this.client.fetchCustomers(),
                 this.client.fetchCategories().catch(err => {
                     console.warn("[DIAGNOSTIC SYNC] Category fetch from server failed or unsupported, will extract from products:", err);
+                    return null;
+                }),
+                this.client.fetchSubcategories().catch(err => {
+                    console.warn("[DIAGNOSTIC SYNC] Subcategory fetch from server failed or unsupported, will extract from products:", err);
                     return null;
                 })
             ]);
@@ -825,7 +892,13 @@ class POSController {
                 this.categories = this.extractCategoriesFromProducts();
             }
 
-            console.log(`[DIAGNOSTIC SYNC] Saving ${this.products.length} products, ${this.customers.length} customers, and ${this.categories.length} categories to IndexedDB...`);
+            if (subData && Array.isArray(subData.subcategories) && subData.subcategories.length > 0) {
+                this.subcategories = subData.subcategories;
+            } else {
+                this.subcategories = this.extractSubcategoriesFromProducts();
+            }
+
+            console.log(`[DIAGNOSTIC SYNC] Saving ${this.products.length} products, ${this.customers.length} customers, ${this.categories.length} categories, and ${this.subcategories.length} subcategories to IndexedDB...`);
             // Batch save to local SQLite / IndexedDB
             await this.db.putBatch("products", this.products);
             await this.db.putBatch("customers", this.customers);
@@ -834,30 +907,58 @@ class POSController {
             } catch (errCat) {
                 console.warn("[DIAGNOSTIC SYNC] Could not write to categories store:", errCat);
             }
-            await this.db.put("meta", { key: "last_sync", value: new Date().toISOString() });
-            console.log("[DIAGNOSTIC SYNC] IndexedDB write complete. Last sync timestamp updated.");
+            try {
+                await this.db.putBatch("subcategories", this.subcategories);
+            } catch (errSub) {
+                console.warn("[DIAGNOSTIC SYNC] Could not write to subcategories store:", errSub);
+            }
+            const syncTimestamp = new Date().toISOString();
+            this.lastSync = syncTimestamp;
+            await this.db.put("meta", { key: "last_sync", value: syncTimestamp });
+            if (typeof localStorage !== "undefined") {
+                localStorage.setItem("pyro_last_sync", syncTimestamp);
+            }
+            console.log("[DIAGNOSTIC SYNC] IndexedDB write complete. Last sync timestamp updated:", syncTimestamp);
 
             this.onStateUpdated({ type: "MASTERS_REFRESHED", count: this.products.length });
-            return true;
+            return {
+                success: true,
+                productsCount: this.products.length,
+                customersCount: this.customers.length,
+                categoriesCount: this.categories.length,
+                subcategoriesCount: this.subcategories.length,
+                lastSync: syncTimestamp
+            };
         } catch (e) {
             console.error(`[DIAGNOSTIC SYNC ERROR] Failed to fetch fresh masters from server (${this.client.serverUrl}):`, e);
             console.warn("Failed to fetch fresh masters from server, using local cache:", e);
-            return false;
+            return {
+                success: false,
+                error: e.message || "Failed to reach Sync Service"
+            };
         }
     }
 
     setCustomer(code) {
-        const found = this.customers.find(c => c.code === code);
-        if (found) {
-            this.activeCustomer = found;
-            if (!this.openCustomerTabs.includes(found.code)) {
-                this.openCustomerTabs.push(found.code);
-                this.persistOpenCustomerTabs();
-            }
-            this.ensureCustomerDraft(found.code);
-            this.persistCustomerDrafts();
-            this.onStateUpdated({ type: "CUSTOMER_CHANGED", customer: found });
+        if (!code) return;
+        const cleanCode = String(code).trim();
+        let found = this.customers.find(c => String(c.code).trim() === cleanCode);
+        if (!found) {
+            found = {
+                code: cleanCode,
+                name: cleanCode === "99999" ? "CASH A/C" : `CUSTOMER #${cleanCode}`,
+                price_tier: cleanCode === "99999" ? "RETAIL" : "WHOLESALE",
+                area_name: "LOCAL"
+            };
         }
+        this.activeCustomer = found;
+        if (!this.openCustomerTabs.includes(found.code)) {
+            this.openCustomerTabs.push(found.code);
+            this.persistOpenCustomerTabs();
+        }
+        this.ensureCustomerDraft(found.code);
+        this.persistCustomerDrafts();
+        this.onStateUpdated({ type: "CUSTOMER_CHANGED", customer: found });
     }
 
     getFilteredProducts() {
@@ -868,25 +969,33 @@ class POSController {
         }
 
         if (this.selectedCategory !== "ALL") {
-            items = items.filter(p => (p.company_code === this.selectedCategory) || (p.company_name === this.selectedCategory));
+            const catClean = String(this.selectedCategory).trim();
+            items = items.filter(p => 
+                (String(p.company_code).trim() === catClean) || 
+                (String(p.company_name).trim() === catClean)
+            );
         }
 
         if (this.selectedSubCategory !== "ALL") {
-            const sub = this.selectedSubCategory.toUpperCase();
+            const sub = this.selectedSubCategory.toUpperCase().trim();
             if (sub === "OTHERS") {
-                const commonPacks = ["PKT", "BOX", "PCS", "BAG", "ROLL", "CASE", "TIN"];
+                const commonPacks = ["PKT", "BOX", "PCS", "BAG", "ROLL", "CASE", "TIN", "BUNDLE"];
                 items = items.filter(p => {
-                    const pPack = (p.pack || "").toUpperCase();
-                    return !commonPacks.some(c => pPack.includes(c));
+                    const pPack = (p.pack || "").toUpperCase().trim();
+                    return pPack && !commonPacks.some(c => pPack.includes(c));
                 });
             } else {
-                items = items.filter(p => (p.pack || "").toUpperCase().includes(sub));
+                items = items.filter(p => (p.pack || "").toUpperCase().trim().includes(sub));
             }
         }
 
         if (this.searchQuery) {
-            const q = this.searchQuery.toUpperCase();
-            items = items.filter(p => p.code.includes(q) || p.name.toUpperCase().includes(q));
+            const q = this.searchQuery.toUpperCase().trim();
+            items = items.filter(p => 
+                p.code.includes(q) || 
+                (p.name && p.name.toUpperCase().includes(q)) ||
+                (p.nick && p.nick.toUpperCase().includes(q))
+            );
         }
 
         return items;

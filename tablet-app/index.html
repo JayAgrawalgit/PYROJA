@@ -74,7 +74,7 @@
                     <div class="flex items-center gap-2 mr-2">
                         <span class="material-symbols-outlined text-primary-container text-[22px]">local_fire_department</span>
                         <span class="font-headline-sm text-lg uppercase tracking-wider text-primary font-extrabold">PYROJA</span>
-                        <span id="app-version-badge" class="bg-surface-container-high text-outline font-label-caps text-[10px] px-1.5 py-0.5 rounded">v0.1.0-alpha</span>
+                        <span id="app-version-badge" class="bg-surface-container-high text-outline font-label-caps text-[10px] px-1.5 py-0.5 rounded">v0.1.1-alpha</span>
                     </div>
 
                     <!-- Online/Offline Indicator -->
@@ -88,13 +88,19 @@
                         <span class="material-symbols-outlined text-secondary text-[16px]">sync</span>
                         <span id="sync-queue-text">Local SQLite Ready</span>
                     </div>
+
+                    <!-- Last Sync Header Pill -->
+                    <div id="last-sync-pill" class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container text-on-surface-variant font-label-numeric-sm text-[11px]" title="Last successful sync timestamp">
+                        <span class="material-symbols-outlined text-outline text-[14px]">history</span>
+                        <span>Last Sync: <strong id="header-last-sync-text" class="text-on-surface font-semibold">Never</strong></span>
+                    </div>
                 </div>
 
                 <!-- Right Controls -->
                 <div class="flex items-center gap-2.5">
-                    <button id="btn-sync-masters" class="flex items-center gap-1 px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-tertiary font-label-caps text-[11px] transition-colors cursor-pointer" title="Sync products & customers from FoxPro">
+                    <button id="btn-sync-masters" class="flex items-center gap-1 px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-tertiary font-label-caps text-[11px] transition-colors cursor-pointer" title="Sync products, customers, categories & subcategories from FoxPro">
                         <span class="material-symbols-outlined text-[15px]">cloud_download</span>
-                        <span>PULL DBF MASTERS</span>
+                        <span>SYNC</span>
                     </button>
                     <div class="flex items-center gap-1 bg-surface-container-high px-2 py-1 rounded text-outline font-label-numeric-sm text-xs">
                         <span class="material-symbols-outlined text-tertiary text-[15px]">print</span>
@@ -580,15 +586,39 @@
             const notificationMsg = document.getElementById("notification-msg");
             const notificationIcon = document.getElementById("notification-icon");
 
+            function formatLastSync(isoString) {
+                if (!isoString) return "Never";
+                const d = new Date(isoString);
+                if (isNaN(d.getTime())) return "Never";
+                const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                const day = String(d.getDate()).padStart(2, '0');
+                const mon = months[d.getMonth()];
+                const year = d.getFullYear();
+                const hours = String(d.getHours()).padStart(2, '0');
+                const mins = String(d.getMinutes()).padStart(2, '0');
+                return `${day}-${mon}-${year} ${hours}:${mins}`;
+            }
+
+            function updateLastSyncDisplay() {
+                const el = document.getElementById("header-last-sync-text");
+                if (el) {
+                    el.textContent = formatLastSync(pos.lastSync);
+                }
+                const diag = document.getElementById("diag-last-sync");
+                if (diag) {
+                    diag.textContent = formatLastSync(pos.lastSync);
+                }
+            }
+
             function showNotification(msg, isError = false) {
                 notificationBanner.classList.remove("hidden");
                 notificationMsg.innerText = msg;
                 if (isError) {
-                    notificationBanner.className = "px-3 py-2 rounded bg-error-container border border-error text-on-error flex items-center justify-between shadow-lg";
+                    notificationBanner.className = "px-3 py-2 rounded bg-error-container border border-error text-on-error flex items-center justify-between shadow-lg whitespace-pre-line";
                     notificationIcon.innerText = "error";
                     notificationIcon.className = "material-symbols-outlined text-error text-[18px]";
                 } else {
-                    notificationBanner.className = "px-3 py-2 rounded bg-surface-container-high border border-tertiary text-on-surface flex items-center justify-between shadow-lg";
+                    notificationBanner.className = "px-3 py-2 rounded bg-surface-container-high border border-tertiary text-on-surface flex items-center justify-between shadow-lg whitespace-pre-line";
                     notificationIcon.innerText = "check_circle";
                     notificationIcon.className = "material-symbols-outlined text-tertiary text-[18px]";
                 }
@@ -632,8 +662,8 @@
                         ` : ''}
                     `;
 
-                    // Click tab to switch customer
-                    tab.querySelector(`[data-cust-code="${code}"]`).onclick = () => {
+                    // Click anywhere on tab to switch customer
+                    tab.onclick = () => {
                         pos.setCustomer(code);
                     };
 
@@ -736,14 +766,48 @@
                 const filtered = pos.getFilteredProducts();
                 if (countEl) countEl.innerText = `${filtered.length} items`;
 
-                const packTypes = ["ALL", "BOX", "PKT", "PCS", "BAG", "ROLL", "TIN", "OTHERS"];
+                const packTypes = ["ALL", "PKT", "BOX", "PCS", "BAG", "ROLL", "TIN", "OTHERS"];
+
+                // Compute counts per pack type for current category
+                let catProducts = pos.products;
+                if (pos.selectedCategory !== "ALL") {
+                    const catClean = String(pos.selectedCategory).trim();
+                    catProducts = catProducts.filter(p => 
+                        (String(p.company_code).trim() === catClean) || 
+                        (String(p.company_name).trim() === catClean)
+                    );
+                }
+
+                const packCounts = { ALL: catProducts.length };
+                packTypes.forEach(pt => { if (pt !== "ALL") packCounts[pt] = 0; });
+                const commonPacks = ["PKT", "BOX", "PCS", "BAG", "ROLL", "TIN"];
+
+                for (const p of catProducts) {
+                    const pPack = (p.pack || "").toUpperCase().trim();
+                    if (!pPack) continue;
+                    let matched = false;
+                    for (const pt of commonPacks) {
+                        if (pPack.includes(pt)) {
+                            packCounts[pt] = (packCounts[pt] || 0) + 1;
+                            matched = true;
+                            break;
+                        }
+                    }
+                    if (!matched) {
+                        packCounts["OTHERS"] = (packCounts["OTHERS"] || 0) + 1;
+                    }
+                }
+
                 chipsBar.innerHTML = packTypes.map(pt => {
                     const isSubActive = pos.selectedSubCategory === pt;
+                    const count = packCounts[pt] || 0;
+                    const label = pt === 'ALL' ? 'All Packs' : pt;
                     return `
-                        <button class="btn-subcat-chip px-2.5 py-1 rounded-full text-[11px] font-label-caps transition-all cursor-pointer whitespace-nowrap ${
+                        <button class="btn-subcat-chip flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-label-caps transition-all cursor-pointer whitespace-nowrap ${
                             isSubActive ? 'bg-primary text-on-primary font-bold shadow-sm' : 'bg-surface-container text-on-surface-variant hover:bg-surface-container-high'
                         }" data-subcat="${pt}">
-                            ${pt === 'ALL' ? 'All Packs' : pt}
+                            <span>${label}</span>
+                            <span class="text-[10px] opacity-80 font-label-numeric-sm">${count}</span>
                         </button>
                     `;
                 }).join("");
@@ -973,13 +1037,23 @@
             btnSyncMasters.onclick = async () => {
                 btnSyncMasters.disabled = true;
                 btnSyncMasters.innerHTML = `<span class="material-symbols-outlined text-[15px] animate-spin">refresh</span><span>SYNCING...</span>`;
-                const ok = await pos.refreshMastersFromServer();
-                btnSyncMasters.disabled = false;
-                btnSyncMasters.innerHTML = `<span class="material-symbols-outlined text-[15px]">cloud_download</span><span>PULL DBF MASTERS</span>`;
-                if (ok) {
-                    showNotification(`Downloaded ${pos.products.length} products & ${pos.customers.length} accounts from FoxPro.`);
-                } else {
-                    showNotification(`Could not reach Sync Service. Using offline SQLite cache.`, true);
+                try {
+                    const res = await pos.refreshMastersFromServer();
+                    btnSyncMasters.disabled = false;
+                    btnSyncMasters.innerHTML = `<span class="material-symbols-outlined text-[15px]">cloud_download</span><span>SYNC</span>`;
+                    if (res && res.success) {
+                        updateLastSyncDisplay();
+                        updateUI();
+                        const toast = `✓ Products Updated: ${res.productsCount}\n✓ Customers Updated: ${res.customersCount}\n✓ Categories Updated: ${res.categoriesCount}\n✓ Subcategories Updated: ${res.subcategoriesCount}`;
+                        showNotification(toast, false);
+                    } else {
+                        const reason = (res && res.error) ? res.error : "Failed to reach Sync Service";
+                        showNotification(`❌ Sync Failed\n${reason}`, true);
+                    }
+                } catch (err) {
+                    btnSyncMasters.disabled = false;
+                    btnSyncMasters.innerHTML = `<span class="material-symbols-outlined text-[15px]">cloud_download</span><span>SYNC</span>`;
+                    showNotification(`❌ Sync Failed\n${err.message || "Unknown error"}`, true);
                 }
             };
 
@@ -1351,12 +1425,12 @@
                 try {
                     const metaSync = await pos.db.get("meta", "last_sync");
                     if (metaSync && metaSync.value) {
-                        diagLastSync.innerText = new Date(metaSync.value).toLocaleString("en-IN");
+                        diagLastSync.innerText = formatLastSync(metaSync.value);
                     } else {
-                        diagLastSync.innerText = "Never synced";
+                        diagLastSync.innerText = "Never";
                     }
                 } catch (e) {
-                    diagLastSync.innerText = "Unknown";
+                    diagLastSync.innerText = "Never";
                 }
 
                 serverModal.classList.remove("hidden");
@@ -1463,13 +1537,14 @@
                 btnServerModalSave.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span><span>Saving & Syncing...</span>`;
 
                 try {
-                    const ok = await pos.updateServerUrl(check.url);
+                    const res = await pos.updateServerUrl(check.url);
                     updateDiagnosticBanner();
+                    updateLastSyncDisplay();
                     updateUI();
                     closeServerModal();
 
-                    if (ok) {
-                        showNotification(`Server URL set to ${check.url}. Master catalog refreshed.`);
+                    if (res && res.success) {
+                        showNotification(`Server URL set to ${check.url}.\n✓ Products: ${res.productsCount} | ✓ Customers: ${res.customersCount}`);
                     } else {
                         showNotification(`Server URL saved to ${check.url}, but server is unreachable. Using offline cache.`, true);
                     }
@@ -1486,6 +1561,7 @@
             await pos.init();
             console.log("[DIAGNOSTIC STARTUP] pos.init() resolved. Updating diagnostic banner with active serverUrl:", pos.client.serverUrl);
             updateDiagnosticBanner();
+            updateLastSyncDisplay();
             updateUI();
         });
     </script>
