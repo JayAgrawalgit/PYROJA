@@ -1,4 +1,4 @@
-# PyroWholesale POS — Alpha Test Execution Guide
+# PYROJA — Alpha Test Execution Guide
 
 This guide provides step-by-step instructions for running the automated Espresso test suite, executing manual verification checklists, and diagnosing runtime behavior using Android Studio and ADB.
 
@@ -82,8 +82,8 @@ Perform the following operational tests in the Android Emulator:
 
 | # | Test Scenario | Steps to Execute | Expected Result | Pass/Fail |
 |---|---|---|---|:---:|
-| **1** | **Fresh Installation** | `adb install dist/pyrowholesale-pos-debug.apk` | App installs cleanly without package signature or manifest errors. | Pass |
-| **2** | **App Upgrade Install** | Reinstall with `-r` flag: `adb install -r dist/pyrowholesale-pos-debug.apk` | Existing SQLite/IndexedDB data preserved; app updates with `Success`. | Pass |
+| **1** | **Fresh Installation** | `adb install dist/pyroja-pos-debug.apk` | App installs cleanly without package signature or manifest errors. | Pass |
+| **2** | **App Upgrade Install** | Reinstall with `-r` flag: `adb install -r dist/pyroja-pos-debug.apk` | Existing SQLite/IndexedDB data preserved; app updates with `Success`. | Pass |
 | **3** | **Offline Startup** | Enable Airplane mode (`cmd connectivity airplane-mode enable`), kill process, and launch app. | App launches immediately (< 250ms), loads cached DBF records, displays `#99999 CASH A/C`, and marks status `OFFLINE`. | Pass |
 | **4** | **Online Startup** | Start Windows Sync Service, disable Airplane mode, click `PULL DBF MASTERS`. | App contacts `http://10.0.2.2:8080`, downloads 3,019 products and 883 customers, and turns pill green (`ONLINE`). | Pass |
 | **5** | **Device Rotation** | Rotate emulator from Landscape to Portrait and back (`user_rotation 0` $\to$ `1`). | WebView reflows smoothly without reload or cart state loss. | Pass |
@@ -96,10 +96,10 @@ Perform the following operational tests in the Android Emulator:
 ### 5.1 Installation & Launch
 ```bash
 # Install fresh APK
-adb install dist/pyrowholesale-pos-debug.apk
+adb install dist/pyroja-pos-debug.apk
 
 # Reinstall / Upgrade preserving user data
-adb install -r dist/pyrowholesale-pos-debug.apk
+adb install -r dist/pyroja-pos-debug.apk
 
 # Launch the POS application
 adb shell am start -n com.pyrowholesale.pos/.MainActivity
@@ -123,7 +123,7 @@ adb logcat -c
 adb logcat -v time "Capacitor:D" "Capacitor/Console:V" "chromium:V" "*:S"
 
 # Stream all POS-related messages
-adb logcat -v time | grep -i -E "(PyroWholesale|Capacitor|chromium|IndexedDB)"
+adb logcat -v time | grep -i -E "(PYROJA|PyroWholesale|Capacitor|chromium|IndexedDB)"
 
 # Export recent 5000 lines of logcat to file
 adb logcat -d -t 5000 > alpha_logcat.txt
@@ -153,7 +153,7 @@ Because `webContentsDebuggingEnabled: true` is enabled in `capacitor.config.json
    ```text
    chrome://inspect/#devices
    ```
-4. Click **Inspect** under `PYROWHOLESALE - Tablet POS Workstation` to open Chrome DevTools:
+4. Click **Inspect** under `PYROJA - Tablet POS Workstation` to open Chrome DevTools:
    - **Console:** Test JavaScript commands live (`window.pos.products.length`).
    - **Application $\to$ IndexedDB:** Inspect raw SQLite-backed tables (`products`, `customers`, `drafts`, `sync_queue`).
    - **Network:** View API latency and payload schemas.

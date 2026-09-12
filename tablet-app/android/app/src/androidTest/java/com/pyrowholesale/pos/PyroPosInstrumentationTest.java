@@ -17,7 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Android Instrumentation Test Suite for PyroWholesale POS.
+ * Android Instrumentation Test Suite for PYROJA POS.
  * 
  * Verifies:
  * 1. App Launch & WebView Initialization

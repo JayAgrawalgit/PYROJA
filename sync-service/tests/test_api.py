@@ -4,7 +4,7 @@ def test_root_endpoint(test_client):
     response = test_client.get("/")
     assert response.status_code == 200
     data = response.json()
-    assert data["service"] == "PYROWHOLESALE FoxPro Sync Service"
+    assert data["service"] == "PYROJA FoxPro Sync Service"
     assert data["status"] == "RUNNING"
     assert "health_url" in data
 

@@ -1,6 +1,6 @@
-# PYROWHOLESALE ↔ Visual FoxPro 6 Windows Sync Service
+# PYROJA ↔ Visual FoxPro 6 Windows Sync Service
 
-High-performance, zero-locking Windows Sync Service connecting **PYROWHOLESALE** Android tablet POS apps to legacy **Visual FoxPro 6.0** billing systems (`FAVWIN`).
+High-performance, zero-locking Windows Sync Service connecting **PYROJA** Android tablet POS apps to legacy **Visual FoxPro 6.0** billing systems (`FAVWIN`).
 
 ---
 

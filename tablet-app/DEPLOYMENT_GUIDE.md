@@ -1,6 +1,6 @@
 # Production Deployment Guide: Android Tablet & Windows Sync Service
 
-**System:** PYROWHOLESALE POS ↔ Visual FoxPro 6.0 Integration  
+**System:** PYROJA POS ↔ Visual FoxPro 6.0 Integration  
 **Store:** RAM FATAKA CENTER, Ghatanji  
 **Target Hardware:**
 - **Primary Billing PC:** Windows 10/11 Pro (hosting `\FAVWIN\` and `sync-service`)
@@ -89,7 +89,7 @@ To ensure uninterrupted communication across the showroom, warehouse, and billin
 ### 2.3 Open Windows Defender Firewall Port
 Allow incoming connections on port 8080 from the local subnet:
 ```cmd
-netsh advfirewall firewall add rule name="PYROWHOLESALE Sync Port 8080" dir=in action=allow protocol=TCP localport=8080 profile=private,domain
+netsh advfirewall firewall add rule name="PYROJA Sync Port 8080" dir=in action=allow protocol=TCP localport=8080 profile=private,domain
 ```
 
 ### 2.4 Service Verification
@@ -150,7 +150,7 @@ For a standalone `.apk` installation:
 # In tablet-app directory:
 npm init -y
 npm install @capacitor/core @capacitor/cli @capacitor/android
-npx cap init "PYROWHOLESALE" "com.ramfataka.pos" --web-dir .
+npx cap init "PYROJA" "com.pyrowholesale.pos" --web-dir .
 npx cap add android
 npx cap copy
 npx cap open android

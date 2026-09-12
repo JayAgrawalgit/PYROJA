@@ -57,7 +57,7 @@ Historically, **RAM FATAKA CENTER** operated on a single legacy **Visual FoxPro 
 #### A. Android Tablet POS (`tablet-app/`)
 - **Runtime:** Android Native Wrapper via **Capacitor 8.5.1**, targeting Android 7.0+ (API 24 to 36). Tested on Google Pixel Tablet (Android 15).
 - **Frontend Stack:** HTML5, Tailwind CSS, Vanilla JavaScript (`app.js`, `index.html`).
-- **Data Layer:** IndexedDB (`PyroWholesalePOS`) backed by Android WebView SQLite in Write-Ahead Logging (WAL) mode.
+- **Data Layer:** IndexedDB (`PYROJA`, with automated safe migration from legacy `PyroWholesalePOS`) backed by Android WebView SQLite in Write-Ahead Logging (WAL) mode.
 - **Identifier Protection:** Native package name **`com.pyrowholesale.pos`** is preserved to allow seamless in-place APK updates (`adb install -r`) without loss of local drafts.
 
 #### B. Sync Service (`sync-service/`)
@@ -244,7 +244,7 @@ Verify the service is active from any browser on the network: `http://<WINDOWS_S
 
 ## 8. Offline Mode Behavior
 
-1. **Optimistic Local Storage:** All product catalogs, categories, and customer master accounts are stored in the tablet's local IndexedDB (`PyroWholesalePOS`).
+1. **Optimistic Local Storage:** All product catalogs, categories, and customer master accounts are stored in the tablet's local IndexedDB (`PYROJA`).
 2. **Crash & Restart Protection:** If the tablet runs out of battery or is rebooted, all active customer drafts remain intact and load automatically upon restart.
 3. **Disconnected Checkout:** When WiFi is unavailable, tapping **"Confirm & Dispatch Draft"** queues the order in the tablet's local `sync_queue` store.
 4. **Auto-Reconnection Sync:** When connection to the LAN server is re-established, the background sync worker flushes queued orders to the server automatically.
@@ -252,7 +252,36 @@ Verify the service is active from any browser on the network: `http://<WINDOWS_S
 
 ---
 
-## 9. Developer & Git Workflow
+## 9. Semantic Versioning & Release Management
+
+PYROJA follows strict [Semantic Versioning (SemVer 2.0.0)](https://semver.org/):
+```text
+MAJOR.MINOR.PATCH[-PRERELEASE]
+Example: 0.1.0-alpha
+```
+
+### Single Source of Truth (`VERSION`)
+The version is governed by a single root file: [`VERSION`](VERSION).
+
+All components dynamically consume this single source of truth without manual code duplication:
+- **Tablet POS Header:** Reads `VERSION` via `tablet-app/scripts/sync-version.js` (written to `version.js` / `window.APP_VERSION`), rendering dynamically in the top-left UI header:
+  ```text
+  🔥 PYROJA v0.1.0-alpha
+  ```
+- **Sync Service API:** Reads `VERSION` on startup in `sync-service/app/__init__.py`, exposing the version in `GET /` and `GET /api/health`.
+- **Node Manifest:** Linked to `tablet-app/package.json` `"version"`.
+
+### Bumping a Release
+1. Update the version string in the root [`VERSION`](VERSION) file (e.g. `0.2.0-beta`).
+2. Run the automated release pipeline:
+   ```bash
+   ./scripts/workflow.sh "chore(release): bump version to 0.2.0-beta" --build-apk
+   ```
+3. The script automatically synchronizes web assets, updates the UI badge, compiles the release APK, runs backend tests, and commits with Conventional Commits.
+
+---
+
+## 10. Developer & Git Workflow
 
 All contributors must adhere to the automated development workflow:
 - **Zero-Broken-Build Policy:** Never commit failing code.
@@ -267,7 +296,7 @@ For complete workflow rules, refer to [DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORK
 
 ---
 
-## 10. Troubleshooting
+## 11. Troubleshooting
 
 ### 1. Tablet Shows "Connecting..." or Fails to Sync
 - **Cause:** Tablet cannot reach Windows host over WiFi or server IP changed.

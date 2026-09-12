@@ -6,6 +6,7 @@ from typing import Dict, List, Optional, Tuple
 import logging
 import time
 
+from app import __version__
 from app.config import AppConfig
 from app.db.database import Database
 from app.dbf.reader import DBFReader
@@ -424,7 +425,7 @@ class MasterDataService:
 
         return HealthResponse(
             status="HEALTHY" if all_ok else "DEGRADED",
-            version="1.0.0",
+            version=__version__,
             timestamp=datetime.now(timezone.utc).isoformat(),
             active_fiscal_year=self.config.foxpro.active_fiscal_year,
             data_path=str(self.data_dir),

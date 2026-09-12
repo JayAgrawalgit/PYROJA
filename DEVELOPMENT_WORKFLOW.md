@@ -10,7 +10,7 @@ This document defines the engineering standards, automated validation pipelines,
 2. **Atomic Conventional Commits:** Every code change must be accompanied by a validated git commit following the [Conventional Commits](https://www.conventionalcommits.org/) standard.
 3. **Architectural Invariants:**
    - Android Package ID must remain **`com.pyrowholesale.pos`** to ensure seamless in-place APK updates (`adb install -r`) without clearing operator data.
-   - IndexedDB database name must remain **`PyroWholesalePOS`** to preserve cached master catalogs, draft carts, and sync queues across app upgrades.
+   - IndexedDB database name is standardized as **`PYROJA`** (backed by automated non-destructive migration from legacy databases).
    - FoxPro `.DBF` table operations must remain strictly zero-locking during read operations.
    - All tablet orders must target the Estimate billbook series (**`BILLBOOK.CODE == 'E '`**).
 
@@ -171,10 +171,41 @@ cp app/build/outputs/apk/debug/app-debug.apk ../dist/pyroja-pos-debug.apk
 
 ---
 
-## 7. Protected Files & Directories
+## 7. Semantic Versioning & Release Lifecycle
+
+PYROJA enforces strict Semantic Versioning (`MAJOR.MINOR.PATCH[-PRERELEASE]`):
+
+### Single Source of Truth (`VERSION`)
+The version is governed by the root [`VERSION`](VERSION) file (e.g. `0.1.0-alpha`).
+
+### Version Synchronization Pipeline
+1. `tablet-app/scripts/sync-version.js` generates `tablet-app/version.js` and `tablet-app/version.json`.
+2. `tablet-app/index.html` renders the dynamic badge:
+   ```html
+   <span id="app-version-badge">v0.1.0-alpha</span>
+   ```
+3. `sync-service/app/__init__.py` exposes `__version__` across FastAPI endpoints (`GET /` and `GET /api/health`).
+
+### Release Procedure
+To cut a new release (e.g. `0.2.0-beta`):
+```bash
+# 1. Update VERSION file
+echo "0.2.0-beta" > VERSION
+
+# 2. Execute automated workflow with APK compilation
+./scripts/workflow.sh "chore(release): bump version to 0.2.0-beta" --build-apk
+
+# 3. Create git tag
+git tag -a "v0.2.0-beta" -m "Release v0.2.0-beta"
+git push origin "v0.2.0-beta"
+```
+
+---
+
+## 8. Protected Files & Directories
 
 To prevent accidental data loss or breaking field deployments, the following files should **never** be manually overwritten or modified without explicit team approval:
 
 1. `legacy-software-extracted/FAVWIN/D2627/*.DBF` — Master FoxPro production tables.
-2. `tablet-app/android/app/src/main/res/values/strings.xml` — `package_name` must stay `com.pyrowholesale.pos`.
-3. `tablet-app/app.js` — IndexedDB database name `PyroWholesalePOS`.
+2. `tablet-app/android/app/src/main/res/values/strings.xml` — `package_name` must stay `com.pyrowholesale.pos` (until post-Alpha).
+3. `tablet-app/app.js` — IndexedDB database name `PYROJA`.

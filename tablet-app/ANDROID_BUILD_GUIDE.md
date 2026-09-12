@@ -1,5 +1,5 @@
 # Android Build & Compilation Guide (macOS)
-**Application:** PYROWHOLESALE Tablet POS  
+**Application:** PYROJA Tablet POS  
 **Package Name:** `com.pyrowholesale.pos`  
 **Framework:** Capacitor 8.5 on Android Native Wrapper  
 **Target Platform:** Android 7.0+ (API 24 to API 36)
@@ -20,7 +20,7 @@
 
 | Artifact | File Location | Size | Description |
 |---|---|:---:|---|
-| **Debug APK (Top-Level)** | [**`tablet-app/dist/pyrowholesale-pos-debug.apk`**](file:///Users/jayagrawal/Documents/My%20Orders/tablet-app/dist/pyrowholesale-pos-debug.apk) | 3.9 MB | Ready to install on Android tablets. |
+| **Debug APK (Top-Level)** | [**`tablet-app/dist/pyroja-pos-debug.apk`**](file:///Users/jayagrawal/Documents/PYROJA/tablet-app/dist/pyroja-pos-debug.apk) | 8.7 MB | Ready to install on Android tablets. |
 | **Gradle Output APK** | [**`tablet-app/android/app/build/outputs/apk/debug/app-debug.apk`**](file:///Users/jayagrawal/Documents/My%20Orders/tablet-app/android/app/build/outputs/apk/debug/app-debug.apk) | 3.9 MB | Direct build output from Gradle. |
 | **Android Manifest** | [**`tablet-app/android/app/src/main/AndroidManifest.xml`**](file:///Users/jayagrawal/Documents/My%20Orders/tablet-app/android/app/src/main/AndroidManifest.xml) | — | Configured with `usesCleartextTraffic="true"` and network permissions. |
 | **Capacitor Config** | [**`tablet-app/capacitor.config.json`**](file:///Users/jayagrawal/Documents/My%20Orders/tablet-app/capacitor.config.json) | — | Native cleartext, server scheme, and WebView debugging config. |
@@ -81,7 +81,7 @@ Connect the tablet via USB with "USB Debugging" enabled:
 adb devices
 
 # Install APK directly
-adb install -r tablet-app/dist/pyrowholesale-pos-debug.apk
+adb install -r tablet-app/dist/pyroja-pos-debug.apk
 
 # Launch App on Tablet
 adb shell am start -n com.pyrowholesale.pos/com.pyrowholesale.pos.MainActivity

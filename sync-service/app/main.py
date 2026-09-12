@@ -62,7 +62,7 @@ def create_app(config: AppConfig = None) -> FastAPI:
         config = load_config()
 
     app = FastAPI(
-        title="PYROWHOLESALE Windows Sync Service",
+        title="PYROJA Windows Sync Service",
         description="Local LAN synchronization and order queueing bridge between Android POS tablets and legacy Visual FoxPro 6.0",
         version=__version__,
         lifespan=lifespan,
@@ -102,7 +102,7 @@ def create_app(config: AppConfig = None) -> FastAPI:
     @app.get("/", tags=["General"])
     async def root_info():
         return {
-            "service": "PYROWHOLESALE FoxPro Sync Service",
+            "service": "PYROJA FoxPro Sync Service",
             "version": __version__,
             "status": "RUNNING",
             "docs_url": "/docs",

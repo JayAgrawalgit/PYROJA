@@ -42,13 +42,46 @@ console.log("[DIAGNOSTIC] Initial selected DEFAULT_SERVER_URL:", DEFAULT_SERVER_
 
 class TabletDB {
     constructor() {
-        this.dbName = "PyroWholesalePOS";
+        this.dbName = "PYROJA";
         this.version = 2;
         this.db = null;
     }
 
+    _createSchema(db) {
+        // Products Store: key is 5-character FoxPro code
+        if (!db.objectStoreNames.contains("products")) {
+            const prodStore = db.createObjectStore("products", { keyPath: "code" });
+            prodStore.createIndex("by_company", "company_name", { unique: false });
+            prodStore.createIndex("by_group", "group_code", { unique: false });
+        }
+        // Customers Store: key is 5-character FoxPro account code
+        if (!db.objectStoreNames.contains("customers")) {
+            const custStore = db.createObjectStore("customers", { keyPath: "code" });
+            custStore.createIndex("by_name", "name", { unique: false });
+            custStore.createIndex("by_area", "area_name", { unique: false });
+        }
+        // Showroom Categories Store (SR 1 to 53 from COMPMST.DBF)
+        if (!db.objectStoreNames.contains("categories")) {
+            const catStore = db.createObjectStore("categories", { keyPath: "code" });
+            catStore.createIndex("by_sr", "sr", { unique: false });
+        }
+        // Local Draft Orders Store
+        if (!db.objectStoreNames.contains("drafts")) {
+            db.createObjectStore("drafts", { keyPath: "draft_id" });
+        }
+        // Background Sync Outbox Queue
+        if (!db.objectStoreNames.contains("sync_queue")) {
+            const queueStore = db.createObjectStore("sync_queue", { keyPath: "idempotency_key" });
+            queueStore.createIndex("by_status", "status", { unique: false });
+        }
+        // Settings & Metadata
+        if (!db.objectStoreNames.contains("meta")) {
+            db.createObjectStore("meta", { keyPath: "key" });
+        }
+    }
+
     async init() {
-        return new Promise((resolve, reject) => {
+        await new Promise((resolve, reject) => {
             const request = indexedDB.open(this.dbName, this.version);
             request.onerror = () => reject(request.error);
             request.onsuccess = () => {
@@ -57,37 +90,79 @@ class TabletDB {
             };
             request.onupgradeneeded = (event) => {
                 const db = event.target.result;
-                // Products Store: key is 5-character FoxPro code
-                if (!db.objectStoreNames.contains("products")) {
-                    const prodStore = db.createObjectStore("products", { keyPath: "code" });
-                    prodStore.createIndex("by_company", "company_name", { unique: false });
-                    prodStore.createIndex("by_group", "group_code", { unique: false });
-                }
-                // Customers Store: key is 5-character FoxPro account code
-                if (!db.objectStoreNames.contains("customers")) {
-                    const custStore = db.createObjectStore("customers", { keyPath: "code" });
-                    custStore.createIndex("by_name", "name", { unique: false });
-                    custStore.createIndex("by_area", "area_name", { unique: false });
-                }
-                // Showroom Categories Store (SR 1 to 53 from COMPMST.DBF)
-                if (!db.objectStoreNames.contains("categories")) {
-                    const catStore = db.createObjectStore("categories", { keyPath: "code" });
-                    catStore.createIndex("by_sr", "sr", { unique: false });
-                }
-                // Local Draft Orders Store
-                if (!db.objectStoreNames.contains("drafts")) {
-                    db.createObjectStore("drafts", { keyPath: "draft_id" });
-                }
-                // Background Sync Outbox Queue
-                if (!db.objectStoreNames.contains("sync_queue")) {
-                    const queueStore = db.createObjectStore("sync_queue", { keyPath: "idempotency_key" });
-                    queueStore.createIndex("by_status", "status", { unique: false });
-                }
-                // Settings & Metadata
-                if (!db.objectStoreNames.contains("meta")) {
-                    db.createObjectStore("meta", { keyPath: "key" });
-                }
+                this._createSchema(db);
             };
+        });
+
+        // Safe migration from legacy PyroWholesalePOS database if present
+        await this.migrateFromLegacyDb();
+        return this.db;
+    }
+
+    async migrateFromLegacyDb() {
+        const legacyDbName = "PyroWholesalePOS";
+        if (typeof indexedDB === "undefined") return;
+        return new Promise((resolve) => {
+            try {
+                const req = indexedDB.open(legacyDbName);
+                let newlyCreated = false;
+                req.onupgradeneeded = () => {
+                    newlyCreated = true;
+                };
+                req.onerror = () => resolve();
+                req.onsuccess = async () => {
+                    const legacyDb = req.result;
+                    if (newlyCreated || !legacyDb.objectStoreNames || legacyDb.objectStoreNames.length === 0) {
+                        legacyDb.close();
+                        try { indexedDB.deleteDatabase(legacyDbName); } catch (e) {}
+                        return resolve();
+                    }
+
+                    console.log("[MIGRATION] Detected legacy database 'PyroWholesalePOS'. Checking records to migrate into 'PYROJA'...");
+                    try {
+                        const stores = ["meta", "products", "customers", "categories", "drafts", "sync_queue"];
+                        for (const storeName of stores) {
+                            if (legacyDb.objectStoreNames.contains(storeName)) {
+                                const items = await new Promise((res) => {
+                                    const tx = legacyDb.transaction(storeName, "readonly");
+                                    const getReq = tx.objectStore(storeName).getAll();
+                                    getReq.onsuccess = () => res(getReq.result || []);
+                                    getReq.onerror = () => res([]);
+                                });
+                                if (items && items.length > 0) {
+                                    const currentCount = await this.count(storeName);
+                                    if (currentCount === 0) {
+                                        console.log(`[MIGRATION] Migrated ${items.length} records in '${storeName}' to 'PYROJA'.`);
+                                        await this.putBatch(storeName, items);
+                                    }
+                                }
+                            }
+                        }
+                        console.log("[MIGRATION] Completed migration from 'PyroWholesalePOS' to 'PYROJA'.");
+                    } catch (mErr) {
+                        console.warn("[MIGRATION] Error migrating legacy store data:", mErr);
+                    } finally {
+                        legacyDb.close();
+                        resolve();
+                    }
+                };
+            } catch (err) {
+                console.warn("[MIGRATION] Exception during legacy DB inspection:", err);
+                resolve();
+            }
+        });
+    }
+
+    async count(storeName) {
+        return new Promise((resolve) => {
+            try {
+                const tx = this.db.transaction(storeName, "readonly");
+                const req = tx.objectStore(storeName).count();
+                req.onsuccess = () => resolve(req.result || 0);
+                req.onerror = () => resolve(0);
+            } catch (e) {
+                resolve(0);
+            }
         });
     }
 
@@ -640,6 +715,14 @@ class POSController {
 
     async init() {
         console.log("[DIAGNOSTIC INIT] === POSController.init() START ===");
+
+        // Bind application version dynamically from single source of truth
+        this.version = (typeof window !== "undefined" && window.APP_VERSION) ? window.APP_VERSION : "0.1.0-alpha";
+        const versionBadge = typeof document !== "undefined" ? document.getElementById("app-version-badge") : null;
+        if (versionBadge) {
+            versionBadge.textContent = "v" + this.version;
+        }
+
         console.log("[DIAGNOSTIC INIT] Initializing TabletDB (IndexedDB)...");
         await this.db.init();
         console.log("[DIAGNOSTIC INIT] TabletDB initialized.");

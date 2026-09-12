@@ -2,7 +2,7 @@
 REM Windows Sync Service - Start Server Script
 cd /d "%~dp0.."
 echo ===================================================
-echo Starting PYROWHOLESALE FoxPro Windows Sync Service
+echo Starting PYROJA FoxPro Windows Sync Service
 echo ===================================================
 
 if exist .venv\Scripts\python.exe (

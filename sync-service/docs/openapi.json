@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "PYROWHOLESALE Windows Sync Service",
+    "title": "PYROJA Windows Sync Service",
     "description": "Local LAN synchronization and order queueing bridge between Android POS tablets and legacy Visual FoxPro 6.0",
-    "version": "1.0.0"
+    "version": "0.1.0-alpha"
   },
   "paths": {
     "/api/health": {

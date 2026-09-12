@@ -60,10 +60,13 @@ else
     echo -e "${YELLOW}Warning: pytest virtualenv not found; skipping python tests.${NC}"
 fi
 
-# Validate JavaScript syntax in tablet app
+# Validate JavaScript syntax and synchronize version
 if command -v node &> /dev/null; then
+    echo "Synchronizing semantic version..."
+    node tablet-app/scripts/sync-version.js
     echo "Validating JavaScript syntax..."
     node -c tablet-app/app.js
+    node -c tablet-app/version.js
 fi
 
 # 3. Optional APK Build Validation
