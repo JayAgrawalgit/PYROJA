@@ -126,13 +126,13 @@
     </header>
 
     <!-- LEFT SIDEBAR: Showroom Categories (COMPMST.DBF) -->
-    <aside class="fixed left-0 top-24 bottom-14 w-48 bg-surface-container-low z-40 flex flex-col justify-between p-2 border-r border-surface-container-high">
+    <aside class="fixed left-0 top-24 bottom-0 w-48 bg-surface-container-low z-40 flex flex-col justify-between p-2 border-r border-surface-container-high">
         <div class="flex flex-col gap-1 overflow-hidden flex-1">
             <div class="px-2 py-1 font-label-caps text-[10px] text-outline uppercase tracking-wider flex justify-between items-center">
                 <span>Categories</span>
                 <span id="cat-total-count-badge" class="font-label-numeric-sm text-[10px] text-primary">53</span>
             </div>
-            <nav id="category-nav" class="flex flex-col gap-1 overflow-y-auto max-h-[calc(100vh-210px)] pr-1">
+            <nav id="category-nav" class="flex flex-col gap-1 overflow-y-auto max-h-[calc(100vh-160px)] pr-1">
                 <!-- Dynamically populated categories -->
                 <button class="cat-btn flex items-center justify-between px-2.5 py-2 rounded bg-surface-container-high text-primary font-bold text-left text-xs" data-cat="ALL">
                     <span>All Products</span>
@@ -151,7 +151,7 @@
 
     <!-- MAIN BODY: Center Catalog (Cols 1-8) & Right Order Summary (Cols 9-12) -->
     <div class="pl-48 pr-96">
-        <main class="relative pt-24 pb-14 w-full min-h-screen bg-surface">
+        <main class="relative pt-24 pb-4 w-full min-h-screen bg-surface">
             <div class="p-3 flex flex-col gap-3">
 
                 <!-- Alert / Notification Banner -->
@@ -216,7 +216,7 @@
     </div>
 
     <!-- RIGHT FIXED DRAWER: Order Execution & Cart -->
-    <aside class="fixed right-0 top-24 bottom-14 w-96 bg-surface-container-lowest z-40 flex flex-col p-3 border-l border-surface-container-high">
+    <aside class="fixed right-0 top-24 bottom-0 w-96 bg-surface-container-lowest z-40 flex flex-col p-3 border-l border-surface-container-high">
         <!-- Active Customer Header Card -->
         <div class="bg-surface-container-low rounded-lg p-2.5 shadow-sm flex flex-col gap-1 mb-2 border border-surface-container-high">
             <div class="flex items-center justify-between">
@@ -285,16 +285,6 @@
         </div>
     </aside>
 
-    <!-- FOOTER BAR -->
-    <footer class="fixed bottom-0 left-0 right-0 h-14 bg-surface-container-lowest z-50 px-4 flex items-center justify-between border-t border-surface-container-high">
-        <div class="flex items-center gap-4 text-xs font-label-numeric-sm">
-            <div class="flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-primary text-[16px]">storage</span>
-                <span class="text-outline">Storage: IndexedDB (SQLite WAL Mode)</span>
-            </div>
-            <span class="text-surface-bright">|</span>
-            <span class="text-on-surface-variant">FoxPro Billbook Series: <strong>ESTIMATE (E)</strong></span>
-        </div>
     <!-- QUANTITY EDIT MODAL (Android Tablet-Optimized) -->
     <div id="qty-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 select-none">
         <div class="bg-surface-container-low border border-surface-container-high rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col">
