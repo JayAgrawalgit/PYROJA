@@ -35,8 +35,15 @@ def test_sync_products_endpoint(test_client):
     data = response.json()
     assert data["active_fiscal_year"] == "D2627"
     assert len(data["dbf_checksum"]) == 64
-    assert data["total_records"] > 3000
+    assert data["total_records"] > 1300
     assert len(data["products"]) == data["total_records"]
+    # Verify ghost products are excluded while valid products exist
+    codes = {p["code"] for p in data["products"]}
+    assert "00013" in codes
+    assert "02083" not in codes
+    assert "02084" not in codes
+    assert "04188" not in codes
+    assert "04189" not in codes
 
     # Verify field structure on first product - Decision 1: 'code' is the ONLY product identifier
     first = data["products"][0]

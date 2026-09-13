@@ -7,7 +7,7 @@
     "build": "mkdir -p www && node scripts/sync-version.js && cp index.html app.js version.js version.json tailwind.cdn.js material-symbols.css fonts.css www/ && cp -r fonts www/",
     "sync": "npm run build && npx cap sync android",
     "open": "npx cap open android",
-    "build:apk": "npm run sync && cd android && ./gradlew assembleDebug"
+    "build:apk": "npm run sync && cd android && ./gradlew assembleRelease"
   },
   "keywords": [
     "pos",

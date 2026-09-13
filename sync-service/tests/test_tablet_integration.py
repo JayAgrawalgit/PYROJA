@@ -17,7 +17,9 @@ def test_tablet_master_data_bootstrap(test_client):
     prod_res = test_client.get("/api/sync/products")
     assert prod_res.status_code == 200
     products = prod_res.json()["products"]
-    assert len(products) > 3000
+    assert len(products) > 1300
+    assert not any(p["code"] in ("02083", "02084", "04188", "04189") for p in products)
+    assert any(p["code"] == "00013" for p in products)
     assert all("code" in p and "name" in p and "selling_rate" in p for p in products[:20])
 
     # 3. Pull customers

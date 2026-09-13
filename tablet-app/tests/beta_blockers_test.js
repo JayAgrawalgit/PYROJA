@@ -176,6 +176,22 @@ async function runTests() {
     assert(typeof syncRes.lastSync === "string");
     assert.strictEqual(pos.lastSync, syncRes.lastSync);
 
+    // TEST 6: Ghost Product Defensive Filtering
+    console.log("Test 6: Ghost product defensive filtering...");
+    const sampleProducts = [
+        { code: "00013", name: "111- ROLL CAPS AGNI", selling_rate: 48, stock_on_hand: 10159 },
+        { code: "02083", name: "", selling_rate: 0, stock_on_hand: 0 },
+        { code: "02084", name: "   ", selling_rate: 0, stock_on_hand: -5 },
+        { code: "04188", name: null, selling_rate: 0, stock_on_hand: 0 },
+        { code: "04127", name: "", selling_rate: 48, stock_on_hand: -2562 }, // has rate -> kept
+        { code: "05090", name: "", selling_rate: 0, stock_on_hand: 1 }        // has stock -> kept
+    ];
+    const ghostFiltered = pos.filterGhostProducts(sampleProducts);
+    assert.strictEqual(ghostFiltered.length, 3, "Expected 3 non-ghost products");
+    assert.strictEqual(ghostFiltered[0].code, "00013");
+    assert.strictEqual(ghostFiltered[1].code, "04127");
+    assert.strictEqual(ghostFiltered[2].code, "05090");
+
     console.log("=== ALL BETA BLOCKERS TESTS PASSED! ===");
 }
 

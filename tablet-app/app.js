@@ -505,6 +505,20 @@ class POSController {
         this.onStateUpdated = () => {};
     }
 
+    isGhostProduct(product) {
+        if (!product) return true;
+        return (
+            !product.name?.trim() &&
+            Number(product.stock_on_hand || 0) <= 0 &&
+            Number(product.selling_rate || 0) <= 0
+        );
+    }
+
+    filterGhostProducts(products) {
+        if (!Array.isArray(products)) return [];
+        return products.filter(p => !this.isGhostProduct(p));
+    }
+
     generateDraftId() {
         return `TAB01-${Math.floor(1000 + Math.random() * 9000)}`;
     }
@@ -794,7 +808,8 @@ class POSController {
 
         // Load local catalog, customers, categories, subcategories, and last sync
         console.log("[DIAGNOSTIC INIT] Querying local IndexedDB for cached products, customers, categories, and subcategories...");
-        this.products = await this.db.getAll("products");
+        const cachedProducts = await this.db.getAll("products");
+        this.products = this.filterGhostProducts(cachedProducts);
         this.customers = await this.db.getAll("customers");
         try {
             this.categories = await this.db.getAll("categories");
@@ -883,7 +898,7 @@ class POSController {
 
             console.log(`[DIAGNOSTIC SYNC] Master data received! Products: ${prodData.products ? prodData.products.length : 0}, Customers: ${custData.customers ? custData.customers.length : 0}`);
 
-            this.products = prodData.products || [];
+            this.products = this.filterGhostProducts(prodData.products || []);
             this.customers = custData.customers || [];
 
             if (catData && Array.isArray(catData.categories) && catData.categories.length > 0) {
@@ -962,7 +977,7 @@ class POSController {
     }
 
     getFilteredProducts() {
-        let items = this.products;
+        let items = this.filterGhostProducts(this.products);
 
         if (this.selectedBrand !== "ALL") {
             items = items.filter(p => p.company_name && p.company_name.toUpperCase().includes(this.selectedBrand.toUpperCase()));

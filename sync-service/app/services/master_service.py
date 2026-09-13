@@ -147,6 +147,14 @@ class MasterDataService:
             if not code:
                 continue
 
+            name = str(r.get("NAME", "")).strip()
+            stock = float(r.get("CQTY", 0.0) or 0.0)
+            rate = float(r.get("SRATE", 0.0) or 0.0)
+
+            # Skip ghost/discontinued placeholder products
+            if not name and stock <= 0 and rate <= 0:
+                continue
+
             ccode = str(r.get("CCODE", "")).strip()
             company_name = companies.get(ccode, f"Brand {ccode}" if ccode else "General")
 
@@ -159,15 +167,14 @@ class MasterDataService:
                 tax_slab = tcode if tcode else f"{tax_pct:.1f}%"
 
             gcode = str(r.get("GCODE", "")).strip()
-            name = str(r.get("NAME", "")).strip()
             pack = str(r.get("PACK", "")).strip() or "UNIT"
             nick = str(r.get("NICK", "")).strip() or None
             qib = int(r.get("QIB", 1) or 1)
             rate_type = str(r.get("RTTP", "P")).strip() or "P"
             mrp = float(r.get("MRP", 0.0) or 0.0)
-            srate = float(r.get("SRATE", 0.0) or 0.0)
+            srate = rate
             prate = float(r.get("PRATE", 0.0) or 0.0)
-            cqty = float(r.get("CQTY", 0.0) or 0.0)
+            cqty = stock
 
             products.append(
                 ProductItem(
@@ -330,9 +337,17 @@ class MasterDataService:
         try:
             item_records, _, _ = self._read_table_records("ITEMMST.DBF")
             for r in item_records:
-                if r.get("CODE"):
-                    cc = str(r.get("CCODE", "")).strip()
-                    item_counts[cc] = item_counts.get(cc, 0) + 1
+                code = str(r.get("CODE", "")).strip()
+                if not code:
+                    continue
+                name = str(r.get("NAME", "")).strip()
+                stock = float(r.get("CQTY", 0.0) or 0.0)
+                rate = float(r.get("SRATE", 0.0) or 0.0)
+                # Skip ghost/discontinued placeholder products
+                if not name and stock <= 0 and rate <= 0:
+                    continue
+                cc = str(r.get("CCODE", "")).strip()
+                item_counts[cc] = item_counts.get(cc, 0) + 1
         except Exception as e:
             logger.warning(f"Could not compute item counts for categories: {e}")
 
@@ -400,7 +415,14 @@ class MasterDataService:
         pack_counts: Dict[str, int] = {k: 0 for k in standard_order}
 
         for r in item_records:
-            if not r.get("CODE"):
+            code = str(r.get("CODE", "")).strip()
+            if not code:
+                continue
+            name = str(r.get("NAME", "")).strip()
+            stock = float(r.get("CQTY", 0.0) or 0.0)
+            rate = float(r.get("SRATE", 0.0) or 0.0)
+            # Skip ghost/discontinued placeholder products
+            if not name and stock <= 0 and rate <= 0:
                 continue
             p = str(r.get("PACK", "")).strip().upper()
             if not p:
