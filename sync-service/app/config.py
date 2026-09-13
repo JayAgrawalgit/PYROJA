@@ -29,8 +29,8 @@ class CacheConfig(BaseModel):
 
 class LoggingConfig(BaseModel):
     level: str = "INFO"
-    format: str = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
-    file: Optional[str] = "sync_service.log"
+    format: str = "%(asctime)s [%(levelname)s] [%(name)s] %(message)s"
+    file: Optional[str] = "logs/sync_service.log"
 
 
 class AppConfig(BaseModel):
@@ -54,7 +54,7 @@ def load_config(config_path: Optional[str] = None) -> AppConfig:
     if config_path:
         target_file = Path(config_path)
     else:
-        env_config = os.getenv("SYNC_CONFIG_PATH")
+        env_config = os.getenv("PYROJA_CONFIG_PATH") or os.getenv("SYNC_CONFIG_PATH")
         if env_config:
             target_file = Path(env_config)
         else:
@@ -73,19 +73,30 @@ def load_config(config_path: Optional[str] = None) -> AppConfig:
 
     config = AppConfig(**config_data)
 
-    # Environment variable overrides
-    if os.getenv("SYNC_SERVER_HOST"):
-        config.server.host = os.environ["SYNC_SERVER_HOST"]
-    if os.getenv("SYNC_SERVER_PORT"):
-        config.server.port = int(os.environ["SYNC_SERVER_PORT"])
-    if os.getenv("SYNC_FOXPRO_DATA_PATH"):
-        config.foxpro.data_path = Path(os.environ["SYNC_FOXPRO_DATA_PATH"])
-    if os.getenv("SYNC_FISCAL_YEAR"):
-        config.foxpro.active_fiscal_year = os.environ["SYNC_FISCAL_YEAR"]
-    if os.getenv("SYNC_DATABASE_PATH"):
-        config.database.path = Path(os.environ["SYNC_DATABASE_PATH"])
-    if os.getenv("SYNC_LOG_LEVEL"):
-        config.logging.level = os.environ["SYNC_LOG_LEVEL"]
+    # Environment variable overrides (PYROJA_* primary, SYNC_* backward-compatible fallback)
+    server_host = os.getenv("PYROJA_SERVER_HOST") or os.getenv("SYNC_SERVER_HOST")
+    if server_host:
+        config.server.host = server_host
+
+    server_port = os.getenv("PYROJA_SERVER_PORT") or os.getenv("SYNC_SERVER_PORT")
+    if server_port:
+        config.server.port = int(server_port)
+
+    foxpro_path = os.getenv("PYROJA_FOXPRO_DATA_PATH") or os.getenv("SYNC_FOXPRO_DATA_PATH")
+    if foxpro_path:
+        config.foxpro.data_path = Path(foxpro_path)
+
+    fiscal_year = os.getenv("PYROJA_FISCAL_YEAR") or os.getenv("SYNC_FISCAL_YEAR")
+    if fiscal_year:
+        config.foxpro.active_fiscal_year = fiscal_year
+
+    db_path = os.getenv("PYROJA_DATABASE_PATH") or os.getenv("SYNC_DATABASE_PATH")
+    if db_path:
+        config.database.path = Path(db_path)
+
+    log_level = os.getenv("PYROJA_LOG_LEVEL") or os.getenv("SYNC_LOG_LEVEL")
+    if log_level:
+        config.logging.level = log_level
 
     # Resolve relative paths against base_dir if needed
     if not config.foxpro.data_path.is_absolute():

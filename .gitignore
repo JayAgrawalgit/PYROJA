@@ -67,11 +67,12 @@ tablet-app/android/app/src/main/assets/public/
 tablet-app/android/app/src/main/assets/capacitor.config.json
 tablet-app/android/app/src/main/assets/capacitor.plugins.json
 
-# Build outputs (allow distribution APK)
+# Build outputs (allow distribution APK, ignore root dist, release, and zip packages)
 *.apk
 *.aab
-!tablet-app/dist/
-!tablet-app/dist/*.apk
+/dist/
+/release/
+*.zip
 
 # ==========================================
 # FoxPro Temporary Files

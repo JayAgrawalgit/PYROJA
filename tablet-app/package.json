@@ -1,6 +1,6 @@
 {
   "name": "pyroja-tablet-pos",
-  "version": "0.1.1-alpha",
+  "version": "1.0.0",
   "description": "PYROJA Android Tablet POS for RAM FATAKA CENTER",
   "main": "app.js",
   "scripts": {

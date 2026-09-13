@@ -16,7 +16,7 @@ from app.logging_config import setup_logging
 from app.services.master_service import MasterDataService
 from app.services.order_service import OrderService
 
-logger = logging.getLogger("sync_service")
+logger = logging.getLogger("PYROJA")
 
 
 @asynccontextmanager
@@ -29,7 +29,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         log_format=config.logging.format,
     )
 
-    logger.info(f"Starting Windows Sync Service v{__version__}")
+    logger.info(f"Starting PYROJA v{__version__}")
     logger.info(f"Active FoxPro fiscal data path: {config.foxpro.data_path}")
     logger.info(f"SQLite state database: {config.database.path}")
 
@@ -62,8 +62,8 @@ def create_app(config: AppConfig = None) -> FastAPI:
         config = load_config()
 
     app = FastAPI(
-        title="PYROJA Windows Sync Service",
-        description="Local LAN synchronization and order queueing bridge between Android POS tablets and legacy Visual FoxPro 6.0",
+        title="PYROJA",
+        description="PYROJA - Local LAN synchronization and order queueing bridge between Android POS tablets and legacy Visual FoxPro 6.0",
         version=__version__,
         lifespan=lifespan,
     )
@@ -102,7 +102,7 @@ def create_app(config: AppConfig = None) -> FastAPI:
     @app.get("/", tags=["General"])
     async def root_info():
         return {
-            "service": "PYROJA FoxPro Sync Service",
+            "service": "PYROJA",
             "version": __version__,
             "status": "RUNNING",
             "docs_url": "/docs",
