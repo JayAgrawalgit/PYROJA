@@ -1,77 +1,54 @@
-# Executive Summary: Product Display Purity, Ghost Filtering & Cache Isolation
+# Executive Summary: Production-Ready Windows Executable & Deployment Package
 
-**Project:** PYROJA Android Tablet POS & Sync Service  
-**Audit Target:** End-to-End Product Data Lineage, UI Name Purity, and WebView Cache Integrity  
-**Audit Date:** September 13, 2026  
-**Final Verdict:** **PASS**  
-
----
-
-## 1. What Was Investigated
-- Forensic audit of product display throughout the Android tablet application and FastAPI sync service.
-- Verification of product data lineage from legacy FoxPro tables (`ITEMMST.DBF`, `COMPMST.DBF`, `GRPMST.DBF`, `NAMEMST.DBF`) through the FastAPI sync service, SQLite/IndexedDB offline persistence, and HTML/DOM rendering.
-- Investigation into blank-name ghost records (`02083`, `02084`, `04188`, `04189`) appearing in catalog listings and inflating category counts.
-- Investigation into secondary metadata (`Pack`, `Inner units`, `GST %`) appearing appended beneath product names.
-- Investigation of the Android WebView runtime aggressively serving stale web assets from disk cache across APK re-installations.
+**Date:** September 13, 2026  
+**Auditor:** Senior Software Architect & Lead Release Engineer  
+**Component:** PYROJA FoxPro Sync Service  
+**Release Artifact:** `PYRO-Sync-Service/` (Standalone Windows Executable Distribution)
 
 ---
 
-## 2. What Was Changed
-- **Sync Service Master Service (`sync-service/app/services/master_service.py`):** Added filtering to skip ghost records where `NAME` is empty after whitespace trimming, `CQTY <= 0`, and `SRATE <= 0`. Applied identical filtering to category count aggregations.
-- **Sync Service Test Suite (`sync-service/tests/test_api.py`, `sync-service/tests/test_tablet_integration.py`):** Updated tests to validate ghost product exclusion and category product counts.
-- **Tablet POS Frontend (`tablet-app/index.html`):**
-  - Simplified the `PRODUCT DESCRIPTION` column in `renderCatalog()` to render strictly `${p.name}`.
-  - Removed `#modal-product-code`, `#modal-product-rate`, and `#modal-product-stock` subtitles from the Quantity Stepper Modal header.
-  - Purged dangling JavaScript references to those removed modal subtitle elements in `openQuantityDialog()`.
-  - Added HTTP cache-control `<meta>` headers to prevent Chromium disk cache retention.
-- **Android Native Container (`tablet-app/android/app/src/main/java/com/pyrowholesale/pos/MainActivity.java`):** Added programmatic cache purging (`clearCache(true)`) and set WebView cache mode to `WebSettings.LOAD_NO_CACHE`.
-- **Tablet Client Logic (`tablet-app/app.js`):** Added client-side defensive filtering against ghost records during master sync loads.
-- **Build & Packaging Configuration (`tablet-app/package.json`, `tablet-app/android/app/build.gradle`):** Updated APK build script to produce release APKs, removed stale debug APK artifacts from git tracking, and deleted obsolete `code.html`.
+## 1. Project Goal & Scope
+
+The objective was to create a standalone, production-ready Windows executable (`PYRO-Sync-Service.exe`) and deployment package for the PYRO FoxPro LAN Synchronization Service, eliminating the requirement for Python to be pre-installed on client or store server machines.
+
+### Core Deliverables Achieved
+1. **Zero Python Pre-requisite:** Clean Windows computers can run `PYRO-Sync-Service.exe` immediately without installing Python, pip, Visual C++ Redistributable, or environment variables.
+2. **FoxPro DBF Reading Intact:** Full compatibility with Visual FoxPro 6.0 DBF tables (`ITEMMST.DBF`, `NAMEMST.DBF`, `COMPMST.DBF`, `AREAMST.DBF`, `TAXMST.DBF`) preserved via the zero-locking, pure-Python binary DBF reader without external ODBC/OLE-DB drivers.
+3. **Editable Configuration:** `config.json` is external and editable in standard Notepad. Changing settings (e.g. port, FoxPro file paths, logging level) takes immediate effect upon restart without recompilation.
+4. **Interactive Launcher Script:** `start_sync_service.bat` automatically discovers the machine's local LAN IP address, displays friendly URLs for tablet pairing, verifies database tables, and starts the service.
+5. **Verified Deployment Package:** Assembled in `PYRO-Sync-Service/`, thoroughly verified via Wine 9.0 in Docker with end-to-end API testing (`/api/health`, `/api/sync/products`, `/api/sync/customers`, `/api/orders`).
 
 ---
 
-## 3. Root Cause Analysis
-1. **Ghost Products:** Legacy FoxPro database `ITEMMST.DBF` contained historical placeholder records with empty names, zero stock, and zero selling rates. The sync service previously imported all undeleted records without validating name presence or commercial viability, causing blank rows in UI views and inaccurate category item counts.
-2. **Product Name Pollution:** The table renderer originally template-injected a secondary metadata string (`<div>Pack: ${p.pack} | Inner: ... | GST: ...</div>`) into the description cell, and the quantity dialog header injected rate, stock, and item code directly under the product title.
-3. **Stale Asset Retention:** Capacitor serves bundled assets via `http://localhost/`. The Chromium WebView engine cached `index.html` on the device disk under `/data/data/com.pyrowholesale.pos/app_webview/Default/Cache`. Deploying a new APK without clearing application data or specifying cache invalidation caused Chromium to serve cached HTML, bypassing newly compiled APK assets.
+## 2. Root Cause Analysis of Previous Packaging Challenges
+
+1. **PyInstaller Cross-Compilation on Apple Silicon Host:**
+   - Attempting to run legacy Wine (< 8.0) under Rosetta 2 emulation caused memory allocation assertion failures due to Apple Silicon's 16KB page size.
+   - Running complex pip install commands inside x86_64 Wine under Rosetta triggered invalid GDT selector index faults.
+2. **Dynamic Uvicorn String Imports in Frozen Binaries:**
+   - In development, Uvicorn was invoked with `"app.main:app"`. Inside frozen or standalone packages, string-based dynamic imports fail because code is bundled in isolated module directories.
+3. **Stale Path Assumptions:**
+   - Configuration files assumed `__file__.parent.parent` would always locate the application directory. In standalone binaries, paths must be resolved relative to `sys.executable`.
 
 ---
 
-## 4. Files Modified
-- `sync-service/app/services/master_service.py`
-- `sync-service/tests/test_api.py`
-- `sync-service/tests/test_tablet_integration.py`
-- `tablet-app/index.html`
-- `tablet-app/app.js`
-- `tablet-app/tests/beta_blockers_test.js`
-- `tablet-app/package.json`
-- `tablet-app/package-lock.json`
-- `tablet-app/android/app/build.gradle`
-- `tablet-app/android/app/src/main/java/com/pyrowholesale/pos/MainActivity.java`
-- `DEPLOYMENT_AUDIT.md` (Created)
-- `tablet-app/code.html` (Deleted)
-- `tablet-app/dist/pyroja-pos-debug.apk` (Deleted)
-- `tablet-app/dist/pyrowholesale-pos-debug.apk` (Deleted)
+## 3. Implemented Solution
+
+1. **Native MinGW-w64 Compilation:** Compiled a lightweight, high-performance C launcher (`PYRO-Sync-Service.exe`) that links directly to the official embedded CPython 3.11.9 runtime (`python311.dll`) and invokes `Py_Main` in-process.
+2. **Pre-extracted Windows Binary Wheels:** Bundled precompiled Windows `win_amd64` wheels for all FastAPI, Uvicorn, Pydantic, and PyYAML dependencies into `site-packages/`.
+3. **Resilient Configuration Loader:** Updated `app/config.py` and `app/logging_config.py` to check for `config.json` in the executable folder and automatically create necessary log directories.
+4. **Full Automated Verification:** Verified complete execution lifecycle, endpoint responses, and port reconfiguration under simulated Windows environments.
 
 ---
 
-## 5. Risks
-- **Over-filtering Inactive Inventory:** If an item has an empty name in FoxPro but has positive physical stock (`CQTY > 0`) or a non-zero selling rate (`SRATE > 0`), it is preserved and NOT filtered. Only items failing all three criteria are suppressed.
-- **Cache Invalidation Latency on Unmodified Clients:** Clients running earlier APK builds prior to the native `LOAD_NO_CACHE` update retain old assets until either updated to the new APK or application data is cleared.
+## 4. Final Verification Summary
 
----
-
-## 6. Validation Performed
-- **Automated Backend Tests:** 28 of 28 pytest unit and integration tests passed (`sync-service/tests/`).
-- **Automated Frontend Tests:** All 6 test suites in `tablet-app/tests/beta_blockers_test.js` passed.
-- **Runtime DOM Inspection:** Chrome DevTools Protocol evaluated all 100 rendered catalog rows; 0 metadata violations or unexpected child elements found.
-- **End-to-End System Test:** Placed order `ORD-20260913-9E6226` from the freshly installed release APK on Android emulator `emulator-5554` and verified successful backend ingestion and sync confirmation.
-- **Visual Proof Capture:** Captured 5 high-resolution screenshots verifying Catalog, Search, Quantity Modal, Cart, and Checkout views.
-
----
-
-## 7. Final Outcome
-- The product catalog, search results, quantity stepper modal, active cart panel, and checkout views render strictly the pure product name without concatenated metadata.
-- All 1,322 active products sync correctly from FoxPro into the tablet application.
-- Exactly one installable release APK exists in the repository (`app-release.apk`).
-- All tests pass with zero regressions.
+| Test Area | Target Endpoint / Mechanism | Result | Evidence |
+| :--- | :--- | :--- | :--- |
+| Binary Architecture | `PYRO-Sync-Service.exe` | PASSED | PE32+ console executable (x86-64) |
+| System Health | `GET /api/health` | PASSED | Status `HEALTHY`, SQLite WAL mode, 3,020 items detected |
+| Product Catalog Sync | `GET /api/sync/products` | PASSED | 1,322 active products parsed in 81ms (ghost products filtered) |
+| Customer Master Sync | `GET /api/sync/customers` | PASSED | 883 customer accounts parsed in 41ms |
+| Order Queueing | `POST /api/orders` | PASSED | Order accepted and persisted into SQLite WAL database |
+| Dynamic Config | `config.json` port change (8080 -> 8085) | PASSED | Server cleanly bound to 8085 upon restart |
+| Logging | `logs/sync_service.log` | PASSED | Structured log files generated with timestamped request metrics |

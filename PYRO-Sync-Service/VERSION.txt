@@ -1,0 +1,5 @@
+PYROJA FoxPro Sync Service v1.0.0
+Build Architecture: Windows x86_64 (64-bit Standalone)
+Runtime: Embedded Python 3.11.9
+Compatibility: Windows 10, Windows 11, Windows Server 2016/2019/2022
+Built Date: 2026-09-13

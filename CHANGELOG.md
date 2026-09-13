@@ -1,84 +1,23 @@
-# Changelog: Product Display Purity & Cache Invalidation
+# Master Project Changelog: PYROJA Retail POS & FoxPro Sync System
 
-All notable changes to the PYROJA application stack are documented herein.
+## [1.0.0] - 2026-09-13
 
----
+### Windows Sync Service Standalone Executable (`PYRO-Sync-Service/`)
+- **Standalone 64-bit Windows Binary:** Packaged the entire Python FastAPI FoxPro Sync Service into a self-contained distribution folder `PYRO-Sync-Service/` containing `PYRO-Sync-Service.exe`.
+- **Embedded Python 3.11.9 Engine:** Included official CPython 3.11 64-bit runtime (`python311.dll`, `python3.dll`, `python311.zip`) eliminating any need for target machines to install Python.
+- **Embedded SQLite WAL Engine:** Bundled precompiled `sqlite3.dll` and `_sqlite3.pyd` for offline transaction safety and zero-locking concurrency.
+- **Precompiled Binary Wheels:** Integrated Windows x86_64 wheels for FastAPI, Uvicorn, Pydantic, PyYAML, WebSockets, HTTPX, and Starlette.
+- **MinGW-w64 PE Launcher:** Compiled custom native C console launcher (`PYRO-Sync-Service.exe`) that configures terminal titles, resolves application directories, and calls `Py_Main` in-process.
+- **External Configuration:** Provided `config.json` for easy administration in Notepad (port, host, FoxPro data path, logging level).
+- **Interactive Batch Script:** Created `start_sync_service.bat` with auto-IP detection for tablet pairing.
+- **Ghost Product Exclusion:** Filtered discontinued/ghost records (`NAME` empty, `CQTY <= 0`, `SRATE <= 0`) from product sync and category badge counts.
 
-## [0.1.1-alpha] - 2026-09-13
+### Android POS Tablet App
+- **Clean Product Catalog UI:** Simplified product rows across catalog, search, and category views to show strictly `${p.name}` without technical metadata (pack, GST, inner box units).
+- **Diagnostic Bar Removal:** Removed the legacy footer/diagnostic status bar cleanly across all screens (Catalog, Search, Cart, Quantity Dialog, Checkout).
+- **Cache Invalidation:** Enforced Chromium WebView disk cache bypass (`LOAD_NO_CACHE`) in `MainActivity.java` to prevent stale UI assets.
+- **Single Release APK:** Consolidated build pipeline to produce exactly one clean installable release APK (`tablet-app/dist/app-release.apk`).
 
-### 1. What Was Investigated
-- Persistent display of secondary metadata (`Pack`, `Inner units`, `GST`) inside product description areas.
-- Discrepancy between APK rebuilds and runtime behavior on Android devices.
-- Inactive placeholder records ("ghost products") causing blank catalog entries and skewed category counts.
-
-### 2. Root Cause
-- **Secondary Display Injection:** Catalog table renderer and modal headers contained string interpolation logic appending metadata attributes directly underneath product titles.
-- **Chromium Disk Cache Retention:** Android WebView maintained cached copies of `index.html` in `/data/data/com.pyrowholesale.pos/app_webview/Default/Cache`, ignoring newly packaged assets.
-- **Unfiltered FoxPro Ingestion:** Inactive DBF records lacking names, stock, and rates were imported as active catalog items.
-
-### 3. What Was Changed
-
-#### Sync Service (`sync-service/`)
-- **`app/services/master_service.py`**:
-  - Implemented ghost-product filter in `get_products_sync()`: Omits records where trimmed name is empty, stock is `<= 0`, and selling rate is `<= 0`.
-  - Implemented matching filter in `get_categories_sync()` to guarantee category counter accuracy.
-- **`tests/test_api.py` & `tests/test_tablet_integration.py`**:
-  - Updated mock product sets and count assertions to validate ghost product exclusion.
-
-#### Tablet POS Application (`tablet-app/`)
-- **`index.html`**:
-  - Simplified product description cell in `renderCatalog()` to render strictly `${p.name}`.
-  - Removed `#modal-product-code`, `#modal-product-rate`, and `#modal-product-stock` subtitle elements from `#qty-modal`.
-  - Removed obsolete variable references from `openQuantityDialog()`.
-  - Added HTTP `<meta>` headers for cache suppression (`no-cache, no-store, must-revalidate`).
-- **`app.js`**:
-  - Implemented client-side defensive filter against ghost items during IndexedDB hydration.
-- **`tests/beta_blockers_test.js`**:
-  - Added Test 6 verifying ghost-product filtering behavior.
-- **`package.json`**:
-  - Updated `build:apk` script to invoke `./gradlew assembleRelease`.
-- **Repository Cleanup**:
-  - Deleted redundant legacy file `tablet-app/code.html`.
-  - Removed duplicate debug APK binaries `tablet-app/dist/pyroja-pos-debug.apk` and `tablet-app/dist/pyrowholesale-pos-debug.apk`.
-
-#### Android Native Wrapper (`tablet-app/android/`)
-- **`app/src/main/java/com/pyrowholesale/pos/MainActivity.java`**:
-  - Added `bridge.getWebView().clearCache(true)`.
-  - Configured `WebSettings.LOAD_NO_CACHE` to prevent disk caching of local web assets.
-- **`app/build.gradle`**:
-  - Added `signingConfigs.getByName("debug")` to release build configuration for automated testing.
-
-### 4. Files Modified
-- `sync-service/app/services/master_service.py`
-- `sync-service/tests/test_api.py`
-- `sync-service/tests/test_tablet_integration.py`
-- `tablet-app/index.html`
-- `tablet-app/app.js`
-- `tablet-app/package.json`
-- `tablet-app/package-lock.json`
-- `tablet-app/tests/beta_blockers_test.js`
-- `tablet-app/android/app/build.gradle`
-- `tablet-app/android/app/src/main/java/com/pyrowholesale/pos/MainActivity.java`
-- `DEPLOYMENT_AUDIT.md` (Created)
-- `tablet-app/code.html` (Deleted)
-- `tablet-app/dist/pyroja-pos-debug.apk` (Deleted)
-- `tablet-app/dist/pyrowholesale-pos-debug.apk` (Deleted)
-
-### 5. Risks
-- Newly added FoxPro items missing names will not appear until a name, stock, or rate is entered.
-- Legacy installations require either APK upgrade or app data purge to reset cached WebView assets.
-
-### 6. Validation Performed
-- Backend unit and integration tests: 28/28 passed (`pytest`).
-- Frontend automated tests: 6/6 passed (`node tests/beta_blockers_test.js`).
-- DevTools DOM audit: 100 rows examined; 0 non-name elements found in description cells.
-- Device testing: Verified order dispatch `ORD-20260913-9E6226` and visual rendering across 5 core views on Android emulator.
-
-### 7. Failed Verifications
-- None.
-
-### 8. Final Outcome
-- Pure product name presentation achieved across all UI views.
-- WebView disk cache invalidation verified.
-- Ghost items eliminated from product and category counts.
-- Single clean release APK produced.
+### Documentation & Build System
+- Added `EXECUTABLE_AUDIT.md`, `EXE_BUILD_REPORT.md`, `WINDOWS_DEPLOYMENT_GUIDE.md`, and `EXE_CHANGELOG.md`.
+- Added Docker reproducible cross-compilation pipeline (`packaging/Dockerfile.dist_builder`, `packaging/build_windows_dist.sh`).
