@@ -169,6 +169,17 @@ npm run sync
 
 ---
 
+## Documentation & Architecture Guides
+
+- **Operator Deployment:** [`WINDOWS_DEPLOYMENT_GUIDE.md`](WINDOWS_DEPLOYMENT_GUIDE.md) — Production setup for Windows host and firewall.
+- **Developer Workflow:** [`DEVELOPMENT_WORKFLOW.md`](DEVELOPMENT_WORKFLOW.md) — Engineering standards, tests, and automated commit pipeline.
+- **Repository Audit:** [`ARTIFACT_AUDIT.md`](ARTIFACT_AUDIT.md) — Forensic audit and artifact census report.
+- **System Specifications:** [`docs/specs/`](docs/specs/) — Visual FoxPro table relationships, CDX index models, import workflows, and catalog architecture.
+- **Product Packaging Rules:** [`docs/packaging/`](docs/packaging/) — Business review worksheets, risk register, and empirical sales analysis.
+- **Historical Archive:** [`docs/archive/`](docs/archive/) — Milestone audits, build reports, and verification evidence.
+
+---
+
 ## License
 
 Proprietary — All rights reserved.
