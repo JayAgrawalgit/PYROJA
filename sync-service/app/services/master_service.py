@@ -179,10 +179,18 @@ class MasterDataService:
 
             # Resolve safe packaging multiple via PackResolver
             dbf_qib = int(r.get("QIB", 1) or 1)
-            pack_mult, pack_src, _ = self.pack_resolver.resolve_pack(code, name)
+            resolution = self.pack_resolver.resolve_pack(code, name)
+            suggested = resolution.suggested_pack_multiple
+            enforced = resolution.enforced_pack_multiple
+            pack_src = resolution.source
+            approval = resolution.approval_status
+
+            # Retain synthetic DBF QIB in suggested multiple if explicitly specified in tests with fallback
             if pack_src == "fallback" and dbf_qib > 1:
-                pack_mult = dbf_qib
-            qib = pack_mult
+                suggested = dbf_qib
+
+            qib = suggested
+            pack_mult = enforced
 
             rate_type = str(r.get("RTTP", "P")).strip() or "P"
             mrp = float(r.get("MRP", 0.0) or 0.0)
@@ -201,8 +209,11 @@ class MasterDataService:
                     pack=pack,
                     nick=nick,
                     qty_in_box=qib,
+                    suggested_pack_multiple=suggested,
+                    enforced_pack_multiple=enforced,
                     pack_multiple=pack_mult,
                     pack_source=pack_src,
+                    approval_status=approval,
                     tax_percentage=tax_pct,
                     tax_code=tcode or "DEFAULT",
                     rate_type=rate_type,

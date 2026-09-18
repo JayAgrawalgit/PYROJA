@@ -6,6 +6,8 @@ Resolves product pack multiples and wholesale case quantities using a 3-tier pre
 3. Safe Default (fallback to 1)
 
 Enforces business safety constraints:
+- Only explicit, enabled rules with status 'APPROVED' in catalog_pack_rules.json can set enforced_pack_multiple > 1.
+- Heuristics suggest pack sizes for tablet UI quick increments and reporting, but enforced_pack_multiple is ALWAYS 1.
 - Multi-shot repeaters (e.g. '30 SHOTS', '240 SHOTS') describe tube counts, not pack multiples.
 - Garland crackers ('1000 LAR', '600 COUNTING') describe cracker counts, sold per garland box.
 - Paper ply thickness ('12 PLY') describes paper thickness, not pack multiples.
@@ -14,11 +16,12 @@ Enforces business safety constraints:
 - Auto-extracted pack multiples are strictly capped at <= 100 units. Any count > 100 falls back to 1.
 """
 
+from dataclasses import dataclass
 import json
 import logging
-import re
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+import re
+from typing import Any, Dict, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -55,6 +58,30 @@ RE_BOX_OF = re.compile(
 )
 
 
+@dataclass
+class PackResolution:
+    """Detailed packaging resolution result distinguishing suggested from enforced multiples."""
+
+    suggested_pack_multiple: int
+    enforced_pack_multiple: int
+    source: str            # 'override', 'heuristic', 'fallback'
+    approval_status: str   # 'APPROVED', 'UNVERIFIED_HEURISTIC', 'DEFAULT', 'PENDING_REVIEW', 'DISABLED'
+    reason: str
+
+    @property
+    def is_enforced(self) -> bool:
+        """Whether a wholesale pack multiple > 1 is enforced."""
+        return self.enforced_pack_multiple > 1
+
+    def __iter__(self):
+        """Backwards compatibility: allows unpacking as (suggested_multiple, source, reason)."""
+        return iter((self.suggested_pack_multiple, self.source, self.reason))
+
+    def __getitem__(self, item):
+        """Backwards compatibility: indexing like a 3-tuple."""
+        return (self.suggested_pack_multiple, self.source, self.reason)[item]
+
+
 class PackResolver:
     """Service to resolve wholesale pack multiples and validate packaging rules."""
 
@@ -88,12 +115,12 @@ class PackResolver:
         code: str,
         name: str,
         default: int = 1,
-    ) -> Tuple[int, str, str]:
+    ) -> PackResolution:
         """Resolve pack multiple for a product code and name.
 
         Returns:
-            Tuple of (pack_multiple: int, source: str, reason: str)
-            source is one of: 'override', 'heuristic', 'fallback'
+            PackResolution containing suggested_pack_multiple, enforced_pack_multiple,
+            source, approval_status, and reason.
         """
         clean_code = str(code).strip()
         clean_name = str(name).strip()
@@ -102,60 +129,139 @@ class PackResolver:
         # Tier 1: Explicit Catalog Overrides
         if clean_code in self.rules:
             rule = self.rules[clean_code]
+            is_enabled = rule.get("enabled", True) is True
+            status = str(rule.get("status", "APPROVED")).strip().upper()
+            is_approved = (status == "APPROVED")
             pack_mult = int(rule.get("pack_multiple", default) or default)
             reason = rule.get("reason", "Explicit catalog overlay rule")
-            return pack_mult, "override", reason
+
+            if is_enabled and is_approved:
+                return PackResolution(
+                    suggested_pack_multiple=pack_mult,
+                    enforced_pack_multiple=pack_mult,
+                    source="override",
+                    approval_status="APPROVED",
+                    reason=reason,
+                )
+            else:
+                # Rule exists but is disabled or pending review: do not enforce above 1
+                return PackResolution(
+                    suggested_pack_multiple=pack_mult,
+                    enforced_pack_multiple=1,
+                    source="override",
+                    approval_status="PENDING_REVIEW" if not is_approved else "DISABLED",
+                    reason=f"{reason} (Rule unapproved or disabled; enforcement inactive)",
+                )
 
         # Tier 2: Guarded Heuristic Extraction
+        # Strict policy: Heuristics NEVER set enforced_pack_multiple > 1!
         # Guard 1: Single unit indicators (e.g. (1P), (1 PCS), ending in 1P)
         if RE_SINGLE_UNIT_TAG.search(name_upper):
-            return 1, "heuristic", "Single unit indicator detected ((1P)/(1 PCS))"
+            return PackResolution(
+                suggested_pack_multiple=1,
+                enforced_pack_multiple=1,
+                source="heuristic",
+                approval_status="UNVERIFIED_HEURISTIC",
+                reason="Single unit indicator detected ((1P)/(1 PCS))",
+            )
 
         # Guard 2: Garland cracker chains (e.g. 1000 LAR, 600 COUNTING, WALA LAR)
         if RE_GARLAND_LAR.search(name_upper):
-            return 1, "heuristic", "Garland cracker string sold per piece/box"
+            return PackResolution(
+                suggested_pack_multiple=1,
+                enforced_pack_multiple=1,
+                source="heuristic",
+                approval_status="UNVERIFIED_HEURISTIC",
+                reason="Garland cracker string sold per piece/box",
+            )
 
         # Guard 3: Paper ply thickness (e.g. 12 PLY)
         if RE_PAPER_PLY.search(name_upper):
-            return 1, "heuristic", "Paper ply thickness specification (defaults to 1)"
+            return PackResolution(
+                suggested_pack_multiple=1,
+                enforced_pack_multiple=1,
+                source="heuristic",
+                approval_status="UNVERIFIED_HEURISTIC",
+                reason="Paper ply thickness specification (defaults to 1)",
+            )
 
         # Guard 4: Pure multi-shot aerial repeaters (e.g. 30 SHOTS, 240 SHOTS)
-        # Note: If there's an explicit pack multiple like (5 P), we allow that,
-        # but if the only number is shot count, default to 1.
         has_pack_tag = RE_STANDARD_PACK_TAG.search(name_upper)
         if not has_pack_tag and RE_SHOTS_COUNT.search(name_upper):
-            return 1, "heuristic", "Multi-shot aerial repeater sold per unit"
+            return PackResolution(
+                suggested_pack_multiple=1,
+                enforced_pack_multiple=1,
+                source="heuristic",
+                approval_status="UNVERIFIED_HEURISTIC",
+                reason="Multi-shot aerial repeater sold per unit",
+            )
 
         # Pattern A: Typo '1OOPKT' or '1OOP' (capital O instead of zero)
         if RE_TYPO_100PKT.search(name_upper):
-            return 100, "heuristic", "Extracted 100 from '1OOPKT' legacy typo"
+            return PackResolution(
+                suggested_pack_multiple=100,
+                enforced_pack_multiple=1,
+                source="heuristic",
+                approval_status="UNVERIFIED_HEURISTIC",
+                reason="Extracted 100 from '1OOPKT' legacy typo (unverified heuristic)",
+            )
 
         # Pattern B: Bundle ratio e.g. (10 DABBI=1BOX) or (50P= 1 BUNDEL)
         m_ratio = RE_BUNDLE_RATIO.search(name_upper)
         if m_ratio:
             val = int(m_ratio.group(1))
             if 1 <= val <= 100:
-                return val, "heuristic", f"Extracted pack multiple {val} from bundle ratio"
+                return PackResolution(
+                    suggested_pack_multiple=val,
+                    enforced_pack_multiple=1,
+                    source="heuristic",
+                    approval_status="UNVERIFIED_HEURISTIC",
+                    reason=f"Extracted pack multiple {val} from bundle ratio (unverified heuristic)",
+                )
 
         # Pattern C: Outer multiple from dual pack like '(10 P) 2P'
         m_outer = RE_DUAL_PACK_OUTER.search(name_upper)
         if m_outer:
             val = int(m_outer.group(1))
             if 1 <= val <= 100:
-                return val, "heuristic", f"Extracted outer pack multiple {val} from dual pack tag"
+                return PackResolution(
+                    suggested_pack_multiple=val,
+                    enforced_pack_multiple=1,
+                    source="heuristic",
+                    approval_status="UNVERIFIED_HEURISTIC",
+                    reason=f"Extracted outer pack multiple {val} from dual pack tag (unverified heuristic)",
+                )
 
         # Pattern D: Standard parenthetical pack tags (e.g. (10 P), (5 PCS), (25 P)
         if has_pack_tag:
             val = int(has_pack_tag.group(1))
             if 1 <= val <= 100:
-                return val, "heuristic", f"Extracted pack multiple {val} from parenthetical pack tag"
+                return PackResolution(
+                    suggested_pack_multiple=val,
+                    enforced_pack_multiple=1,
+                    source="heuristic",
+                    approval_status="UNVERIFIED_HEURISTIC",
+                    reason=f"Extracted pack multiple {val} from parenthetical pack tag (unverified heuristic)",
+                )
 
         # Pattern E: 'BOX OF 10', 'PACK OF 5', etc.
         m_box_of = RE_BOX_OF.search(name_upper)
         if m_box_of:
             val = int(m_box_of.group(1))
             if 1 <= val <= 100:
-                return val, "heuristic", f"Extracted pack multiple {val} from box-of pattern"
+                return PackResolution(
+                    suggested_pack_multiple=val,
+                    enforced_pack_multiple=1,
+                    source="heuristic",
+                    approval_status="UNVERIFIED_HEURISTIC",
+                    reason=f"Extracted pack multiple {val} from box-of pattern (unverified heuristic)",
+                )
 
         # Tier 3: Safe Fallback
-        return default, "fallback", "No packaging multiple pattern detected; safe default to 1"
+        return PackResolution(
+            suggested_pack_multiple=default,
+            enforced_pack_multiple=1,
+            source="fallback",
+            approval_status="DEFAULT",
+            reason="No packaging multiple pattern detected; safe default to 1",
+        )

@@ -94,15 +94,16 @@ class OrderService:
                 )
 
             # Pack multiple validation rule (strictly enforced on wholesale accounts, bypassed for retail Cash A/C 99999)
+            # Only explicit, approved rules set enforced_pack_multiple > 1. Heuristic suggestions NEVER block wholesale orders.
             is_wholesale = matched_customer.code != "99999" and matched_customer.price_tier.upper() != "RETAIL"
-            qib = master_product.qty_in_box
-            if is_wholesale and qib and qib > 1:
+            enforced = getattr(master_product, "enforced_pack_multiple", None) or master_product.pack_multiple or 1
+            if is_wholesale and enforced > 1:
                 # Modulo with floating point tolerance
-                remainder = item.qty % qib
-                if abs(remainder) > 1e-4 and abs(remainder - qib) > 1e-4:
+                remainder = item.qty % enforced
+                if abs(remainder) > 1e-4 and abs(remainder - enforced) > 1e-4:
                     raise OrderValidationError(
                         f"Line {idx}: Pack multiple rule violation for item '{item_code}' ({master_product.name}). "
-                        f"Units per box is {qib} ({master_product.pack}). Requested quantity {item.qty} must be a multiple of {qib}."
+                        f"Enforced units per box is {enforced} ({master_product.pack}). Requested quantity {item.qty} must be a multiple of {enforced}."
                     )
 
             # Auto-resolve fields if not explicitly specified
@@ -123,7 +124,7 @@ class OrderService:
                     "item_code": item_code,
                     "item_name": item_name,
                     "pack": pack,
-                    "qty_in_box": qib or 1,
+                    "qty_in_box": master_product.qty_in_box or 1,
                     "qty": item.qty,
                     "rate": rate,
                     "tax_percentage": tax_pct,

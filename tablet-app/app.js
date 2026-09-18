@@ -674,6 +674,9 @@ class POSController {
             ? productOrCode
             : this.products.find(p => p.code === productOrCode);
         if (!product) return 1;
+        if (product.suggested_pack_multiple && Number(product.suggested_pack_multiple) >= 1) {
+            return Number(product.suggested_pack_multiple);
+        }
         if (product.pack_multiple && Number(product.pack_multiple) >= 1) {
             return Number(product.pack_multiple);
         }

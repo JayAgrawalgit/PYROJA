@@ -145,10 +145,10 @@ def test_pack_multiple_rule_enforcement(temp_dbf_dir):
                 "CODE": "90001",
                 "CCODE": "1",
                 "GCODE": "SPK",
-                "NAME": "SUPER ROCKET 10PCS",
-                "PACK": "BOX",
+                "NAME": "UNVERIFIED HEURISTIC ROCKET (10 P)",
+                "PACK": "PKT",
                 "NICK": "***",
-                "QIB": 10,  # Pack size 10
+                "QIB": 1,
                 "TAX": 0.0,
                 "TCODE": "T1",
                 "RTTP": "P",
@@ -156,7 +156,23 @@ def test_pack_multiple_rule_enforcement(temp_dbf_dir):
                 "SRATE": 85.0,
                 "PRATE": 60.0,
                 "CQTY": 500.0,
-            }
+            },
+            {
+                "CODE": "00178",
+                "CCODE": "1",
+                "GCODE": "SPK",
+                "NAME": "APPROVED OVERLAY RED BIJALI 10 BAGS",
+                "PACK": "BAG",
+                "NICK": "***",
+                "QIB": 1,
+                "TAX": 0.0,
+                "TCODE": "T1",
+                "RTTP": "P",
+                "MRP": 50.0,
+                "SRATE": 17.5,
+                "PRATE": 10.0,
+                "CQTY": 200.0,
+            },
         ],
     )
 
@@ -182,49 +198,60 @@ def test_pack_multiple_rule_enforcement(temp_dbf_dir):
     app = create_app(cfg)
     client = TestClient(app)
 
-    # Case A: Wholesale Customer + Qty = 20 (Multiple of 10) -> Should succeed
-    res_valid = client.post(
+    # Case A: Heuristic value of 10 must NEVER reject wholesale order of 15 (enforced=1)
+    res_heur_15 = client.post(
         "/api/orders",
         json={
-            "draft_id": "DRAFT-QIB-01",
-            "customer_code": "C0001",
-            "line_items": [{"item_code": "90001", "qty": 20.0, "rate": 85.0}],
-        },
-    )
-    assert res_valid.status_code == 201
-
-    # Case B: Wholesale Customer + Qty = 15 (NOT a multiple of 10) -> Must fail with 422
-    res_invalid = client.post(
-        "/api/orders",
-        json={
-            "draft_id": "DRAFT-QIB-02",
+            "draft_id": "DRAFT-HEUR-15",
             "customer_code": "C0001",
             "line_items": [{"item_code": "90001", "qty": 15.0, "rate": 85.0}],
         },
     )
-    assert res_invalid.status_code == 422
-    detail = res_invalid.json()["detail"]
+    assert res_heur_15.status_code == 201, f"Heuristic must not reject wholesale order: {res_heur_15.text}"
+
+    # Case B: Approved explicit rule (00178 has enforced=10) with valid multiple (qty=20) -> Succeeds
+    res_appr_20 = client.post(
+        "/api/orders",
+        json={
+            "draft_id": "DRAFT-APPR-20",
+            "customer_code": "C0001",
+            "line_items": [{"item_code": "00178", "qty": 20.0, "rate": 17.5}],
+        },
+    )
+    assert res_appr_20.status_code == 201
+
+    # Case C: Approved explicit rule (00178 has enforced=10) with non-multiple (qty=15) -> Rejection (422)
+    res_appr_15 = client.post(
+        "/api/orders",
+        json={
+            "draft_id": "DRAFT-APPR-15",
+            "customer_code": "C0001",
+            "line_items": [{"item_code": "00178", "qty": 15.0, "rate": 17.5}],
+        },
+    )
+    assert res_appr_15.status_code == 422
+    detail = res_appr_15.json()["detail"]
     assert "Pack multiple rule violation" in detail
     assert "must be a multiple of 10" in detail
 
-    # Case C: Cash Customer 99999 + Qty = 15 (Non-multiple) -> Must SUCCEED (Retail bypass)
+    # Case D: Cash Customer 99999 + Approved item (00178) + non-multiple (qty=15) -> SUCCEEDS (Retail bypass)
     res_cash_15 = client.post(
         "/api/orders",
         json={
             "draft_id": "DRAFT-CASH-15",
             "customer_code": "99999",
-            "line_items": [{"item_code": "90001", "qty": 15.0, "rate": 85.0}],
+            "line_items": [{"item_code": "00178", "qty": 15.0, "rate": 17.5}],
         },
     )
     assert res_cash_15.status_code == 201
 
-    # Case D: Cash Customer 99999 + Qty = 1 (Single unit loose purchase) -> Must SUCCEED
+    # Case E: Cash Customer 99999 + Approved item (00178) + Single loose unit (qty=1) -> SUCCEEDS
     res_cash_1 = client.post(
         "/api/orders",
         json={
             "draft_id": "DRAFT-CASH-01",
             "customer_code": "99999",
-            "line_items": [{"item_code": "90001", "qty": 1.0, "rate": 85.0}],
+            "line_items": [{"item_code": "00178", "qty": 1.0, "rate": 17.5}],
         },
     )
     assert res_cash_1.status_code == 201
