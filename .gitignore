@@ -79,3 +79,16 @@ tablet-app/android/app/src/main/assets/capacitor.plugins.json
 # ==========================================
 *.TMP
 *.tmp
+
+# ==========================================
+# Runtime Order Staging & Import Outputs
+# ==========================================
+import_staging.json
+import_result.json
+
+# ==========================================
+# Test Coverage & Cache Outputs
+# ==========================================
+.coverage
+htmlcov/
+
