@@ -87,9 +87,9 @@ Evaluated live DOM on Android emulator `emulator-5554`:
 - Uninstalled previous application and performed clean streamed install onto `emulator-5554`.
 
 ### D. Visual Verification & Screenshot Evidence
-- **Catalog View ([proof_footer_removed_catalog.png](file:///Users/jayagrawal/Documents/PYROJA/proof_footer_removed_catalog.png)):** Confirms sidebar, catalog table, and drawer flush to bottom with 0 footer elements.
-- **Cart Panel View ([proof_footer_removed_cart.png](file:///Users/jayagrawal/Documents/PYROJA/proof_footer_removed_cart.png)):** Confirms active cart items and totals card render cleanly down to the viewport base.
-- **Checkout View ([proof_footer_removed_checkout.png](file:///Users/jayagrawal/Documents/PYROJA/proof_footer_removed_checkout.png)):** Confirms full operational readiness of order submission without UI collision.
+- **Catalog View ([proof_footer_removed_catalog.png](../proofs/proof_footer_removed_catalog.png)):** Confirms sidebar, catalog table, and drawer flush to bottom with 0 footer elements.
+- **Cart Panel View ([proof_footer_removed_cart.png](../proofs/proof_footer_removed_cart.png)):** Confirms active cart items and totals card render cleanly down to the viewport base.
+- **Checkout View ([proof_footer_removed_checkout.png](../proofs/proof_footer_removed_checkout.png)):** Confirms full operational readiness of order submission without UI collision.
 
 ---
 
