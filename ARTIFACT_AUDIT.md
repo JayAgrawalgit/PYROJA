@@ -154,27 +154,141 @@ docs/
 2. **`docs/packaging/PACKAGING_HISTORY_EVIDENCE_REPORT.md`**:  
    Verify that relative links to `PACKAGING_RULE_DECISIONS.csv` and `PACKAGING_BUSINESS_REVIEW_WORKSHEET.md` remain intact within `./`.
 
-### C. Gitignore Hardening
-Add explicit exclusion rules in `.gitignore` to prevent runtime generation of order staging files and test coverage from polluting Git status:
-```gitignore
-# Runtime staging and FoxPro result files
-import_staging.json
-import_result.json
+### C. Gitignore Hardening & Scoping
+Runtime execution of `export_orders.py` and FoxPro `IMPORT.PRG` produces transient staging JSON payloads. To prevent polluting the repository tree while strictly protecting static test fixtures and JSON schemas, `.gitignore` is scoped narrowly:
 
-# Test coverage outputs
+```gitignore
+# ==========================================
+# Runtime Order Staging & Import Outputs
+# ==========================================
+# Ephemeral order staging and import execution outputs
+/import_staging.json
+/import_result.json
+sync-service/import_staging.json
+sync-service/import_result.json
+PYRO-Sync-Service/import_staging.json
+PYRO-Sync-Service/import_result.json
+
+# Explicitly ensure test sample fixtures and schemas are never ignored
+!sync-service/samples/import_staging.json
+!sync-service/schemas/staging_schema.json
+
+# ==========================================
+# Test Coverage & Cache Outputs
+# ==========================================
 .coverage
 htmlcov/
 ```
 
+- **Runtime vs Fixture Audit:** Verified that `sync-service/samples/import_staging.json` and `sync-service/schemas/staging_schema.json` are required test contract files (tested by `test_exporter.py`). The negation rules (`!sync-service/samples/...`) ensure they remain tracked and visible.
+- **Verification Command:** `git check-ignore -v ./import_staging.json sync-service/import_staging.json sync-service/samples/import_staging.json`
+  - Output confirms `./import_staging.json` and `sync-service/import_staging.json` are ignored.
+  - Output confirms `sync-service/samples/import_staging.json` is **not** ignored.
+
 ---
 
-## 5. Risk Assessment & Verification Directives
+## 5. Cryptographic Verification: Duplicate Root `vfp/` Deletion
 
-- **Sync Service Impact:** Zero. All Python code and tests in `sync-service/` remain 100% intact. Tests continue targeting `sync-service/app/`.
-- **Tablet POS Impact:** Zero. Obsolete screenshots in `tablet-app/` were unreferenced; all web assets (`index.html`, `app.js`, `fonts/`, `tailwind.cdn.js`) and Capacitor configurations are untouched.
-- **Windows Packaging Impact:** Zero. `PYRO-Sync-Service/` and `packaging/` remain fully functional.
-- **Verification Gates:**
-  1. Full execution of backend test suite (`pytest sync-service/tests/ -v`).
-  2. Verification of JavaScript syntax (`node -c tablet-app/app.js`).
-  3. Verification that no broken relative links exist in documentation.
-  4. Git tree verification to ensure clean status with zero untracked clutter.
+Before removing `vfp/CONFIG.FPW` and `vfp/IMPORT.PRG` from the repository root, cryptographic SHA-256 checksums were calculated and compared against their canonical counterparts in `sync-service/vfp/`:
+
+| Artifact | Canonical Path | Deleted Root Path | SHA-256 Checksum | Match Status |
+| :--- | :--- | :--- | :--- | :---: |
+| **FoxPro Config** | `sync-service/vfp/CONFIG.FPW` | `vfp/CONFIG.FPW` | `9b1d40dca761ac62bb17d61e0f8da6341149435329e2e4acf5f0ef2a7307c4d2` | **IDENTICAL (100%)** |
+| **FoxPro Import Script** | `sync-service/vfp/IMPORT.PRG` | `vfp/IMPORT.PRG` | `7a1dab16f0630af2fa130a75a6594b8827d6f20e1203b0cb95ba8e897fa2b7cc` | **IDENTICAL (100%)** |
+
+**Conclusion:** The root files were bit-for-bit redundant duplicates committed during repository initialization (`b19609f`). Deleting the root copies leaves the canonical scripts in `sync-service/vfp/` completely intact with zero risk of data or code loss.
+
+---
+
+## 6. Comprehensive Reference Search & Dependency Audit
+
+Every moved, archived, and deleted file was audited across all tracked repository text, configuration, script, and manifest files (including Python, JavaScript, shell scripts, batch files, Gradle configs, Dockerfiles, and JSON/YAML):
+
+| Target File | Original Location | New Destination / Action | References Found | Disposition & Resolution Status |
+| :--- | :--- | :--- | :---: | :--- |
+| `DEPLOYMENT_AUDIT.md` | `/` | `docs/archive/audits/` | 2 | `ARTIFACT_AUDIT.md` (audit table & tree). Zero operational code references. |
+| `EXECUTABLE_AUDIT.md` | `/` | `docs/archive/audits/` | 2 | `ARTIFACT_AUDIT.md` (audit table & tree). Zero operational code references. |
+| `FOOTER_REMOVAL_AUDIT.md` | `/` | `docs/archive/audits/` | 7 | Updated internal proof links to `../proofs/`; listed in `FOOTER_REMOVAL_CHANGELOG.md` text. |
+| `FOOTER_REMOVAL_CHANGELOG.md` | `/` | `docs/archive/audits/` | 7 | Listed in `ARTIFACT_AUDIT.md` and historical changelog text. |
+| `TECHNICAL_AUDIT.md` | `/` | `docs/archive/audits/` | 2 | `ARTIFACT_AUDIT.md` (audit table & tree). Zero operational code references. |
+| `alpha_test_plan.md` | `/` | `docs/archive/pilot/` | 2 | `ARTIFACT_AUDIT.md` (audit table & tree). Zero operational code references. |
+| `bug_tracker_template.md` | `/` | `docs/archive/pilot/` | 2 | `ARTIFACT_AUDIT.md` (audit table & tree). Zero operational code references. |
+| `operator_feedback_form.md` | `/` | `docs/archive/pilot/` | 2 | `ARTIFACT_AUDIT.md` (audit table & tree). Zero operational code references. |
+| `proof_footer_removed_cart.png` | `/` | `docs/archive/proofs/` | 5 | Updated links in `FOOTER_REMOVAL_AUDIT.md` to `../proofs/proof_footer_removed_cart.png`. |
+| `proof_footer_removed_catalog.png` | `/` | `docs/archive/proofs/` | 5 | Updated links in `FOOTER_REMOVAL_AUDIT.md` to `../proofs/proof_footer_removed_catalog.png`. |
+| `proof_footer_removed_checkout.png` | `/` | `docs/archive/proofs/` | 5 | Updated links in `FOOTER_REMOVAL_AUDIT.md` to `../proofs/proof_footer_removed_checkout.png`. |
+| `EXECUTIVE_SUMMARY.md` | `/` | `docs/archive/reports/` | 2 | `ARTIFACT_AUDIT.md` (audit table & tree). Zero operational code references. |
+| `EXE_BUILD_REPORT.md` | `/` | `docs/archive/reports/` | 2 | `ARTIFACT_AUDIT.md` (audit table & tree). Zero operational code references. |
+| `EXE_CHANGELOG.md` | `/` | `docs/archive/reports/` | 2 | `ARTIFACT_AUDIT.md` (audit table & tree). Zero operational code references. |
+| `VERIFICATION_REPORT.md` | `/` | `docs/archive/reports/` | 2 | `ARTIFACT_AUDIT.md` (audit table & tree). Zero operational code references. |
+| `catalog_mapping_report.md` | `/` | `docs/archive/reports/` | 2 | `ARTIFACT_AUDIT.md` (audit table & tree). Superseded by `CATEGORY_MAPPING_REPORT.md`. |
+| `CATEGORY_MAPPING_REPORT.md` | `/` | `docs/specs/` | 3 | `ARTIFACT_AUDIT.md`. Specification document. Zero operational code references. |
+| `import_workflow_and_test_plan.md` | `/` | `docs/specs/` | 2 | `ARTIFACT_AUDIT.md`. Specification document. Zero operational code references. |
+| `invoice_creation_analysis.md` | `/` | `docs/specs/` | 2 | `ARTIFACT_AUDIT.md`. Specification document. Zero operational code references. |
+| `legacy_catalog_strategy.md` | `/` | `docs/specs/` | 2 | `ARTIFACT_AUDIT.md`. Specification document. Zero operational code references. |
+| `missing_data_report.md` | `/` | `docs/specs/` | 2 | `ARTIFACT_AUDIT.md`. Specification document. Zero operational code references. |
+| `required_fields.md` | `/` | `docs/specs/` | 2 | `ARTIFACT_AUDIT.md`. Specification document. Zero operational code references. |
+| `showroom_navigation.md` | `/` | `docs/specs/` | 2 | `ARTIFACT_AUDIT.md`. Specification document. Zero operational code references. |
+| `table_relationships.md` | `/` | `docs/specs/` | 2 | `ARTIFACT_AUDIT.md`. Specification document. Zero operational code references. |
+| `CATALOG_PACKAGING_REPORT.md` | `/` | `docs/packaging/` | 2 | `ARTIFACT_AUDIT.md`. Business report. Zero operational code references. |
+| `PACKAGING_BUSINESS_REVIEW_WORKSHEET.md` | `/` | `docs/packaging/` | 4 | Co-located relative links preserved (`./PACKAGING_BUSINESS_REVIEW_WORKSHEET.md`). |
+| `PACKAGING_HISTORY_EVIDENCE_REPORT.md` | `/` | `docs/packaging/` | 5 | Co-located relative links preserved in `docs/packaging/`. |
+| `PACKAGING_RULE_DECISIONS.csv` | `/` | `docs/packaging/` | 4 | Co-located relative link preserved in `PACKAGING_HISTORY_EVIDENCE_REPORT.md`. |
+| `ACTIVE_RULE_RISK_REGISTER.md` | `/` | `docs/packaging/` | 5 | Co-located relative link preserved in `PACKAGING_BUSINESS_REVIEW_WORKSHEET.md`. |
+| `screen.png` | `tablet-app/` | **DELETED** | 1 | `ARTIFACT_AUDIT.md`. Zero code or build references. |
+| `screenshot1.png` | `tablet-app/` | **DELETED** | 1 | `ARTIFACT_AUDIT.md`. Zero code or build references. |
+| `screenshot2_catalog.png` | `tablet-app/` | **DELETED** | 1 | `ARTIFACT_AUDIT.md`. Zero code or build references. |
+| `screenshot3_cart.png` | `tablet-app/` | **DELETED** | 1 | `ARTIFACT_AUDIT.md`. Zero code or build references. |
+| `screenshot4_offline_restart.png` | `tablet-app/` | **DELETED** | 1 | `ARTIFACT_AUDIT.md`. Zero code or build references. |
+| `vfp/CONFIG.FPW` | `vfp/` | **DELETED** | 1 | `ARTIFACT_AUDIT.md`. Canonical version in `sync-service/vfp/CONFIG.FPW`. |
+| `vfp/IMPORT.PRG` | `vfp/` | **DELETED** | 1 | `ARTIFACT_AUDIT.md`. Canonical version in `sync-service/vfp/IMPORT.PRG`. |
+
+**Markdown Link Validation:** An automated link scanner verified **54 links across 62 markdown files**. **100% of relative links resolve to valid, existing files.**
+
+---
+
+## 7. Tablet Application Validation & Blocker Report
+
+Validation commands and checks executed for the Android Tablet POS application:
+
+| Check | Execution Command | Result | Blocker / Dependency Constraint |
+| :--- | :--- | :---: | :--- |
+| **Android Unit Tests** | `cd tablet-app/android && JAVA_HOME="/opt/homebrew/opt/openjdk@21" ./gradlew testDebugUnitTest` | **PASSED** | 53 actionable tasks executed, 0 failures. Ran `ExampleUnitTest`. |
+| **Android Debug APK Compilation** | `cd tablet-app/android && JAVA_HOME="/opt/homebrew/opt/openjdk@21" ./gradlew assembleDebug` | **PASSED** | 93 actionable tasks executed, 0 failures. Output: `tablet-app/android/app/build/outputs/apk/debug/app-debug.apk`. |
+| **Node.js Web Lint / Type Check** | `npm test` / `npm run build` | **BLOCKED** | `node`, `npm`, and `npx` are not installed on this host (`command not found: node`). Lockfiles were left unmodified. |
+| **JavaScript Syntax Check** | `node -c tablet-app/app.js` | **BLOCKED** | Node runtime unavailable on local machine. Code verified by inspection against recent commits. |
+| **Android Instrumentation Tests** | `./gradlew connectedDebugAndroidTest` | **BLOCKED** | Requires an attached physical tablet or running Android emulator (`adb devices` is empty). |
+
+---
+
+## 8. Windows Packaging Validation & Rebuild Qualification
+
+Validation commands and dependency analysis for Windows packaging:
+
+| Check | Target / Command | Result | Technical Qualification |
+| :--- | :--- | :---: | :--- |
+| **Packaging Inputs Inspection** | `packaging/build_windows_dist.sh` | **VERIFIED** | Source audit confirms packaging inputs depend exclusively on `sync-service/app/`. There are zero dependencies on `vfp/`, `docs/`, or root report files. |
+| **Deployment Scripts Inspection** | `PYRO-Sync-Service/start_pyroja.bat`, `start_sync_service.bat` | **VERIFIED** | Scripts reference local `PYROJA.exe` and `PYRO-Sync-Service.exe` within the same folder. Untouched and functional. |
+| **Full Windows Executable Rebuild** | Docker cross-compilation (`packaging/Dockerfile.dist_builder`) | **NOT RUN** | **Explicit Qualification:** A full Windows binary recompile was NOT performed. The Docker daemon is inactive (`unix:///Users/jayagrawal/.orbstack/run/docker.sock` unavailable) and `wine` is not installed on macOS. |
+| **Wine Runtime Verification** | `packaging/verify_windows_deployment.sh` | **NOT RUN** | Requires Wine environment, unavailable on this host. |
+
+---
+
+## 9. Residual Risks, Deployment Impact & Rollback Procedure
+
+- **Deployment Impact:**  
+  *Qualified Low.* No runtime code or backend logic was altered. The standalone Windows deployment folder `PYRO-Sync-Service/` remains as committed in v1.0.0. All packaging scripts remain intact with unchanged inputs. Android Gradle debug build compiles cleanly.
+- **Residual Risks:**  
+  1. *Host Tooling Gap:* Node.js is not installed on this developer workstation, meaning `tablet-app/package.json` scripts (`npm run build`, `npm run sync`) require execution on a machine with Node 18+ installed.
+  2. *Windows Rebuild Cadence:* When new Python features are deployed to production, `packaging/build_windows_dist.sh` must be executed within Docker to refresh `PYRO-Sync-Service/`.
+- **Rollback Procedure:**  
+  If any archived document or removed file is required in its previous location:
+  ```bash
+  # Option 1: Complete branch discard
+  git checkout main
+  git branch -D chore/repository-artifact-cleanup
+
+  # Option 2: Selective commit revert
+  git revert <commit-hash>
+  ```
+
