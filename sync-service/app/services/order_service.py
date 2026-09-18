@@ -93,9 +93,10 @@ class OrderService:
                     f"Line {idx}: Quantity for item '{item_code}' must be greater than 0 (got {item.qty})."
                 )
 
-            # Pack multiple validation rule
+            # Pack multiple validation rule (strictly enforced on wholesale accounts, bypassed for retail Cash A/C 99999)
+            is_wholesale = matched_customer.code != "99999" and matched_customer.price_tier.upper() != "RETAIL"
             qib = master_product.qty_in_box
-            if qib and qib > 1:
+            if is_wholesale and qib and qib > 1:
                 # Modulo with floating point tolerance
                 remainder = item.qty % qib
                 if abs(remainder) > 1e-4 and abs(remainder - qib) > 1e-4:

@@ -1,0 +1,198 @@
+{
+  "_version": "1.0.0",
+  "_description": "Explicit product packaging overrides and case multiples for PYROJA sync service.",
+  "rules": {
+    "03088": {
+      "pack_multiple": 1,
+      "case_units": 600,
+      "reason": "Matchbox bundle (600 DABBA). Billed per bundle, not individual dabba.",
+      "verified_by": "saletrn_audit_2026_09_19"
+    },
+    "04192": {
+      "pack_multiple": 1,
+      "case_units": 600,
+      "reason": "Matchbox bundle (600 DABBA). Billed per bundle.",
+      "verified_by": "saletrn_audit_2026_09_19"
+    },
+    "04042": {
+      "pack_multiple": 1,
+      "case_units": 80,
+      "reason": "Dhaga bundle (80 DABBI). Billed per packet/bundle.",
+      "verified_by": "saletrn_audit_2026_09_19"
+    },
+    "00186": {
+      "pack_multiple": 1,
+      "case_units": 100,
+      "reason": "10 Chorsa bundle (100P=1BUND). Billed per bundle in SALETRN.",
+      "verified_by": "saletrn_audit_2026_09_19"
+    },
+    "00223": {
+      "pack_multiple": 50,
+      "case_units": 50,
+      "reason": "16 Chorsa bundle (50P=1 BUNDEL). Billed in multiples of 50 packets in SALETRN.",
+      "verified_by": "saletrn_audit_2026_09_19"
+    },
+    "00224": {
+      "pack_multiple": 50,
+      "case_units": 50,
+      "reason": "28 Chorsa bundle (50P=1 BUNDEL). Sold in multiples of 50 packets.",
+      "verified_by": "saletrn_audit_2026_09_19"
+    },
+    "00225": {
+      "pack_multiple": 50,
+      "case_units": 50,
+      "reason": "28 Chorsa bundle (50P=1 BUNDEL). Sold in multiples of 50 packets.",
+      "verified_by": "saletrn_audit_2026_09_19"
+    },
+    "00079": {
+      "pack_multiple": 1,
+      "case_units": 5,
+      "reason": "Dual parenthetical: (10 PCS) (1P). Inner pack is 1P.",
+      "verified_by": "audit_2026_09_19"
+    },
+    "04616": {
+      "pack_multiple": 1,
+      "case_units": 5,
+      "reason": "Dual parenthetical: (5 PCS) (1P). Inner pack is 1P.",
+      "verified_by": "audit_2026_09_19"
+    },
+    "04625": {
+      "pack_multiple": 1,
+      "case_units": 5,
+      "reason": "Dual parenthetical: (5 PCS) (1P). Inner pack is 1P.",
+      "verified_by": "audit_2026_09_19"
+    },
+    "00455": {
+      "pack_multiple": 1,
+      "case_units": 10,
+      "reason": "Dual parenthetical: (4 P )( 1 P). Inner pack is 1P.",
+      "verified_by": "audit_2026_09_19"
+    },
+    "02157": {
+      "pack_multiple": 1,
+      "case_units": 1,
+      "reason": "Missile repeater (127X1). Multi-shot tube count, sold as 1 unit.",
+      "verified_by": "audit_2026_09_19"
+    },
+    "00178": {
+      "pack_multiple": 10,
+      "case_units": 10,
+      "reason": "Red Bijali 10 bags outer case pack.",
+      "verified_by": "audit_2026_09_19"
+    },
+    "00180": {
+      "pack_multiple": 10,
+      "case_units": 10,
+      "reason": "Mini Red Bijali 10 bags outer case pack.",
+      "verified_by": "audit_2026_09_19"
+    },
+    "00181": {
+      "pack_multiple": 10,
+      "case_units": 10,
+      "reason": "Red Bijali 10 bags outer case pack.",
+      "verified_by": "audit_2026_09_19"
+    },
+    "02905": {
+      "pack_multiple": 1,
+      "case_units": 1,
+      "reason": "Lar garland (1000 LAR). Sold per garland box.",
+      "verified_by": "audit_2026_09_19"
+    },
+    "05933": {
+      "pack_multiple": 1,
+      "case_units": 1,
+      "reason": "Lar garland (1000 LAR). Sold per garland box.",
+      "verified_by": "audit_2026_09_19"
+    },
+    "06106": {
+      "pack_multiple": 1,
+      "case_units": 1,
+      "reason": "Lar garland (5000 LAR). Sold per garland box.",
+      "verified_by": "audit_2026_09_19"
+    },
+    "00082": {
+      "pack_multiple": 1,
+      "case_units": 100,
+      "reason": "Big Naggoli bundle (100X1=1 B). Billed per bundle in SALETRN.",
+      "verified_by": "saletrn_audit_2026_09_19"
+    },
+    "00083": {
+      "pack_multiple": 1,
+      "case_units": 100,
+      "reason": "Big Naggoli bundle (100X1= 1BOX). Billed per bundle in SALETRN.",
+      "verified_by": "saletrn_audit_2026_09_19"
+    },
+    "00187": {
+      "pack_multiple": 1,
+      "case_units": 100,
+      "reason": "10 Gaint Jawan bundle (100P=1BUNDLE). Billed per bundle in SALETRN.",
+      "verified_by": "saletrn_audit_2026_09_19"
+    },
+    "00456": {
+      "pack_multiple": 1,
+      "case_units": 4,
+      "reason": "Dual parenthetical: (4 P)(1P). Inner pack is 1P.",
+      "verified_by": "audit_2026_09_19"
+    },
+    "04613": {
+      "pack_multiple": 1,
+      "case_units": 6,
+      "reason": "Dual pack indicator: (6 P) 1P. Inner pack is 1P.",
+      "verified_by": "audit_2026_09_19"
+    },
+    "00182": {
+      "pack_multiple": 10,
+      "case_units": 10,
+      "reason": "Red Bijali 10 bags outer case pack.",
+      "verified_by": "saletrn_audit_2026_09_19"
+    },
+    "00183": {
+      "pack_multiple": 10,
+      "case_units": 10,
+      "reason": "Red Bijali 10 bags outer case pack.",
+      "verified_by": "saletrn_audit_2026_09_19"
+    },
+    "00184": {
+      "pack_multiple": 10,
+      "case_units": 10,
+      "reason": "Red Bijali 10 bags outer case pack.",
+      "verified_by": "saletrn_audit_2026_09_19"
+    },
+    "00185": {
+      "pack_multiple": 10,
+      "case_units": 10,
+      "reason": "Red Bijali 10 bags outer case pack.",
+      "verified_by": "saletrn_audit_2026_09_19"
+    },
+    "04301": {
+      "pack_multiple": 10,
+      "case_units": 10,
+      "reason": "Stripped Bijali 10 bags outer case pack.",
+      "verified_by": "saletrn_audit_2026_09_19"
+    },
+    "04302": {
+      "pack_multiple": 10,
+      "case_units": 10,
+      "reason": "Stripped Bijali 10 bags outer case pack.",
+      "verified_by": "saletrn_audit_2026_09_19"
+    },
+    "04303": {
+      "pack_multiple": 10,
+      "case_units": 10,
+      "reason": "Stripped Bijali 10 bags outer case pack.",
+      "verified_by": "saletrn_audit_2026_09_19"
+    },
+    "04305": {
+      "pack_multiple": 10,
+      "case_units": 10,
+      "reason": "Stripped Bijali 10 bags outer case pack.",
+      "verified_by": "saletrn_audit_2026_09_19"
+    },
+    "04306": {
+      "pack_multiple": 10,
+      "case_units": 10,
+      "reason": "Stripped Bijali 10 bags outer case pack.",
+      "verified_by": "saletrn_audit_2026_09_19"
+    }
+  }
+}

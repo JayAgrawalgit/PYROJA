@@ -21,6 +21,7 @@ from app.schemas.sync import (
     SubCategoryItem,
     SubcategorySyncResponse,
 )
+from app.services.pack_resolver import PackResolver
 
 logger = logging.getLogger(__name__)
 
@@ -36,10 +37,16 @@ class MasterDataService:
         "TAXMST.DBF",
     ]
 
-    def __init__(self, config: AppConfig, db: Optional[Database] = None):
+    def __init__(
+        self,
+        config: AppConfig,
+        db: Optional[Database] = None,
+        pack_resolver: Optional[PackResolver] = None,
+    ):
         self.config = config
         self.data_dir = config.foxpro.data_path
         self.db = db
+        self.pack_resolver = pack_resolver or PackResolver()
 
         # In-memory caches: (timestamp, checksum, data)
         self._cached_products: Optional[Tuple[float, str, List[ProductItem]]] = None
@@ -169,7 +176,14 @@ class MasterDataService:
             gcode = str(r.get("GCODE", "")).strip()
             pack = str(r.get("PACK", "")).strip() or "UNIT"
             nick = str(r.get("NICK", "")).strip() or None
-            qib = int(r.get("QIB", 1) or 1)
+
+            # Resolve safe packaging multiple via PackResolver
+            dbf_qib = int(r.get("QIB", 1) or 1)
+            pack_mult, pack_src, _ = self.pack_resolver.resolve_pack(code, name)
+            if pack_src == "fallback" and dbf_qib > 1:
+                pack_mult = dbf_qib
+            qib = pack_mult
+
             rate_type = str(r.get("RTTP", "P")).strip() or "P"
             mrp = float(r.get("MRP", 0.0) or 0.0)
             srate = rate
@@ -187,6 +201,8 @@ class MasterDataService:
                     pack=pack,
                     nick=nick,
                     qty_in_box=qib,
+                    pack_multiple=pack_mult,
+                    pack_source=pack_src,
                     tax_percentage=tax_pct,
                     tax_code=tcode or "DEFAULT",
                     rate_type=rate_type,

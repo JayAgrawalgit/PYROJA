@@ -19,6 +19,8 @@ class ProductItem(BaseModel):
     pack: str = Field(..., description="Packing description from ITEMMST.PACK, e.g. 'PKT', 'BOX'")
     nick: Optional[str] = Field(None, description="Product nickname from ITEMMST.NICK")
     qty_in_box: int = Field(..., description="Inner unit quantity in box/case from ITEMMST.QIB")
+    pack_multiple: int = Field(1, description="Wholesale pack multiple / minimum order increment")
+    pack_source: Optional[str] = Field("fallback", description="Resolution source: override, heuristic, or fallback")
     tax_percentage: float = Field(..., description="Tax percentage from TAXMST.TAX")
     tax_code: str = Field(..., description="Tax slab code from ITEMMST.TCODE, e.g. 'T1'")
     rate_type: str = Field(..., description="Rate type flag from ITEMMST.RTTP ('P' = piece, etc.)")

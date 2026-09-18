@@ -673,17 +673,14 @@ class POSController {
         const product = typeof productOrCode === "object" && productOrCode !== null
             ? productOrCode
             : this.products.find(p => p.code === productOrCode);
-        if (!product) return 10;
-        if (product.qty_in_box && Number(product.qty_in_box) > 1) {
+        if (!product) return 1;
+        if (product.pack_multiple && Number(product.pack_multiple) >= 1) {
+            return Number(product.pack_multiple);
+        }
+        if (product.qty_in_box && Number(product.qty_in_box) >= 1) {
             return Number(product.qty_in_box);
         }
-        if (product.pack && typeof product.pack === "string") {
-            const match = product.pack.match(/\b(\d+)\b/);
-            if (match && Number(match[1]) > 1) {
-                return Number(match[1]);
-            }
-        }
-        return 10;
+        return 1;
     }
 
     resetCustomerDraft(customerCode) {

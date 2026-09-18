@@ -164,7 +164,10 @@ def test_pack_multiple_rule_enforcement(temp_dbf_dir):
     create_synthetic_dbf(
         temp_dbf_dir / "NAMEMST.DBF",
         [("CODE", "C", 5, 0), ("NAME", "C", 30, 0)],
-        [{"CODE": "C0001", "NAME": "TEST CUSTOMER"}],
+        [
+            {"CODE": "C0001", "NAME": "TEST WHOLESALE CUSTOMER"},
+            {"CODE": "99999", "NAME": "CASH A/C"},
+        ],
     )
     create_synthetic_dbf(temp_dbf_dir / "COMPMST.DBF", [("CODE", "C", 5, 0), ("NAME", "C", 20, 0)], [])
     create_synthetic_dbf(temp_dbf_dir / "TAXMST.DBF", [("CODE", "C", 5, 0), ("SLAB", "C", 20, 0), ("TAX", "N", 5, 2)], [])
@@ -179,7 +182,7 @@ def test_pack_multiple_rule_enforcement(temp_dbf_dir):
     app = create_app(cfg)
     client = TestClient(app)
 
-    # Case A: Qty = 20 (Multiple of 10) -> Should succeed
+    # Case A: Wholesale Customer + Qty = 20 (Multiple of 10) -> Should succeed
     res_valid = client.post(
         "/api/orders",
         json={
@@ -190,7 +193,7 @@ def test_pack_multiple_rule_enforcement(temp_dbf_dir):
     )
     assert res_valid.status_code == 201
 
-    # Case B: Qty = 15 (NOT a multiple of 10) -> Must fail with pack multiple violation
+    # Case B: Wholesale Customer + Qty = 15 (NOT a multiple of 10) -> Must fail with 422
     res_invalid = client.post(
         "/api/orders",
         json={
@@ -203,6 +206,28 @@ def test_pack_multiple_rule_enforcement(temp_dbf_dir):
     detail = res_invalid.json()["detail"]
     assert "Pack multiple rule violation" in detail
     assert "must be a multiple of 10" in detail
+
+    # Case C: Cash Customer 99999 + Qty = 15 (Non-multiple) -> Must SUCCEED (Retail bypass)
+    res_cash_15 = client.post(
+        "/api/orders",
+        json={
+            "draft_id": "DRAFT-CASH-15",
+            "customer_code": "99999",
+            "line_items": [{"item_code": "90001", "qty": 15.0, "rate": 85.0}],
+        },
+    )
+    assert res_cash_15.status_code == 201
+
+    # Case D: Cash Customer 99999 + Qty = 1 (Single unit loose purchase) -> Must SUCCEED
+    res_cash_1 = client.post(
+        "/api/orders",
+        json={
+            "draft_id": "DRAFT-CASH-01",
+            "customer_code": "99999",
+            "line_items": [{"item_code": "90001", "qty": 1.0, "rate": 85.0}],
+        },
+    )
+    assert res_cash_1.status_code == 201
 
 
 def test_get_order_and_pending_orders(test_client):
