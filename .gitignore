@@ -79,3 +79,26 @@ tablet-app/android/app/src/main/assets/capacitor.plugins.json
 # ==========================================
 *.TMP
 *.tmp
+
+# ==========================================
+# Runtime Order Staging & Import Outputs
+# ==========================================
+# Ephemeral order staging and import execution outputs
+/import_staging.json
+/import_result.json
+sync-service/import_staging.json
+sync-service/import_result.json
+PYRO-Sync-Service/import_staging.json
+PYRO-Sync-Service/import_result.json
+
+# Explicitly ensure test sample fixtures and schemas are never ignored
+!sync-service/samples/import_staging.json
+!sync-service/schemas/staging_schema.json
+
+# ==========================================
+# Test Coverage & Cache Outputs
+# ==========================================
+.coverage
+htmlcov/
+
+

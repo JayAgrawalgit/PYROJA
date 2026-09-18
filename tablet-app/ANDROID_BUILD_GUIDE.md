@@ -20,11 +20,11 @@
 
 | Artifact | File Location | Size | Description |
 |---|---|:---:|---|
-| **Debug APK (Top-Level)** | [**`tablet-app/dist/pyroja-pos-debug.apk`**](file:///Users/jayagrawal/Documents/PYROJA/tablet-app/dist/pyroja-pos-debug.apk) | 8.7 MB | Ready to install on Android tablets. |
-| **Gradle Output APK** | [**`tablet-app/android/app/build/outputs/apk/debug/app-debug.apk`**](file:///Users/jayagrawal/Documents/My%20Orders/tablet-app/android/app/build/outputs/apk/debug/app-debug.apk) | 3.9 MB | Direct build output from Gradle. |
-| **Android Manifest** | [**`tablet-app/android/app/src/main/AndroidManifest.xml`**](file:///Users/jayagrawal/Documents/My%20Orders/tablet-app/android/app/src/main/AndroidManifest.xml) | — | Configured with `usesCleartextTraffic="true"` and network permissions. |
-| **Capacitor Config** | [**`tablet-app/capacitor.config.json`**](file:///Users/jayagrawal/Documents/My%20Orders/tablet-app/capacitor.config.json) | — | Native cleartext, server scheme, and WebView debugging config. |
-| **Package Manifest** | [**`tablet-app/package.json`**](file:///Users/jayagrawal/Documents/My%20Orders/tablet-app/package.json) | — | Build and sync automation scripts. |
+| **Debug APK (Top-Level)** | **`dist/pyroja-pos-debug.apk`** | 8.7 MB | Ready to install on Android tablets. |
+| **Gradle Output APK** | **`android/app/build/outputs/apk/debug/app-debug.apk`** | 3.9 MB | Direct build output from Gradle. |
+| **Android Manifest** | [**`android/app/src/main/AndroidManifest.xml`**](android/app/src/main/AndroidManifest.xml) | — | Configured with `usesCleartextTraffic="true"` and network permissions. |
+| **Capacitor Config** | [**`capacitor.config.json`**](capacitor.config.json) | — | Native cleartext, server scheme, and WebView debugging config. |
+| **Package Manifest** | [**`package.json`**](package.json) | — | Build and sync automation scripts. |
 
 ---
 
