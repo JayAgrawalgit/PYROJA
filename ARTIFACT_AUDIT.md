@@ -77,7 +77,8 @@ The table below catalogs every evaluated non-source or suspicious file across th
 | 26 | `PACKAGING_BUSINESS_REVIEW_WORKSHEET.md` | 151 KB | Product packaging rules business review worksheet | 1 (`PACKAGING_HISTORY_EVIDENCE_REPORT.md`) | No | Business review | Low | **Move** (`docs/packaging/`) | Active business review document for showroom owner sign-off. |
 | 27 | `PACKAGING_HISTORY_EVIDENCE_REPORT.md` | 108 KB | Packaging rules historical sales evidence report | 0 | No | Business evidence | Low | **Move** (`docs/packaging/`) | Documents historical sales analysis for 439 candidate products. |
 | 28 | `PACKAGING_RULE_DECISIONS.csv` | 100 KB | Packaging rule decision matrix (439 rows) | 1 (`PACKAGING_HISTORY_EVIDENCE_REPORT.md`) | No | Data export | Low | **Move** (`docs/packaging/`) | Complete export of empirical packaging decisions and GCD analysis. |
-| 29 | `tablet-app/screen.png` | 1.1 MB | Prototype screenshot (Sep 6) | 0 | No | Ad-hoc image | Zero | **Delete** | Untracked/unreferenced prototype screenshot taking 1.1 MB in git. Not referenced in web app or Android build. |
+| 29 | `ACTIVE_RULE_RISK_REGISTER.md` | 11.4 KB | Active packaging rules risk register & pilot safety audit (Sep 19) | 0 | No | Risk register | Low | **Move** (`docs/packaging/`) | Safety audit of 32 approved overlay rules; co-located with packaging reports in `docs/packaging/`. |
+| 30 | `tablet-app/screen.png` | 1.1 MB | Prototype screenshot (Sep 6) | 0 | No | Ad-hoc image | Zero | **Delete** | Untracked/unreferenced prototype screenshot taking 1.1 MB in git. Not referenced in web app or Android build. |
 | 30 | `tablet-app/screenshot1.png` | 188 KB | Prototype screenshot (Sep 7) | 0 | No | Ad-hoc image | Zero | **Delete** | Unreferenced prototype image taking 188 KB in git. |
 | 31 | `tablet-app/screenshot2_catalog.png` | 338 KB | Prototype screenshot (Sep 7) | 0 | No | Ad-hoc image | Zero | **Delete** | Unreferenced prototype image taking 338 KB in git. |
 | 32 | `tablet-app/screenshot3_cart.png` | 358 KB | Prototype screenshot (Sep 7) | 0 | No | Ad-hoc image | Zero | **Delete** | Unreferenced prototype image taking 358 KB in git. |
@@ -137,6 +138,7 @@ docs/
 │   ├── showroom_navigation.md
 │   └── table_relationships.md
 └── packaging/
+    ├── ACTIVE_RULE_RISK_REGISTER.md
     ├── CATALOG_PACKAGING_REPORT.md
     ├── PACKAGING_BUSINESS_REVIEW_WORKSHEET.md
     ├── PACKAGING_HISTORY_EVIDENCE_REPORT.md
