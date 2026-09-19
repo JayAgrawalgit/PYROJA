@@ -67,10 +67,10 @@ tablet-app/android/app/src/main/assets/public/
 tablet-app/android/app/src/main/assets/capacitor.config.json
 tablet-app/android/app/src/main/assets/capacitor.plugins.json
 
-# Build outputs (allow distribution APK, ignore root dist, release, and zip packages)
+# Build outputs (allow distribution APK, ignore dist, release, and zip packages)
 *.apk
 *.aab
-/dist/
+**/dist/
 /release/
 *.zip
 
