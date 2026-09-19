@@ -4,6 +4,9 @@
 **Target Operating Systems:** Windows 10, Windows 11, Windows Server 2016 / 2019 / 2022 (64-bit)  
 **Package Folder:** `PYRO-Sync-Service/`
 
+> [!TIP]
+> **Recommended for Store Operators:** For the modern graphical desktop interface with single-click start/stop, live status indicators, FoxPro data path browsing (`D:\FAVWIN\D2627`), and port testing, see the new [WINDOWS_CONTROL_PANEL_GUIDE.md](file:///Users/jayagrawal/Documents/PYROJA/WINDOWS_CONTROL_PANEL_GUIDE.md).
+
 ---
 
 ## 1. Quick Start for Store Administrators
